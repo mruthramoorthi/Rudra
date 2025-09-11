@@ -1,0 +1,81 @@
+<style>
+    
+.display-f{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+.hr-ing{
+    margin: 10px 0 !important;
+}
+    </style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="display-f"> 
+        {{createInput type="text" id="name" placeholder="First Name"}}
+        {{createInput type="text" id="lastname" placeholder="Last Name"}}
+        {{createInput type="date" id="dob" placeholder="DOB"}}
+        {{createInput type="number" id="number1" placeholder="Primary Number"}}
+        {{createInput type="number" id="number2" placeholder="Secondary Number"}}
+        {{createInput type="text" id="email" placeholder="Email"}}
+        {{createInputTa id="address" placeholder="Address"}}
+        {{createInput type="date" id="joinon" placeholder="DOJ"}}
+        {{createInput type="number" id="aadhaar" placeholder="Addhaar"}}
+        {{createInput type="text" id="pannum" placeholder="PAN"}}
+        {{selectBox id="state" options="nd: States"}}
+        {{selectBox id="district" options="nd: District"}}
+        {{createInput type="text" id="area" placeholder="Area (land mark)"}}
+        {{imageUpload id="profile" noncei=nonce placeholder="Profile"}}
+        {{imageUpload id="proof" noncei=nonce placeholder="Proof"}}
+        <input type="hidden" id="uniquekey" name="uniquekey">
+        <input type="hidden" id="user_id" name="user_id">
+    </div>
+    <hr class="hr-ing">
+    <div class="display-f">
+        {{createInput type="text" id="username" placeholder="User Name"}}
+        {{createInput type="password" id="password" placeholder="Password"}}
+        {{createInput type="password" id="cpassword" placeholder="Confirm Password"}}
+    </div><br>
+    <div class="display-f">
+        <button id="saveButton" class="center" type="button">Save</button>
+        <button id="cancelButton" class="center" type="button">Cancel</button>
+    </div>
+    
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        selectLoad('state', '/user-registration/loadState', content = 'application/json', undefined);
+        document.getElementById('state').addEventListener('change', function(event) {
+            selectLoad('district', '/user-registration/loadDistrict', content = 'application/json', event.target.value);
+        });
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/user-registration/insert", "POST", undefined, formData);
+        });
+    });
+</script>
+{{> footer }}

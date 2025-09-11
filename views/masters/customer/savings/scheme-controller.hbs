@@ -1,0 +1,114 @@
+<style>
+.flex-box{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+h3{
+    color: brown !important;
+    text-decoration: underline;
+}
+.main-tabs{
+    display: none !important;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <h3>Scheme Creation Settings</h3>
+    <div class="flex-box">
+        {{createInput type="text" id="savingnumber" placeholder="Savings Number Start With"}}
+        {{checkBox id="savings" className="checkc" placeholder="Savings Number Editable" style="" label="right"}}
+    </div><br>
+    <div class="flex-box">
+        {{createInput type="number" id="totalmonth" placeholder="Total Month"}}
+        {{checkBox id="month" className="checkc" placeholder="Month Editable" style="" label="right"}}
+    </div><br>
+    <h3>Due Payment Settings</h3>
+    <div class="flex-box">
+        {{createInput type="number" id="paypermonth" placeholder="Payment per Month"}}
+        {{checkBox id="strict_duration" className="checkc" placeholder="Strictly No Date or Duration to Follow" style="" label="right"}}
+    </div><br>
+        {{checkBox id="due_date" className="checkc" placeholder="Due Date Editable" style="" label="right"}}
+        <input type="hidden" name="str_duration" id="str_duration" value="0">
+        <input type="hidden" name="due_date_res" id="due_date_res" value="0">
+        <input type="hidden" name="savings_edit" id="savings_edit" value="0">
+        <input type="hidden" name="total_amount" id="total_amount" value="0">
+        <input type="hidden" name="month_condition" id="month_condition" value="0">
+        <input type="hidden" name="uniquekey" id="uniquekey" value="">
+    <center><button type="button" id="add" name="add">Add</button></center>
+</div>
+{{> formend }}
+{{> view }}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        backEndCall("load_all_data", "/scheme-controller/loadData", "GET", undefined, undefined);
+        document.getElementById("add").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/scheme-controller/insert", "POST", undefined, formData);
+        });
+        document.getElementById("strict_duration").addEventListener("click", () => {
+            const saving = document.getElementById("strict_duration");
+            if(saving.checked)
+                Sv("str_duration",1);
+            else
+                Sv("str_duration",0);
+        });
+        document.getElementById("due_date").addEventListener("click", () => {
+            const saving = document.getElementById("due_date");
+            if(saving.checked)
+                Sv("due_date_res",1);
+            else
+                Sv("due_date_res",0);
+        });
+        document.getElementById("savings").addEventListener("click", () => {
+            const saving = document.getElementById("savings");
+            if(saving.checked)
+                Sv("savings_edit",1);
+            else
+                Sv("savings_edit",0);
+        });
+        document.getElementById("amount").addEventListener("click", () => {
+            const amount = document.getElementById("amount");
+            if(amount.checked)
+                Sv("total_amount",1);
+            else
+                Sv("total_amount",0);
+        });
+        document.getElementById("month").addEventListener("click", () => {
+            const month = document.getElementById("month");
+            if(month.checked)
+                Sv("month_condition",1);
+            else
+                Sv("month_condition",0);
+        });
+    });
+    function backEndCall_load_all_data(msg)
+    {
+        debugger
+        if(msg.response[0])
+        {
+            Sv("savingnumber",msg.response[0].savings_number_starts_with);
+            Sv("amount_upto",msg.response[0].savings_amount_upto);
+            Sv("totalmonth",msg.response[0].month);
+            Sv("uniquekey",msg.response[0].uniqueid);
+            Sv("paypermonth",msg.response[0].paypermonth)
+            if(msg.response[0].savings_number_edit)
+                document.getElementById("savings").click();
+            if(msg.response[0].month_edit)
+                document.getElementById("month").click();
+            if(msg.response[0].savings_amount_upto_edit)
+                document.getElementById("amount").click();
+            if(msg.response[0].strict_no_duration)
+                document.getElementById("strict_duration").click();
+            if(msg.response[0].due_date_edit)
+                document.getElementById("due_date").click();
+        }
+    }
+</script>
+{{> footer }}

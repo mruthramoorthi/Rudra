@@ -1,0 +1,99 @@
+<style>
+.flex-divs{
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   justify-content: center;
+}
+.assign-btn{
+    display:none;
+}
+.main-tabs{
+    display: none !important;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="flex-divs">
+        {{selectBox id="roles" options='nd:Roles'}}
+        {{selectBox id="pages" options='nd:Pages'}}
+    </div>
+</div>
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{> formend }}
+{{> view }}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+document.addEventListener("DOMContentLoaded", () => {
+    selectLoad('roles', '/page-features/loadrole', content = 'application/json', undefined);
+    let thead = "<th>S.no</th><th>Page Name</th><th>Edit</th><th>Limit</th><th>Days</th><th>Time</th><th>Delete</th><th>Limit</th><th>Days</th><th>Time</th><th>View</th><th>Limit</th><th>Days</th><th>Time</th><th>Pdf</th><th>Limit</th><th>Days</th><th>Time</th><th>Date</th><th>Limit</th><th>Days</th><th>Time</th>";
+        let tfoot = "<td colspan='5'></td>";
+    document.getElementById('roles').addEventListener('change', function(event) {
+        selectLoad('pages', '/page-features/loaduser', content = 'application/json', event.target.value);
+        const formData=getFormData();
+        // Call the fetchData function and wait for it to complete
+        fetchTableData('content', '1000', '1', 'content', '', '/page-features/select', '50vh', 'lazy-content', formData, thead, tfoot);
+    });
+    document.getElementById('pages').addEventListener('change', function(event) {
+        const formData=getFormData();
+        fetchTableData('content', '1000', '1', 'content', '', '/page-features/select', '50vh', 'lazy-content', formData, thead, tfoot);
+    });
+    document.addEventListener("click", (event) => {
+
+        const clickedId = event.target.id;
+        // Check if the clicked element is a <tr> element
+        const clickedElement = event.target;
+
+        // Check if the clicked element is a <tr> or if the target is inside a <tr>
+        const clickedRow = clickedElement.closest('tr');
+        const dataAttribute = clickedRow.attributes.dataset; // Replace 'yourDataAttributeName' with the actual attribute name
+        const parsedObject = JSON.parse(dataAttribute.value);
+        const unique = parsedObject.uniqueid;
+        if (clickedRow && clickedRow.classList.value==="trs") {
+            // Access the data attribute from the <tr> element
+            showElementById('assign-btn', unique);
+        }
+        if(event.target.classList=="assign-btn")
+        {
+            const path = parsedObject.path;
+            const route = parsedObject.route;
+            const role = parsedObject.role;
+            const editstatus = document.getElementById("editstatus"+unique).checked;
+            const editlimit = document.getElementById("editlimit"+unique).checked;
+            const editdays = Val("editdays"+unique);
+            const edittime = Val("edittime"+unique);
+            const deletestatus = document.getElementById("deletestatus"+unique).checked;
+            const deletelimit = document.getElementById("deletelimit"+unique).checked;
+            const deletedays = Val("deletedays"+unique);
+            const deletetime = Val("deletetime"+unique);
+            const viewstatus = document.getElementById("viewstatus"+unique).checked;
+            const viewlimit = document.getElementById("viewlimit"+unique).checked;
+            const viewdays = Val("viewdays"+unique);
+            const viewtime = Val("viewtime"+unique);
+            const pdfstatus = document.getElementById("pdfstatus"+unique).checked;
+            const pdflimit = document.getElementById("pdflimit"+unique).checked;
+            const pdfdays = Val("pdfdays"+unique);
+            const pdftime = Val("pdftime"+unique);
+            const datestatus = document.getElementById("datestatus"+unique).checked;
+            const datelimit = document.getElementById("datelimit"+unique).checked;
+            const datedays = Val("datedays"+unique);
+            const datetime = Val("datetime"+unique);
+            const array_var = JSON.stringify({path,route,role,editstatus,editlimit,editdays,edittime,deletestatus,deletelimit,deletedays,deletetime,viewstatus,viewlimit,viewdays,viewtime,pdfstatus,pdflimit,pdfdays,pdftime,datestatus,datelimit,datedays,datetime});
+
+            backEndCall("call_back", "/page-features/update", "POST", undefined, array_var);
+        }
+    });
+});
+function backEndCall_call_back(hello)
+    {
+        hideClass("assign-btn");
+    }
+</script>
+{{> footer }}

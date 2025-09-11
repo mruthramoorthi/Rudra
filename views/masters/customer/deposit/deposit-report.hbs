@@ -1,0 +1,75 @@
+<style>
+    .addcssfortable{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="addcssfortable">
+        {{createInput type="date" id="from" placeholder="from"}}
+        {{createInput type="date" id="to" placeholder="to"}}
+        <button type="button" id="search">Search</button>
+    </div>
+    <button type="button" id="print-report">Print</button>
+</div>
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th>Dep No</th><th>Date</th><th>Maturity</th><th>Customer Details</th><th>Amount</th><th>Gram</th><th>Purchase</th><th>Available</th><th>Action</th>";
+        let tfoot = "<td colspan='7'></td>";
+        if({{checkingRights data=rights action="view"}})
+            fetchTableData('content', '1000', '1', 'content', '', '/deposit-report/select', '50vh', 'lazy-content', {from:Val("from"),to:Val("to")}, thead, tfoot);
+    });
+    function pageView()
+    {
+        let thead = "<th>S.no</th><th>Dep No</th><th>Date</th><th>Maturity</th><th>Customer Details</th><th>Amount</th><th>Gram</th><th>Purchase</th><th>Available</th><th>Action</th>";
+        let tfoot = "<td colspan='7'></td>";
+        if({{checkingRights data=rights action="view"}})
+            fetchTableData('content', '1000', '1', 'content', '', '/deposit-report/select', '50vh', 'lazy-content', {from:Val("from"),to:Val("to")}, thead, tfoot);
+    }
+    document.addEventListener("click", (event) => {
+            const clickId = event.target.id;
+            if(event.target.classList=="print-iconi")
+            {
+                const pdfBtn = document.getElementById(event.target.id);
+                if ({{checkingRights data=rights action="print"}}) {
+                    openPDF("/deposit-report/pdf","POST",{"id":pdfBtn.getAttribute("deposit")});
+                }
+            }
+            if(clickId=="print-report")
+            {
+                const pdfBtn = document.getElementById(event.target.id);
+                const from =Val("from");
+                const to =Val("to");
+                if ({{checkingRights data=rights action="print"}}) {
+                    pdfBtn.addEventListener("click", async () => {
+                        await openPDF("/deposit-report/pdfReport","POST",{from,to});
+                    });
+                }
+            }
+            if(clickId=="search")
+            {
+                pageView()
+            }
+    });
+</script>
+{{> footer }}

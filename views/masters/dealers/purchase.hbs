@@ -1,0 +1,704 @@
+<style>
+.addcssfortable{
+    display: flex;
+        gap: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+#bankdiv{
+    display: none;
+}
+.addcssfortable1{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-around;
+    align-items: center;
+}
+.addcssfortable2{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.addjust{
+    overflow-x: scroll;
+}
+.buy-with-cash-div{
+    display: none;
+}
+.pcswt{
+    width: 90px !important;
+}
+.pcswt2{
+    width: 100px !important;
+}
+#Cashp{
+    width: 100px !important;
+}
+#Purep{
+    width: 100px !important;
+}
+#Cash{
+    width: 100px !important;
+}
+#Pure{
+    width: 100px !important;
+}
+#totalp{
+    width: 100px !important;
+}
+#totalc{
+    width: 100px !important;
+}
+#cancel{
+    color: white;
+    background-color: red;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="addcssfortable1">
+    <label for="" style="font-size: large;font-weight:800;">Pure : <label id='Pure' style="color:red;">0</label></label>
+    <input type="hidden" name="Pure_balance" id="Pure_balance" value="0">
+    {{selectBox id="dealer" options='nd:Dealers'}}
+    {{selectBox id="metals" options='nd:Metal'}}
+    <label for="" style="font-size: large;font-weight:800;">Cash : <label id='Cash' style="color:red;">0</label></label>
+    <input type="hidden" name="Cash_balance" id="Cash_balance" value="0">
+</div>
+<div class="vietnam">
+    <div class="snowdiv">
+        <div class="addcssfortable">
+            {{selectBox id="counter" options='nd:Counter'}}
+            {{selectBox id="product" options='nd:Category'}}
+            {{selectBox id="typeofjewel" options='nd:Jewel Type'}}
+            {{selectBox id="subtype" options='nd:Sub Type'}}
+            {{createInput type="number" id="pcs" placeholder="Pieces" othersForDiv="pcswt"}}
+            {{createInput type="number" id="totalweight" placeholder="Weight" othersForDiv="pcswt"}}
+            {{createInput type="number" id="purity" placeholder="Purity" othersForDiv="pcswt"}}
+            {{createInput type="number" id="waste" placeholder="Wastage" othersForDiv="pcswt"}}
+            {{createInput type="number" id="mc" placeholder="MC" othersForDiv="pcswt"}}
+            {{checkBox id="gramorpcs" className="check" placeholder="Gram/Pcs" style="" checked="checked"}}
+            <b><label for="" id="gramorpcslbl">Gram</label></b>
+            {{imageUpload id="photo" noncei=nonce placeholder="Jewels Photo"}}
+        </div>
+    </div>
+    <div class="snowdiv">
+        <div class="addcssfortable">
+            {{createInput type="number" id="totalstoneweight" placeholder="Total Stn Wt" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="totalstoneprice" placeholder="Total Stn rt" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="noofstones" placeholder="Stn nos" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="caratsize" placeholder="Ct Size" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="caratprice" placeholder="Ct Price" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="certificate" placeholder="Cert Chrg" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="labour" placeholder="Lab Chrg" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="extra" placeholder="Ex Chrg" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="hallmark" placeholder="HM Chrg" othersForDiv="pcswt2"}}
+            {{createInput type="number" id="gst" placeholder="gst%" othersForDiv="pcswt2"}}
+            <input type="hidden" name="gstprice" id="gstprice" value="0">
+        </div><br>
+        <div class="addcssfortable1">
+            <label for="" style="font-size: large;font-weight:800;">Pure : <label id='Purep' style="color:blue;">0</label></label>
+            <input type="hidden" name="Pure_purchase" id="Pure_purchase" value="0">
+            <button type="button" id="add">Add</button>
+            <button type="button" id="refresh">Refresh</button>
+            <label for="" style="font-size: large;font-weight:800;">Cash : <label id='Cashp' style="color:blue;">0</label></label>
+            <input type="hidden" name="Cash_purchase" id="Cash_purchase" value="0">
+        </div>
+    </div>
+</div>
+<div class="snowdiv addjust">
+    <center>
+        <table class="table-bordered"><thead><tr><th>S.no</th><th>Counter</th><th>Category</th><th>Jeweltype</th><th>Subtype</th><th>Pcs</th><th>Weight</th><th>Purity</th><th>Waste</th><th>Mc</th><th>Stone Weight</th><th>Stone Price</th><th>No Of Stones</th><th>Carat Size</th><th>Carat Price</th><th>Certificate Chrg</th><th>Labour Chrg</th><th>Extra Chrg</th><th>Hallmark Chrg</th><th>GST</th><th>GST Price</th><th>Pure</th><th>Cash</th><th>Action</th></tr></thead><tbody id="purchase-adder"></tbody></table>
+        <br>
+        <div class="addcssfortable1">
+            {{imageUpload id="proof" noncei=nonce placeholder="Bill Photo"}}
+            <div>
+                {{selectBox id="buy" options='1:Buy With Pure'}}
+                <div class="buy-with-cash-div">
+                    <br>
+                    {{selectBox id="rate" options='nd:Rate'}}
+                    {{createInput type="number" id="purerate" placeholder="Pure Rate"}}
+                </div>
+                <label for="" id="buy_pure_cash"></label>
+            </div>
+            {{selectBox id="payment" options='1:Future Payment'}}
+            {{createInput type="date" id="entry_date" placeholder="Date"}}
+            <div id="bankdiv" class="addcssfortable1">
+                {{selectBox id="banks" options="nd:Banks"}}
+                {{selectBox id="transactiontype" options="nd:Transaction Type"}}
+                {{createInput type="number" id="bank" placeholder="Bank Amount" value=0}}
+            </div>
+        </div><br>
+        <div class="addcssfortable1">
+            <label for="" style="font-size: large;font-weight:800;">Pure : <label id='totalp' style="color:blue;">0</label></label>
+            <input type="hidden" name="total_Pure_purchase" id="total_Pure_purchase" value="0">
+            <button type="button" id="save">Save</button>
+            <button type="button" id="cancel">Cancel</button>
+            {{#if (checkingRights data=rights action="print")}}
+            <button id="pdfBtns" type="button">Print</button>
+            {{/if}}
+            <label for="" style="font-size: large;font-weight:800;">Cash : <label id='totalc' style="color:blue;">0</label></label>
+            <input type="hidden" name="total_Cash_purchase" id="total_Cash_purchase" value="0">
+        </div>
+    </center>
+    <input type="hidden" id="rowedit" name="rowedit" value="0">
+    <input type="hidden" name="allrowid" id="allrowid" value="">
+    <input type="hidden" id="lotid" name="lotid" value="">
+    <input type="hidden" name="purchaseid" id="purchaseid" value="">
+    <input type="hidden" name="purchase_id" id="purchase_id" value="">
+    <input type="hidden" name="mc_status" id="mc_status" value="gram">
+    <input type="hidden" name="purecash" id="purecash" value="0">
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+function backEndCall_edits(msg)
+{
+    debugger
+    Si("purchase-adder","");
+    Sv("allrowid","");
+    if(msg.success)
+    {
+        Si("purchase-adder",msg.html);
+        Sv("allrowid",msg.allid);
+    }
+}
+
+    function buy_with_cash()
+    {
+        const pureInputs = document.querySelectorAll('.pures');
+        let Pure_purchase = 0;
+        // Loop through each element and add its value to the sum
+        pureInputs.forEach(input => {
+            Pure_purchase += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+        });
+        const cashInputs = document.querySelectorAll('.cashs');
+        let total_Cash_purchase = 0;
+        // Loop through each element and add its value to the sum
+        cashInputs.forEach(input => {
+            total_Cash_purchase += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+        });
+        const pure_rate = Val("purerate");
+        const pure_cash = valNum(Pure_purchase) * valNum(pure_rate);
+        Sv("purecash",pure_cash);
+        Si("buy_pure_cash",Pure_purchase+" X "+pure_rate+" = "+pure_cash);
+        const cash = parseInt(valNum(total_Cash_purchase)) + parseInt(pure_cash);
+        const buy_without_cash = parseInt(cash) - parseInt(valNum(total_Cash_purchase));
+        if(Val("buy")=="0")
+        {
+            Sv("total_Cash_purchase",cash);
+            Si("totalc",money(cash,0,1));
+            Sv("total_Pure_purchase",0);
+            Si("totalp",0);
+        }
+        else
+        {
+            const pureInputs = document.querySelectorAll('.pures');
+            let pure_sum = 0;
+            // Loop through each element and add its value to the sum
+            pureInputs.forEach(input => {
+                pure_sum += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+            });
+            const cashInputs = document.querySelectorAll('.cashs');
+            let cash_sum = 0;
+            // Loop through each element and add its value to the sum
+            cashInputs.forEach(input => {
+                cash_sum += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+            });
+            Sv("total_Cash_purchase",cash_sum);
+            Si("totalc",money(cash_sum,0,1));
+            Sv("total_Pure_purchase",money(pure_sum,3,0));
+            Si("totalp",money(pure_sum,3,1));
+        }
+    }
+    function backEndCall_balance(msg)
+    {
+        debugger
+        Si("Pure",0)
+        Si("Cash",0)
+        Sv("Pure_balance",0)
+        Sv("Cash_balance",0)
+        if(msg.success)
+        {
+            Si("Pure",money(msg.pure,3,1))
+            Si("Cash",money(msg.cash,3,1))
+            Sv("Pure_balance",msg.pure)
+            Sv("Cash_balance",msg.cash)
+        }
+    }
+document.addEventListener("DOMContentLoaded", () => {
+    selectLoad('dealer', '/purchase/dealer', content = 'application/json', undefined);
+    selectLoad('metals', '/purchase/metal', content = 'application/json', undefined);
+    selectLoad('banks', '/purchase/bank', content = 'application/json', undefined);
+    selectLoad('transactiontype', '/purchase/transactionType', content = 'application/json', undefined);
+    selectLoad('counter', '/purchase/counter', content = 'application/json', undefined);
+    selectLoad('buy', '/purchase/buyType', content = 'application/json', undefined);
+    selectLoad('payment', '/purchase/paymentType', content = 'application/json', undefined);
+    selectLoad('rate', '/purchase/rates', content = 'application/json', undefined);
+    let thead = "<th>S.no</th><th>Purchase ID</th><th>Dealer</th><th>Counter</th><th>Category</th><th>Jewel</th><th>Sub</th><th>Weight</th><th>Pcs</th><th>Wastage</th><th>MC</th><th>MC-Sts</th><th>Date</th><th>Action</th>";
+    let tfoot = "<td colspan='6'></td>";
+    if({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/purchase/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+    document.getElementById('dealer').addEventListener('change', function(event) {
+        const dealer = getFormData();
+        backEndCall("balance", "/purchase/balance", "POST", undefined, dealer);
+    });
+    document.getElementById('metals').addEventListener('change', function(event) {
+        const dealer = getFormData();
+        backEndCall("balance", "/purchase/balance", "POST", undefined, dealer);
+    });
+    document.getElementById('metals').addEventListener('change', function(event) {
+        selectLoad('product', '/purchase/loadCate', content = 'application/json', event.target.value);
+    });
+    document.getElementById('product').addEventListener('change', function(event) {
+        selectLoad('typeofjewel', '/purchase/loadJewel', content = 'application/json', event.target.value);
+    });
+    document.getElementById('purerate').addEventListener('keyup', function(event) {
+        buy_with_cash();
+    });
+    document.getElementById('buy').addEventListener('change', function(event) {
+        if (event.target.value == "0") {
+            document.querySelector(".buy-with-cash-div").style.display = "block";
+        } else {
+            Sv("purecash",0);
+            Si("buy_pure_cash","");
+            document.querySelector(".buy-with-cash-div").style.display = "none";
+        }
+        pureCalc()
+    });
+    document.getElementById('rate').addEventListener('change', function(event) {
+        Sv("purerate",event.target.value);
+        buy_with_cash();
+    });
+    document.getElementById('typeofjewel').addEventListener('change', function(event) {
+        selectLoad('subtype', '/purchase/subType', content = 'application/json', event.target.value+"[w~12]"+Val("product"));
+    });
+    document.getElementById('payment').addEventListener('change', function(event) {
+        if(event.target.value=="0")
+            s("bankdiv","flex");
+        else
+        {
+            Ss("banks","nd");
+            Ss("transactiontype","nd");
+            Sv("bank",0);
+            h("bankdiv");
+        }
+    });
+    // List of input IDs
+    const pureIds = ["totalweight", "purity", "waste", "totalstoneweight"];
+    const cashIds = ["mc", "totalstoneprice", "caratsize", "caratprice","certificate","labour","extra","hallmark","gst"];
+    // Add event listener for keyup to all input elements
+    pureIds.forEach(id => {
+        document.getElementById(id).addEventListener("keyup", pureCalc);
+        document.getElementById(id).addEventListener("change", pureCalc);
+    });
+    cashIds.forEach(id => {
+        document.getElementById(id).addEventListener("keyup", cashCalc);
+        document.getElementById(id).addEventListener("change", cashCalc);
+    });
+
+    document.getElementById("refresh").addEventListener("click", () => {
+        refrshing();
+    });
+    document.getElementById("gramorpcs").addEventListener("click", () => {
+        checkCheckboxStatus()
+    });
+    document.addEventListener("click", async (event) => {
+        const clickedId = event.target.id;
+        if(event.target.classList=="edit-iconi")
+        {
+            const editVal = Val(clickedId,"datas");
+            await backEndCall("edits", "/purchase/edit", "POST", undefined, JSON.stringify(editVal));
+            scrollToElementById("form-for-get-input");
+            Ss("dealer",editVal.dealercode);
+            Sv("purchaseid",editVal.purchasecode);
+            Sv("purchase_id",editVal.purchaseid);
+            Sv("rowedit", "0");
+            Sv("total_Pure_purchase",editVal.total_pure);
+            Sv("total_Cash_purchase",editVal.total_cash);
+            Sv("purerate",editVal.rate);
+            Ss("buy",editVal.buy);
+            Ss("payment",editVal.payment);
+            Sv("entry_date",rawDateFormat(editVal.date,'ymd',"-"));
+            Sv("bank",editVal.bank);
+            Ss("banks",editVal.bankname);
+            Ss("transactiontype",editVal.transactiontype);
+            const profilePic = editVal.billproof;
+            if(profilePic)
+            {
+                const imagePathParts = profilePic.split("[pics~pics]").filter(item => item.trim() !== "");
+                // Loop through the path parts and generate the <img> tags
+                imagePathParts.forEach(item => {
+                    loadImg("proof", item);
+                });
+            }
+            // Triggering the onkeyup event on the "weight" element
+            document.getElementById("totalweight").dispatchEvent(new KeyboardEvent('keyup'));
+            // Triggering the onkeyup event on the "mc" element
+            document.getElementById("mc").dispatchEvent(new KeyboardEvent('keyup'));
+            buy_with_cash();
+            document.dispatchEvent(edit_event);
+        }
+        if(event.target.id=="cancel")
+        {
+            reloadSite();
+        }
+        if(event.target.classList=="print-iconi")
+        {
+            const pdfBtn = document.getElementById(event.target.id);
+            if ({{checkingRights data=rights action="print"}}) {
+                pdfBtn.addEventListener("click", async () => {
+                    await openPDF("/purchase/pdf","POST",{"id":pdfBtn.getAttribute("purchase")});
+                });
+            }
+        }
+        if(event.target.classList=="delete-iconi")
+        {
+            const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+            const purchaseId = document.getElementById(clickedId).getAttribute('purchase');
+            deleteKey = JSON.stringify({uniquekey: deleteId, purchase:purchaseId});
+            const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+            if(userConfirmed)
+                backEndCall(undefined, "/purchase/delete", "POST", undefined, deleteKey);
+        }
+    });
+    // Function to check if the checkbox is checked
+    function checkCheckboxStatus() {
+        const checkbox = document.getElementById('gramorpcs');
+        
+        // Check if the checkbox is checked using the 'checked' property
+        if (checkbox.checked)
+        {
+            Si("gramorpcslbl","Gram");
+            Sv("mc_status","gram");
+        }
+        else
+        {
+            Si("gramorpcslbl","Pcs");
+            Sv("mc_status","pcs");
+        }
+        cashCalc();
+    }
+
+    function pureCalc()
+    {
+        // Retrieve and validate input values
+        const totalweight = valNum(parseFloat(Val("totalweight")));
+        const purity = valNum(parseFloat(Val("purity")));
+        const waste = valNum(parseFloat(Val("waste")));
+        const stone_Wt = valNum(parseFloat(Val("totalstoneweight")));
+        // Calculate pure value
+        const pure = (totalweight + waste - stone_Wt) * purity / 100;
+        // Update the result
+        Si("Purep", money(pure,3,1));
+        // set total pure
+         // Select all elements with the class 'pures'
+        const pureInputs = document.querySelectorAll('.pures');
+        let sum = 0;
+        // Loop through each element and add its value to the sum
+        pureInputs.forEach(input => {
+            sum += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+        });
+        const totalp = sum + pure;
+        Sv("total_Pure_purchase", money(totalp,3,0));
+        Si("totalp",money(totalp,3,1));
+        Sv("Pure_purchase", money(pure,3,0));
+    }
+
+    function cashCalc()
+    {
+        const mc = valNum(parseFloat(Val("mc")));
+        const pcs = valNum(parseFloat(Val("pcs")));
+        const totalstoneprice = valNum(parseFloat(Val("totalstoneprice")));
+        const caratsize = valNum(parseFloat(Val("caratsize")));
+        const caratcost = valNum(parseFloat(Val("caratprice")));
+        const totalweight = valNum(parseFloat(Val("totalweight")));
+        const extra = valNum(parseFloat(Val("extra")));
+        const certificate = valNum(parseFloat(Val("certificate")));
+        const labour = valNum(parseFloat(Val("labour")));
+        const hallmark = valNum(parseFloat(Val("hallmark")));
+        const purecash = valNum(parseFloat(Val("purecash")));
+        const gst = parseFloat(valNum(Val("gst")));
+        const checked = document.getElementById('gramorpcs');
+        const caratprice = caratsize * caratcost;
+        let mc_cash = mc * pcs;
+        if(checked.checked)
+            mc_cash = mc * totalweight;
+        let all_Cash = mc_cash + totalstoneprice + caratprice + extra + certificate + labour + hallmark + purecash;
+        let gstprice =  all_Cash * (gst/100);
+        Sv("gstprice",gstprice);
+        all_Cash += all_Cash * (gst/100);
+        Si("Cashp", money(all_Cash,0,1));
+        Sv("Cash_purchase", all_Cash);
+        // set total cash
+        let sum = 0;
+         // Select all elements with the class 'pures'
+        const cashInputs = document.querySelectorAll('.cashs');
+        // Loop through each element and add its value to the sum
+        cashInputs.forEach(input => {
+            sum += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+        });
+        const totalc = sum + all_Cash;
+        Sv("total_Cash_purchase",totalc);
+        Si("totalc",money(totalc,3,1));
+    }
+
+    let editingRow = null; // To keep track of the row being edited
+
+    // Add event listener for the "Add" button to capture the input and add to the table
+    document.getElementById("save").addEventListener("click", () => {
+        const formData = getFormData();
+        backEndCall(undefined,"/purchase/insert","POST",undefined,formData);
+    });
+document.getElementById("add").addEventListener("click", () => {
+    // Collect input values
+    const counter = Val("counter");
+    const product = Val("product");
+    const typeofjewel = Val("typeofjewel");
+    const jewelcode = typeofjewel.split("[s~1]")[0];
+    const jeweltype = typeofjewel.split("[s~1]")[1];
+    const subtype = Val("subtype");
+    const pcs = Val("pcs");
+    const totalweight = Val("totalweight");
+    const purity = Val("purity");
+    const waste = Val("waste");
+    const mc = Val("mc");
+    const totalstoneweight = Val("totalstoneweight");
+    const totalstoneprice = Val("totalstoneprice");
+    const noofstones = Val("noofstones");
+    const caratsize = Val("caratsize");
+    const caratprice = Val("caratprice");
+    const certificate = Val("certificate");
+    const labour = Val("labour");
+    const extra = Val("extra");
+    const hallmark = Val("hallmark");
+    const gst = Val("gst");
+    const gstprice = Val("gstprice");
+    const gramorpcs = Val("mc_status");
+    const Purep = Val("Pure_purchase");
+    const Cashp = Val("Cash_purchase");
+    const photo = Val("imgpath_photo");
+
+    // Ensure all required fields are filled
+    if (subtype && product && typeofjewel && totalweight && purity) {
+        // Create new row in the table
+        const tableBody = document.getElementById("purchase-adder");
+        const newRow = document.createElement("tr");
+
+        let rowId = new Date().getTime(); // This can be replaced with any unique identifier method.
+        if (Val("rowedit") !== "0") {
+            rowId = Val("rowedit");
+            Sv("rowedit", "0");
+        }
+
+        newRow.setAttribute("id", "tr" + rowId);
+
+        newRow.innerHTML = `
+            <td>${tableBody.children.length + 1}</td>
+            <td>${caps(counter)}</td>
+            <td>${caps(product)}</td>
+            <td>${caps(jeweltype)}</td>
+            <td>${caps(subtype)}</td>
+            <td>${pcs}</td>
+            <td>${totalweight}</td>
+            <td>${purity}</td>
+            <td>${waste}</td>
+            <td>${"("+gramorpcs+") "+mc}</td>
+            <td>${totalstoneweight}</td>
+            <td>${totalstoneprice}</td>
+            <td>${noofstones}</td>
+            <td>${caratsize}</td>
+            <td>${caratprice}</td>
+            <td>${certificate}</td>
+            <td>${labour}</td>
+            <td>${extra}</td>
+            <td>${hallmark}</td>
+            <td>${gst}</td>
+            <td>${gstprice}</td>
+            <td>${Purep}<input type='hidden' class='pures' id='pures-${rowId}' name='pures-${rowId}' value='${Purep}'></td>
+            <td>${Cashp}<input type='hidden' class='cashs' id='pures-${rowId}' name='pures-${rowId}' value='${Cashp}'></td>
+            <td><div class='flex-with-space-edit-delete'>
+                <img src="/images/edit.png" width="25" height="25" class="edit-icon" title="Edit" id="edit-user${rowId}" data-id="${rowId}"/>
+                <img src="/images/delete.png" class="delete-icon" title="Delete" width="25" height="25" id="delete-user${rowId}" data-id="${rowId}"/>
+                </div>
+            </td>
+        `;
+
+        // Append the new row to the table
+        tableBody.appendChild(newRow);
+
+        // Create hidden inputs dynamically for each column data
+        const hiddenInputs = document.createElement('div');
+        hiddenInputs.style.display = 'none';
+        hiddenInputs.setAttribute('data-id', rowId);
+
+        // Array of the values and their corresponding names
+        const fieldNames = [
+            "counter", "product", "typeofjewel", "subtype", "pcs", "totalweight", "purity", 
+            "waste", "mc", "mc_status", "totalstoneweight", "totalstoneprice", "noofstones", 
+            "caratsize", "caratprice", "certificate", "labour", "extra", "hallmark", "gst", "gstprice", "Pure_purchase", "Cash_purchase","imgpath_photo"
+        ];
+
+        // Loop over the field names and create the hidden inputs
+        fieldNames.forEach(field => {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.id = `${field}-${rowId}`;
+            hiddenInput.name = `${field}-${rowId}`;
+            hiddenInput.value = Val(field) || '';  // Default to empty string if value is falsy
+            hiddenInputs.appendChild(hiddenInput);
+        });
+
+        // Append the hidden inputs to the row
+        newRow.appendChild(hiddenInputs);
+
+        // Add rowId to allrowid hidden input
+        updateRowIds(rowId);
+
+        // Reset input fields
+        refrshing();
+        document.getElementById("custom_dropdown_product").click();
+    } else {
+        alert("Please fill in all fields before adding.");
+    }
+    buy_with_cash();
+});
+
+function updateRowIds(rowId) {
+    const allRowIdsInput = document.getElementById("allrowid");
+    let allRowIds = allRowIdsInput.value ? allRowIdsInput.value.split(",") : [];
+    allRowIds.push(rowId);  // Add the new rowId
+    allRowIdsInput.value = allRowIds.join(",");  // Update the hidden input
+}
+
+// Delete and Edit functionality using event delegation
+document.getElementById("purchase-adder").addEventListener("click", (event) => {
+    const target = event.target;
+    debugger
+    const rowId = target.getAttribute("data-id");
+
+    if (target.classList.contains("edit-icon")) {
+        // Edit functionality
+        const row = document.getElementById("tr" + rowId);
+        Ss("counter", row.querySelector(`#counter-${rowId}`).value);
+        Ss("product", row.querySelector(`#product-${rowId}`).value);
+        setTimeout(() => {
+            Ss("typeofjewel", row.querySelector(`#typeofjewel-${rowId}`).value);
+        },500);
+        setTimeout(() => {
+            Ss("subtype", row.querySelector(`#subtype-${rowId}`).value);
+        },1000);
+        Sv("pcs", row.querySelector(`#pcs-${rowId}`).value);
+        Sv("totalweight", row.querySelector(`#totalweight-${rowId}`).value);
+        Sv("purity", row.querySelector(`#purity-${rowId}`).value);
+        Sv("waste", row.querySelector(`#waste-${rowId}`).value);
+        Sv("mc", row.querySelector(`#mc-${rowId}`).value);
+        const check_sts = document.getElementById("gramorpcs");
+        if(row.querySelector(`#mc_status-${rowId}`).value==="gram" && !check_sts.checked)
+            document.getElementById("gramorpcs").click();
+        if(row.querySelector(`#mc_status-${rowId}`).value==="pcs" && check_sts.checked)
+            document.getElementById("gramorpcs").click();
+        Sv("totalstoneweight", row.querySelector(`#totalstoneweight-${rowId}`).value);
+        Sv("totalstoneprice", row.querySelector(`#totalstoneprice-${rowId}`).value);
+        Sv("noofstones", row.querySelector(`#noofstones-${rowId}`).value);
+        Sv("caratsize", row.querySelector(`#caratsize-${rowId}`).value);
+        Sv("caratprice", row.querySelector(`#caratprice-${rowId}`).value);
+        Sv("certificate", row.querySelector(`#certificate-${rowId}`).value);
+        Sv("labour", row.querySelector(`#labour-${rowId}`).value);
+        Sv("extra", row.querySelector(`#extra-${rowId}`).value);
+        Sv("hallmark", row.querySelector(`#hallmark-${rowId}`).value);
+        Sv("gst", row.querySelector(`#gst-${rowId}`).value);
+        Sv("rowedit", rowId);
+        scrollToElementById("form-for-get-input");
+        // Set editingRow to this row
+        editingRow = row;
+        row.remove();
+        cashCalc()
+        pureCalc()
+        const profilePic = row.querySelector(`#imgpath_photo-${rowId}`).value;
+        const imagePathParts = profilePic.split("[pics~pics]").filter(item => item.trim() !== "");
+        // Loop through the path parts and generate the <img> tags
+        imagePathParts.forEach(item => {
+            loadImg("photo", item);
+        });
+    }
+
+    if (target.classList.contains("delete-icon")) {
+        // Delete functionality
+        const row = document.getElementById("tr" + rowId);
+        row.remove();
+
+        // Remove the rowId from the allrowid input
+        removeRowId(rowId);
+        buy_with_cash();
+    }
+    // Refresh the serial numbers
+    refreshSerialNumbers();
+});
+
+// Remove the rowId from the allrowid hidden input
+function removeRowId(rowId) {
+    const allRowIdsInput = document.getElementById("allrowid");
+    let allRowIds = allRowIdsInput.value ? allRowIdsInput.value.split(",") : [];
+    allRowIds = allRowIds.filter(id => id !== rowId);  // Remove the rowId
+    allRowIdsInput.value = allRowIds.join(",");  // Update the hidden input
+}
+
+// Refresh the serial numbers
+function refreshSerialNumbers() {
+    const tableBody = document.getElementById("purchase-adder");
+    const rows = tableBody.querySelectorAll("tr");
+    
+    rows.forEach((row, index) => {
+        const serialCell = row.querySelector("td:first-child");
+        if (serialCell) {
+            serialCell.textContent = index + 1;  // Update the serial number
+        }
+    });
+}
+
+// Function to reset the form fields
+function refrshing() {
+    scrollToElementById("form-for-get-input");
+    Ss("counter", 'nd');
+    Ss("product", 'nd');
+    Ss("typeofjewel", 'nd');
+    Ss("subtype", 'nd');
+    Sv("pcs", '');
+    Sv("totalweight", '');
+    Sv("purity", '');
+    Sv("waste", '');
+    Sv("mc", '');
+    if(document.getElementById("gramorpcs").checked)
+        document.getElementById("gramorpcs").click();
+    Sv("totalstoneweight", '');
+    Sv("totalstoneprice", '');
+    Sv("noofstones", '');
+    Sv("caratsize", '');
+    Sv("caratprice", '');
+    Sv("certificate", '');
+    Sv("labour", '');
+    Sv("extra", '');
+    Sv("hallmark", '');
+    Sv("gst", '');
+    Sv("rowedit", '0');
+    Sv("Cash_purchase", '0');
+    Sv("Pure_purchase", '0');
+    Si("Cashp", '0');
+    Si("Purep", '0');
+    clearUploader("photo");
+}
+
+});
+</script>
+{{> footer }}

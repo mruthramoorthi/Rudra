@@ -1,0 +1,105 @@
+<style>
+    
+.display-f{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+    </style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="display-f"> 
+        {{selectBox id="header" noncei=nonce options='nd:Header'}}
+        {{createInput type="text" id="bankname" placeholder="Bank Name"}}
+        {{createInput type="text" id="accnum" placeholder="Account Number"}}
+        {{createInput type="text" id="ifsc" placeholder="IFSC Code"}}
+        {{createInput type="text" id="short" placeholder="Short Name"}}
+        {{createInput type="text" id="display" placeholder="Display Name"}}
+        {{createInput type="text" id="branch" placeholder="Branch Name"}}
+        <input type="hidden" id="uniquekey" name="uniquekey">
+        <input type="hidden" id="uniquekey2" name="uniquekey2">
+    </div>
+    <div class="display-f">
+        <button id="saveButton" class="center" type="button">Save</button>
+        <button id="cancelButton" class="center" type="button">Cancel</button>
+         {{#if (checkingRights data=rights action="print")}}
+        <button id="pdfBtns" type="button">Print</button>
+        {{/if}}
+    </div>
+    
+</div>
+{{> formend }}
+{{> view }}
+ {{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    if({{checkingRights data=rights action="print"}})
+    document.getElementById("pdfBtns").addEventListener("click", async () => {
+        await openPDF("/bank-registration/pdf");
+    });
+        let thead = "<th>S.no</th><th>Bank</th><th>Acc</th><th>IFSC</th><th>Display</th><th>Short</th><th>Branch</th><th>Action</th>";
+        let tfoot = "<td colspan='7'></td>";
+        selectLoad('header', '/bank-registration/loadHeader', content = 'application/json', undefined);
+        // Call the fetchTableData function and wait for it to complete
+        if({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/bank-registration/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/bank-registration/insert", "POST", undefined, formData);
+        });
+
+        document.getElementById("cancelButton").addEventListener("click", () => {
+            reloadSite();
+        });
+
+         document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                debugger;
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Ss("header",`${userDatas.acc_id}`);
+                Sv("bankname",userDatas.bankname);
+                Sv("accnum",userDatas.accno);
+                Sv("ifsc",userDatas.ifsc);
+                Sv("short",userDatas.shortname);
+                Sv("display",userDatas.displayname);
+                Sv("branch",userDatas.branchname);
+                Sv("uniquekey",userDatas.uniqueid)
+                Sv("uniquekey2",userDatas.entity_ref);
+                Si("saveButton", "Update");
+                document.getElementById('cancelButton').style.display="block";
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                const deleteId2 = document.getElementById(clickedId).getAttribute('uniquekey2');
+                deleteKey = JSON.stringify({uniquekey: deleteId, uniquekey2: deleteId2});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/bank-registration/delete", "POST", undefined, deleteKey);
+            }
+        });
+</script>
+{{> footer }}

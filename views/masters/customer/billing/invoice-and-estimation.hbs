@@ -1,0 +1,525 @@
+<style>
+.scrollable-div{
+    /* overflow-y: visible !important; */
+}
+.snowdiv{
+    margin-top: 10px !important;
+}
+.flex-box{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.ship{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    z-index: 9;
+}
+.savings-profile{
+    width: 75px;
+}
+.address{
+    width: 250px;
+}
+.billing-icons{
+    width: 30px;
+    height: 30px;
+}
+.way-half{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: space-between;
+}
+.way-half1{
+    width: 50%;
+}
+.way-half2{
+    width: 50%;
+}
+.light-space{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.customer-details{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
+}
+.customer-space{
+    width: 100%;
+    gap: 10% !important;
+    justify-content: space-between;
+    align-items: center;
+}
+.customer-card-space{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.customer-pic{
+    width: 50px;
+    height: 50px;
+}
+.customer-details-img{
+    width: 20%;
+    text-align: center;
+}
+.customer-details-lbl{
+    width: 80%;
+}
+.customer-infos {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  height: 15px;
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.jwl-cart-menu{
+    display: none;
+    width: fit-content;
+    margin-top: -15px;
+    position: absolute;
+    top: 100%;
+    padding-top: 25px !important;
+    gap: 10px;
+}
+
+.stone{
+    width: 20px;
+}
+.custom-savings-design{
+    margin-bottom: 10px;
+    width: -webkit-fill-available;
+}
+.custom-deposit-design{
+    margin-bottom: 10px;
+    width: -webkit-fill-available;
+}
+
+.savings-numbers{
+    display: flex;
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.deposit-numbers{
+    display: flex;
+    gap: 10px;
+    align-items: end;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.estimation{
+    justify-content: space-between;
+}
+.customer-loading-off{
+    background: none !important;
+    width: 225px !important;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: unset !important;
+    margin-bottom: 0px !important;
+}
+.direct-cart{
+    align-items: end;
+}
+.direct-sell-cancel{
+    color: white;
+    background: red;
+}
+.delete-jewel-cart-button{
+    width: 20px;
+}
+/* jewel range adjusters */
+.jewels-permenent{
+    display: none;
+}
+
+.display-f{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+.adj-box:focus{
+    border: 2px solid grey !important;
+}
+.adj-box{
+    width: 80px;
+    text-align: right;
+    height: 20px;
+}
+.adj{
+    justify-content: space-between;
+}
+.readonly{
+    display: none;
+}
+
+/* jewel range adjusters */
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="way-half">
+        <div class="way-half1">
+            <div class="flex-box">
+                {{selectBox id="overall-metal" options='nd:Metal'}}
+                {{selectBox id="customer" options='nd:Customer'}}
+            </div>
+            <div class="flex-box customer-space">
+                <div class="light-space">
+                    {{selectBox id="att1" options='nd:Primary Attender'}}
+                    {{selectBox id="att2" options='nd:Finalized Attender'}}
+                    {{selectBox id="att3" options='nd:Secondary Attender'}}
+                    {{createInput id="entrydate" placeholder="Bill Date" type="date"}}
+                </div>
+                <div class="customer-details">
+                    <div class="sheet customer-card-space">
+                        <div class="customer-details-img">
+                            <img src="/images/profile.png" alt="user" class="customer-pic">
+                        </div>
+                        <div class="customer-details-lbl">
+                            <div class="wrapper"><label class="customer-infos" id="customer_name"></label><div class="tooltip nosil" id="customer_name_tooltip"></div></div>
+                            <div class="wrapper"><label class="customer-infos" id="customer_phone"></label><div class="tooltip nosil" id="customer_phone_tooltip"></div></div>
+                            <div class="wrapper"><label class="customer-infos" id="customer_address"></label><div class="tooltip nosil" id="customer_address_tooltip"></div></div>
+                        </div>
+                    </div>
+                    <div class="sheet ship">
+                        {{createInput id="tagNumber" placeholder='Tag No'}}
+                        <div class="search sheet sheetclick" tabindex="0"><img src="/images/search.png" class="search billing-icons"></div>
+                        <div class="taglost sheet sheetclick" tabindex="0"><img src="/images/tag-lost.png" class="taglost billing-icons"></div>
+                        <div class="untag sheet sheetclick" tabindex="0"><img src="/images/directsell.png" class="untag billing-icons"></div>
+                    </div>
+                    <div id="drawer-to-tag" class="sheet jwl-cart-menu">
+                        <div class="flex-box tag-cart">
+                            {{selectBox id="tagmetal" options='nd:Metal'}}
+                            {{selectBox id="tagcounter" options='nd:Counter'}}
+                            {{selectBox id="tagcategory" options='nd:Category'}}
+                            {{selectBox id="tagjewels" options='nd:Jewel Type'}}
+                            {{selectBox id="tagsub" options='nd:Sub Type'}}
+                            {{selectBox id="taglist" options='nd:Tag List'}}
+                            <button type="button" class="direct-sell-cancel">Cancel</button>
+                        </div>
+                        <div>
+                            <label>Available Weight : <font id="avl_tag_wt">0</font></label>
+                            <label>Available Pcs : <font id="avl_tag_pcs">0</font></label>
+                        </div>
+                    </div>
+                    <div id="drawer-to-get" class="sheet jwl-cart-menu">
+                        <div class="flex-box direct-cart">
+                            {{selectBox id="metal" options='nd:Metal'}}
+                            {{selectBox id="counter" options='nd:Counter'}}
+                            {{selectBox id="category" options='nd:Category'}}
+                            {{selectBox id="jewels" options='nd:Jewel Type'}}
+                            {{selectBox id="sub" options='nd:Sub Type'}}
+                            {{createInput id="pcs" type='number' placeholder='Pcs' othersForDiv="old-sml-box"}}
+                            {{createInput id="weight" type='number' placeholder='Weight' othersForDiv="old-sml-box"}}
+                            <button type="button" class="direct-sell-ok">Ok</button>
+                            <button type="button" class="direct-sell-cancel">Cancel</button>
+                        </div>
+                        <div>
+                            <label>Available Weight : <font id="avl_wt">0</font></label>
+                            <label>Available Pcs : <font id="avl_pcs">0</font></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sheet">
+                <div class="exchange-div">
+                    <table class="table-bordered custom-exchange-design">
+                        <thead><th>S.no</th><th>Jewel Details</th><th>Stones</th><th>Gram</th><th>Amount</th><th>Action</th></thead>
+                        <tbody id="jewels_body"></tbody>
+                        <tfoot><th colspan="4">Total Jewel Amount</th><th id="total-jewel-amount" class="right-align">0</th><th></th></tfoot>
+                    </table>
+                </div>
+            </div><br>
+        </div>
+        <div class="way-half2">
+            <div class="sheet">
+                {{exchange}}
+                <div class="flex-box estimation">
+                    <div>
+                        {{bank_transactions}}
+                        <div class="savings">
+                            <table class="table-bordered custom-savings-design">
+                                <thead><th>S.no</th><th>Savings No</th><th>Gram</th><th>Amount</th><th>Action</th></thead>
+                                <tbody></tbody>
+                                <tbody>
+                                    <td colspan="4">{{createInput id="savingno" type='number' placeholder='Savings No'}}</td>
+                                    <td><button type="button">ok</button></td>
+                                </tbody>
+                                <tfoot><th colspan="3">Total Savings Amount</th><th id="total-savings-amount" class="right-align">0</th><th></th></tfoot>
+                            </table>
+                        </div>
+                        <div class="deposit">
+                            <table class="table-bordered custom-deposit-design">
+                                <thead><th>S.no</th><th>Deposit No</th><th>Gram</th><th>Amount</th><th>Action</th></thead>
+                                <tbody></tbody>
+                                <tbody>
+                                    <td colspan="4">{{createInput id="depositno" type='number' placeholder='Deposit No'}}</td>
+                                    <td><button type="button">ok</button></td>
+                                </tbody>
+                                <tfoot><th colspan="3">Total Deposit Amount</th><th id="total-deposit-amount" class="right-align">0</th><th></th></tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div>
+                        <table>
+                            <tr><th>Grand Total (<font id="total_weights">0</font>.G)</th><td>:</td><td class="right-align"> <font id="total_amounts">0</font></td></tr>
+                            <tr><th>GST</th><td>:</td><td class="right-align"> (<font id="gst_perc">0</font>%) <font id="gst_value">0</font></td></tr>
+                            <tr><th>Advance<br>(B)<font id="advance_bank_amounts">0</font><br>(C)<font id="advance_amounts">0</font></th><td>:</td><td class="right-align"><font id="advanced">0</font></td></tr>
+                            <tr><th>Old (<font id="old_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="old_amounts">0</font></td></tr>
+                            <tr><th>Pure (<font id="pure_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="pure_amounts">0</font></td></tr>
+                            <tr><th>Jewel (<font id="exchange_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="ex_amounts">0</font></td></tr>
+                            <tr><th>Coin (<font id="coin_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="coin_amounts">0</font></td></tr>
+                            <tr><th>Savings (<font id="savings_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="savings_amounts">0</font></td></tr>
+                            <tr><th>Deposits (<font id="deposits_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="deposits_amounts">0</font></td></tr>
+                            <tr><th>Total With GST</th><td>:</td><td class="right-align"> <font id="gst_amounts">0</font></td></tr>
+                            <tr><th>After Reduction</th><td>:</td><td class="right-align"> <font id="reduction_amounts">0</font></td></tr>
+                            <tr><th>Discount</th><td>:</td><td class="right-align"> <font id="discount_amounts">0</font></td></tr>
+                            <tr><th>Round Off</th><td>:</td><td class="right-align"> <font id="round_off_amounts">0</font></td></tr>
+                            <tr><th>Net Total</th><td>:</td><td class="right-align"> <font id="net_amounts">0</font></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function backEndCall_load_price(msg)
+    {
+        Sa("form-for-get-input","prices",msg.response);
+    }
+    function backEndCall_show_details_of_customer(msg)
+    {
+        const datas = msg.response[0];
+        let design = "";
+        if(datas)
+        {
+            Si("customer_name", caps(datas.name))
+            Si("customer_phone", datas.primaryphonenumber+", "+datas.secondaryphonenumber);
+            Si("customer_address", datas.address)
+            Si("customer_name_tooltip", caps(datas.name))
+            Si("customer_phone_tooltip", datas.primaryphonenumber+", "+datas.secondaryphonenumber);
+            Si("customer_address_tooltip", datas.address)
+            addClass("customer_name","customer-loading-off");
+            addClass("customer_phone","customer-loading-off");
+            addClass("customer_address","customer-loading-off");
+        }
+        else
+        {
+            Si("customer_name", "")
+            Si("customer_phone", "");
+            Si("customer_address", "")
+            Si("customer_name_tooltip", "")
+            Si("customer_phone_tooltip", "");
+            Si("customer_address_tooltip", "")
+            removeClass("customer_name","customer-loading-off");
+            removeClass("customer_phone","customer-loading-off");
+            removeClass("customer_address","customer-loading-off");
+        }
+    }
+    function backEndCall_available_stock(res)
+    {
+        const datas = res.response;
+        Si("avl_wt",datas.weight);
+        Si("avl_pcs",datas.pcs);
+    }
+    backEndCall("load_price", "/auth/price", "POST", undefined, undefined);
+    selectLoad('customer', '/invoice-and-estimation/customer', content = 'application/json', undefined);
+    selectLoad('overall-metal', '/invoice-and-estimation/metal', content = 'application/json', undefined);
+    selectLoad('metal', '/invoice-and-estimation/metal', content = 'application/json', undefined);
+    selectLoad('counter', '/invoice-and-estimation/counter', content = 'application/json', undefined);
+    selectLoad('tagmetal', '/invoice-and-estimation/metal', content = 'application/json', undefined);
+    selectLoad('tagcounter', '/invoice-and-estimation/counter', content = 'application/json', undefined);
+    selectLoad('att1', '/invoice-and-estimation/staffs', content = 'application/json', undefined);
+    selectLoad('att2', '/invoice-and-estimation/staffs', content = 'application/json', undefined);
+    selectLoad('att3', '/invoice-and-estimation/staffs', content = 'application/json', undefined);
+    document.getElementById('counter').addEventListener('change', function(event) {
+        selectLoad('category', '/invoice-and-estimation/loadCate', content = 'application/json', event.target.value);
+    });
+    document.getElementById('tagcounter').addEventListener('change', function(event) {
+        selectLoad('tagcategory', '/invoice-and-estimation/loadCate', content = 'application/json', event.target.value);
+    });
+    document.getElementById('sub').addEventListener('change', function(event) {
+        const formData=getFormData();
+        if(event.target.value!='nd')
+        backEndCall('available_stock', '/invoice-and-estimation/avlStock', 'POST', undefined, formData);
+    });
+    document.getElementById('category').addEventListener('change', function(event) {
+        const formData=getFormData();
+        selectLoad('jewels', '/invoice-and-estimation/loadJewel', content = 'application/json', formData);
+    });
+    document.getElementById('jewels').addEventListener('change', function(event) {
+        const formData=getFormData();
+        selectLoad('sub', '/invoice-and-estimation/subType', content = 'application/json', formData);
+    });
+    document.getElementById("customer").addEventListener("change", () => {
+        const formData=getFormData();
+        backEndCall("show_details_of_customer", "/invoice-and-estimation/fetchDetails", "POST", undefined, formData);
+    });
+    document.getElementById('tagcategory').addEventListener('change', function(event) {
+        const formData=getFormData();
+        selectLoad('tagjewels', '/invoice-and-estimation/loadJewel', content = 'application/json', formData);
+    });
+    document.getElementById('tagjewels').addEventListener('change', function(event) {
+        const formData=getFormData();
+        selectLoad('tagsub', '/invoice-and-estimation/subType', content = 'application/json', formData);
+    });
+    document.getElementById('taglist').addEventListener('change', function(event) {
+        add_tag_sell();
+        refresh_untag_cart()
+    });
+    document.addEventListener("click", (event) => {
+        debugger
+        if(event.target.classList.contains("taglost"))
+        {
+            const element = document.getElementById('drawer-to-tag'); 
+            if(element.style.display=="none" || !element.style.display)
+            s("drawer-to-tag")
+            else
+            h("drawer-to-tag")
+        }
+        if(event.target.closest("tr")?.classList.contains("jewel-cart-details"))
+        {
+            const id = Val(event.target.closest("tr")?.id, "alt");
+            if(document.getElementById("jwlper_"+id).style.display=="none" || !document.getElementById("jwlper_"+id).style.display)
+                s("jwlper_"+id)
+            else
+                h("jwlper_"+id)
+        }
+        if(event.target.classList.contains("search"))
+        {
+            add_tag_sell();
+        }
+        if(event.target.classList.contains("direct-sell-ok"))
+        {
+            add_direct_sell();
+            refresh_untag_cart()
+        }
+        if(event.target.classList.contains("direct-sell-cancel"))
+        {
+            refresh_untag_cart()
+        }
+        if(event.target.classList.contains("untag"))
+        {
+            const element = document.getElementById('drawer-to-get'); 
+            if(element.style.display=="none" || !element.style.display)
+            s("drawer-to-get")
+            else
+            h("drawer-to-get")
+        }
+    });
+    let dPressed = false;
+
+    document.addEventListener('keydown', function(e) {
+        if(e.key=="Enter")
+        {
+            if(e.target.closest("tr")?.classList.contains("jewel-cart-details"))
+            {
+                const id = Val(e.target.closest("tr")?.id, "alt");
+                if(document.getElementById("jwlper_"+id).style.display=="none" || !document.getElementById("jwlper_"+id).style.display)
+                    s("jwlper_"+id)
+                else
+                    h("jwlper_"+id)
+            }
+            if (e.key === 'd') {
+                dPressed = true;
+            } else if (e.key === 'Enter' && dPressed) {
+                alert('ok');
+                dPressed = false; // reset after alert
+            } else {
+                dPressed = false; // reset if other keys are pressed
+            }
+        }
+    });
+    function add_tag_sell()
+    {
+        let tag_no = "";
+        const tag_list = Val("taglist");
+        const tagNumber = Val("tagNumber");
+        if(tag_list!="nd")
+        {
+            tag_no = tag_list
+        }
+        else
+        {
+            tag_no = tagNumber
+        }
+        const all_tags = getValInClass("all_tags")
+        const data = JSON.stringify({tag:tag_no, all_tags:all_tags});
+        backEndCall("tagged_jewel", "/invoice-and-estimation/taggedJewel", "POST", undefined, data);
+    }
+    function backEndCall_tagged_jewel(msg)
+    {
+        // jewels_body
+        const data = msg.response;
+        if(data)
+        {
+            Sii("jewels_body", data);
+            addSno(".jewel_snos")
+        }
+    }
+    function add_jewels()
+    {
+
+    }
+    function refresh_untag_cart()
+    {
+        Sv("metal","nd");
+        Sv("counter","nd");
+        Sv("category","nd");
+        Sv("jewels","nd");
+        Sv("sub","nd");
+        Sv("weight","");
+        Sv("pcs","");
+        Sv("avl_wt","");
+        Sv("avl_pcs","");
+    }
+    function refresh_tag_cart()
+    {
+        Sv("tagmetal","nd");
+        Sv("tagcounter","nd");
+        Sv("tagcategory","nd");
+        Sv("tagjewels","nd");
+        Sv("tagsub","nd");
+        Sv("taglist","nd");
+        Sv("avl_tag_wt","");
+        Sv("avl_tag_pcs","");
+    }
+</script>
+{{> footer }}

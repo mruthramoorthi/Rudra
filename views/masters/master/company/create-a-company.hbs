@@ -1,0 +1,113 @@
+<style>
+.alignment {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+#saveButton{
+    display: block;
+    margin: 0 auto;
+}
+</style>
+
+{{> header }}
+{{> navbar }}
+{{> dtb }}
+{{> form }}
+<div class="snowdiv">
+    <div class="alignment">
+        {{createInput type="text" id="companyname" placeholder="Company Name"}}
+        {{createInput type="text" id="industry" placeholder="Industry"}}
+        {{createInput type="text" id="code" placeholder="company code"}}
+        {{createInput type="text" id="gstin" placeholder="GST Number"}}
+        {{createInput type="date" id="since" placeholder="Since"}}
+        {{createInput type="number" id="number1" placeholder="Primary Number"}}
+        {{createInput type="number" id="number2" placeholder="Secondary Number"}}
+        {{createInputTa id="address" placeholder="Address"}}
+        {{createInputTa id="quote" placeholder="Company quotes"}}
+        {{createInput id="ownername" placeholder="Owner Name"}}
+        {{createInput id="ownerno" placeholder="Owner Number"}}
+        {{imageUpload id="companyimg" noncei=nonce placeholder="Company"}}
+        {{imageUpload id="ownerimg" noncei=nonce placeholder="Owner"}}
+        <input type="hidden" id="edit_id" name="edit_id" value="">
+    </div>
+    <button id="saveButton" type="button">Save</button>
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+<script nonce="{{nonce}}">
+document.getElementById("saveButton").addEventListener("click", () => {
+    const formData=getFormData();
+    console.log(formData);
+    backEndCall(undefined, "/create-a-company/insert", "POST", undefined, formData);
+});
+let thead = "<th>S.no</th><th>Name</th><th>Phone</th><th>Address</th><th>Photo</th><th>Date</th><th>Action</th>";
+let tfoot = "<td colspan='7'></td>";
+
+// Call the fetchData function and wait for it to complete
+if ({{checkingRights data=rights action="view"}})
+fetchDivData('content', '1000', '1', 'content', '', '/create-a-company/select', '50vh', 'lazy-content', undefined);
+
+const lazyContentElement = document.getElementById("lazy-content");
+// Add the scroll event listener only if the element exists
+lazyContentElement.addEventListener('scroll', () => {
+    lazy_div_Loading(lazyContentElement);
+});
+
+
+document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Sv("companyname",userDatas.companyname);
+                Sv("industry",userDatas.industry);
+                Sv("since",rawDateFormat(userDatas.since, 'ymd'));
+                Sv("address",userDatas.address);
+                Sv("code",userDatas.code);
+                Sv("gstin",userDatas.gstnumber);
+                Sv("quote",userDatas.quote);
+                Sv("number1",userDatas.number1);
+                Sv("number2",userDatas.number2);
+                Sv("edit_id",userDatas.uniqueid)
+                Sv("ownername",userDatas.ownername);
+                Sv("ownerno",userDatas.ownerno)
+                Si("saveButton", "Update");
+                const profilePic = userDatas.ownerimage;
+                const proof = userDatas.companyimage;
+                const imagePathParts = profilePic.split("[pics~pics]").filter(item => item.trim() !== "");
+                const imageProofs = proof.split("[pics~pics]").filter(item => item.trim() !== "");
+
+                // Loop through the path parts and generate the <img> tags
+                imagePathParts.forEach(item => {
+                    loadImg("ownerimg", item);
+                });
+
+                // Loop through the path parts and generate the <img> tags
+                imageProofs.forEach(item => {
+                    loadImg("companyimg", item);
+                });
+                document.dispatchEvent(edit_event);
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/create-a-company/delete", "POST", undefined, deleteKey);
+            }
+        });
+
+
+</script>
+
+{{> footer }}

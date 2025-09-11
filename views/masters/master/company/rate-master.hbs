@@ -1,0 +1,38 @@
+<style>
+.rates{
+    flex-wrap: wrap;
+    display: flex;
+}
+.main-tabs{
+    display: none !important;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="addcssfortable" id="loadhtml">
+  
+</div>
+<center><button id="Update" type="button">Update</button></center>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+document.addEventListener("DOMContentLoaded", () => {
+    backEndCall("load_html", "/rate-master/loadRate", "GET", undefined, undefined);
+});
+document.getElementById("Update").addEventListener("click", () => {
+    const formData=getFormData();
+    backEndCall(undefined, "/rate-master/insert", "POST", undefined, formData);
+});
+function backEndCall_load_html(msg)
+{
+    debugger;
+    Si("loadhtml","");
+    Si("loadhtml",msg.response);
+}
+</script>
+{{> footer }}

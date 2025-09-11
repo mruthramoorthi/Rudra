@@ -1,0 +1,105 @@
+<style>
+.flex-divs{
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   justify-content: center;
+}
+
+</style>
+
+{{> header}}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+   <div class="flex-divs">
+      {{selectBox id="pages" options='nd:Pages'}}
+      {{selectBox id="roles" options='nd:Roles'}}
+      {{checkBox id="statusKey" className="check" placeholder="Page Status" style="" checked="checked"}}
+   </div>
+   <input type="hidden" id="uniquekey" name="uniquekey">
+   <input type="hidden" id="status" name="status" value="1">
+<br>
+<div class="flex-divs">
+   <button id="addBtns" type="button">Add</button>
+   <button id="pdfBtns" type="button">Print</button>
+</div>
+
+</div>
+
+{{> formend }}
+{{> view }}
+<div id="lazy-contents">
+</div>
+<div id="loading">
+</div>
+{{> viewend }}
+{{> dtb }}
+
+<script nonce="{{nonce}}">
+   const thead = `<th>S.no</th><th>Path</th><th>Route</th><th>Role</th><th>Status</th><th>Action</th>`;
+   const tfoot = ``;
+document.addEventListener("DOMContentLoaded", () => {
+   selectLoad('pages', '/page-role-master/loaduser', content = 'application/json', undefined);
+   selectLoad('roles', '/page-role-master/loadrole', content = 'application/json', undefined);
+   fetchTableData('contentsOfTable', '1000', '1', 'contentsOfTable', '', '/page-role-master/select', '50vh', 'lazy-contents', undefined, thead, tfoot);
+});
+document.getElementById("addBtns").addEventListener("click", () => {
+    const formData=getFormData();
+    backEndCall(undefined, "/page-role-master/insert", "POST", undefined, formData);
+});
+document.getElementById("pdfBtns").addEventListener("click", async () => {
+ await openPDF("/page-role-master/pdf");
+});
+document.addEventListener("click", (event) => {
+   debugger
+   const clickedId = event.target.id;
+   if(event.target.classList=="edit-icon")
+   {
+      let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+      Sv("pagename",userDatas.pagename);
+      Ss("pages",userDatas.path);
+      Ss("roles",userDatas.role);
+      Si("addBtns", "Update");
+      document.dispatchEvent(edit_event);
+   }
+   if(event.target.classList=="delete-icon")
+   {
+      const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+      const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+      deleteKey = JSON.stringify({uniquekey: deleteId});
+      if(userConfirmed)
+      backEndCall(undefined, "/page-role-master/delete", "POST", undefined, deleteKey);
+   }
+   if(event.target.classList=="custom-checkbox")
+   {
+      const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+      deleteKey = JSON.stringify({uniquekey: deleteId});
+      backEndCall(undefined, "/page-role-master/update", "POST", undefined, deleteKey);
+   }
+   if(clickedId=="statusKey")
+   {
+      if(Id("statusKey").checked)
+         Sv("status","1");
+      else
+         Sv("status","0");
+   }
+   if(event.target.classList.contains("is-select"))
+   {
+      let data = "";
+      let pagesval = Val("pages");
+      data+=pagesval;
+      let rolesval = Val("roles");
+      data+=','+rolesval;
+      const datas = data.split(',');
+      $("#contentsOfTable").empty();
+      fetchTableData('contentsOfTable', '1000', '1', 'loading', 'Loading...', '/page-role-master/select', '50vh', 'lazy-contents', datas, thead, tfoot);
+   }
+   if(event.target.classList=="just-check")
+   {
+      const updateSts = JSON.stringify({clickedId:clickedId});
+      backEndCall(undefined, "/page-role-master/update", "POST", undefined, updateSts);
+   }
+});
+</script>
+{{> footer }}

@@ -1,0 +1,103 @@
+<style>
+    .display-flexing{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .exchange-list{
+        display: none;
+    }
+    .green{
+        color: red;
+        font-weight: 800;
+    }
+    .red{
+        color: green;
+        font-weight: 800;
+    }
+    .pcswt{
+        width: 8rem !important;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+
+<div class="snowdiv addcssfortable">
+    <div class="display-flexing">
+</div>
+<br>
+  <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function load_balance()
+    {
+        let thead = "<th>S.no</th><th>Dealer</th><th>Metal</th><th>DR - Weight</th><th>DR - Cash</th><th>CR - Weight</th><th>CR - Cash</th><th>Action</th>";
+        let tfoot = "<td colspan='6'></td>";
+        fetchTableData('content', '1000', '1', 'content', '', '/dealer-balance-opening/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        load_balance();
+        document.addEventListener("click", async (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="ob-bal-btn")
+            {
+                const dealer = document.getElementById(clickedId).getAttribute("dealer");
+                const crweight = Val("crweight_"+dealer);
+                const crcash = Val("crcash_"+dealer);
+                const drweight = Val("drweight_"+dealer);
+                const drcash = Val("drcash_"+dealer);
+                const metal = Val("metal_"+dealer);
+                backEndCall("update_ob", "/dealer-balance-opening/insert", "POST", undefined, JSON.stringify({dealer,crweight,crcash,drweight,drcash,metal}));
+            }
+        });
+        document.addEventListener("keyup", async (event) => {
+            debugger
+            const clickedId = event.target.id;
+            const ide = clickedId.split("_");
+            if(ide[0]=="crweight")
+            {
+                Sv("drweight_"+ide[1],"0");
+            }
+            if(ide[0]=="drweight")
+            {
+                Sv("crweight_"+ide[1],"0");
+            }
+            if(ide[0]=="crcash")
+            {
+                Sv("drcash_"+ide[1],"0");
+            }
+            if(ide[0]=="drcash")
+            {
+                Sv("crcash_"+ide[1],"0");
+            }
+        });
+        document.addEventListener("focusin", async (event) => {
+            const clickedId = event.target.id;
+            const dynamic = clickedId.split("metal_")[1];
+            if(dynamic)
+                selectLoad('metal_'+dynamic, '/dealer-balance-opening/metal', content = 'application/json', undefined);
+        });
+    });
+    function backEndCall_update_ob(msg)
+    {
+        if(msg.success)
+        {
+
+        }
+    }
+</script>
+{{> footer }}

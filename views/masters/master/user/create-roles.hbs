@@ -1,0 +1,100 @@
+<style>
+.alignment {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+#saveButton{
+    display: block;
+    margin: 0 auto;
+}
+.main-tabs{
+    display: none !important;
+}
+</style>
+
+{{> header }}
+{{> navbar }}
+{{> dtb }}
+{{> form }}
+<div class="snowdiv">
+    <div class="alignment">
+        {{selectBox id="companyname" options='nd:Company'}}
+        {{createInput type="text" id="role" placeholder="Role Name"}}
+         {{createInput type="number" id="priority" placeholder="Priority"}}
+        <input type="hidden" id="edit_id" name="edit_id" value="">
+    </div>
+    <button id="saveButton" type="button">Save</button>
+</div>
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> formend }}
+{{> view }}
+{{> viewend }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        debugger;
+        selectLoad('companyname', '/create-roles/loadcomp', content = 'application/json', undefined);
+    });
+document.getElementById("saveButton").addEventListener("click", () => {
+    const formData=getFormData();
+    backEndCall(undefined, "/create-roles/insert", "POST", undefined, formData);
+});
+let thead = "<th>S.no</th><th>Company</th><th>roles</th><th>Priority</th><th>Action</th>";
+let tfoot = "<td colspan='5'></td>";
+
+// Call the fetchData function and wait for it to complete
+if ({{checkingRights data=rights action="view"}})
+fetchTableData('content', '1000', '1', 'content', '', '/create-roles/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+
+const lazyContentElement = document.getElementById("lazy-content");
+// Add the scroll event listener only if the element exists
+lazyContentElement.addEventListener('scroll', () => {
+    lazy_table_Loading(lazyContentElement);
+});
+
+
+document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Sv("companyname",userDatas.companyname);
+                Sv("role",userDatas.role);
+                Sv("priority",userDatas.priority);
+                Sv("edit_id",userDatas.uniqueid);
+                Si("saveButton", "Update");
+                const profilePic = userDatas.ownerimage;
+                const proof = userDatas.companyimage;
+                const imagePathParts = profilePic.split("[pics~pics]").filter(item => item.trim() !== "");
+                const imageProofs = proof.split("[pics~pics]").filter(item => item.trim() !== "");
+
+                // Loop through the path parts and generate the <img> tags
+                imagePathParts.forEach(item => {
+                    loadImg("ownerimg", item);
+                });
+
+                // Loop through the path parts and generate the <img> tags
+                imageProofs.forEach(item => {
+                    loadImg("companyimg", item);
+                });
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/create-roles/delete", "POST", undefined, deleteKey);
+            }
+        });
+
+
+</script>
+
+{{> footer }}

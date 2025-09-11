@@ -1,0 +1,84 @@
+<style>
+    .addcssfortable{
+        display:flex;
+        gap:10px;
+        align-items: center;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+  {{createInput type="text" id="tableName" placeholder="Table Name"}}
+  <input type="hidden" id="edit_id" name="edit_id" value="">
+  <button id="insertDataButton" type="button">Create</button>
+</div>
+{{> formend }}
+{{> view }}
+ {{#if (checkingRights data=rights action="view")}}
+    <div id="table-responsive">
+    </div>
+    <div id="loading">
+    </div>
+    {{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+
+// Call the function on page load
+$(document).ready(function() {
+
+    const thead = `<th>S.no</th><th>Table</th><th>Action</th>`;
+    const tfoot = ``;
+    if({{checkingRights data=rights action="view"}})
+    fetchTableData('contentsOfTable', '1000', '1', 'loading', 'Loading...', '/db-action/fetchData', '50vh', 'table-responsive', undefined, thead, tfoot);
+
+});
+  document.getElementById('insertDataButton').addEventListener('click', async () => {
+    const table_Name = document.getElementById('tableName').value.trim();
+    if (!table_Name) {
+      alert('Please fill in all fields.');
+      return;
+    }
+    const datas = JSON.stringify({ table_Name });
+    const tableName = "tables";
+    const uni = Val("edit_id");
+    const deleteKey = JSON.stringify({uniquekey: uni});
+    const data = {
+      tablename: table_Name,
+    };
+    if(uni)
+      backEndCall(undefined,'/db-action/delete', 'POST',undefined,deleteKey);
+    const insert_datas = JSON.stringify({ tableName, data });
+    backEndCall(undefined,'/db-action/createTable', 'POST',undefined,datas);
+    backEndCall(undefined,'/db-action/insert', 'POST',undefined,insert_datas);
+  });
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.addEventListener('click', (event) => {
+      // debugger;
+      const id = event.target.id;
+      if (event.target.classList.contains('edit-icon')) {
+        const tablename = Val(id,'datas','tablename');
+        const uniqki = Val(id,'uniquekey');
+        Sv("tableName", tablename);
+        Sv("edit_id", uniqki);
+        Si("insertDataButton","Update");
+      }
+      if (event.target.classList.contains('delete-icon')) {
+        const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+        if (userConfirmed) {
+          debugger;
+          const tableName = "tables";
+          const uniqki = Val(id,'uniquekey');
+          const deleteKey = JSON.stringify({uniquekey: uniqki});
+          if(uniqki)
+            backEndCall(undefined,'/db-action/delete', 'POST',undefined,deleteKey);
+        }
+      }
+    });
+  });
+
+</script>
+{{> footer }}

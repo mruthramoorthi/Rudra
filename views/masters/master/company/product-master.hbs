@@ -1,0 +1,143 @@
+<style>
+#metal-boxes{
+    display: none;
+}
+
+#howmany{
+    display: none;
+}
+.main-tabs{
+        display: none !important;
+    }
+.display-f{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+    </style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="display-f">
+        {{createInput type="text" id="product" placeholder="Product Name"}}
+        <input type="hidden" id="uniquekey" name="uniquekey">
+        {{selectBox id="types" options='single:Single Metal,multi:Multi Metal' classes='data-load'}}
+        <div id="howmany">
+            {{createInput type="text" id="how" placeholder="How Many"}}
+        </div>
+        <div id="singlemetal">
+            {{selectBox id="metal" options='nd: Metal'}}
+        </div>
+        <div id="metal-boxes">
+        </div>
+    </div>
+    <div class="display-f">
+        <button id="saveButton" class="center" type="button">Save</button>
+        <button id="cancelButton" class="center" type="button">Cancel</button>
+    </div>
+</div>
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> formend }}
+{{> view }}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function backEndCall_boxes(res)
+    {
+        let datas = res.response.split("[temp]");
+        document.getElementById("metal-boxes").innerHTML = "";
+        document.getElementById("metal-boxes").innerHTML = datas[0];
+        for(let i=1; i<=parseInt(datas[1]); i++)
+        {
+            searchableSelect("metal"+i);
+        }
+    }
+     document.addEventListener("DOMContentLoaded", () => {
+        selectLoad('metal', '/product-master/loadMetal', content = 'application/json', undefined);
+        document.getElementById('types').addEventListener('change', function(event) {
+            if(Val("types")==="multi")
+            {
+                document.getElementById("metal-boxes").style.display="block";
+                document.getElementById("singlemetal").style.display="none";
+                document.getElementById("howmany").style.display="block";
+            }
+            else
+            {
+                document.getElementById("metal-boxes").innerHTML="";
+                document.getElementById("metal-boxes").style.display="none";
+                document.getElementById("singlemetal").style.display="block";
+                document.getElementById("howmany").style.display="none";
+                Sv("how","");
+            }
+        });
+        searchableSelect('types');
+        document.getElementById('how').addEventListener('keyup', function(event) {
+            const how_many = Val("how");
+            backEndCall("boxes", "/product-master/selectBoxes", "POST", undefined, JSON.stringify({how: how_many}));
+        });
+        let thead = "<th>S.no</th><th>Product</th><th>Type</th><th>Byproduct</th><th>Action</th>";
+        let tfoot = "<td colspan='5'></td>";
+        if ({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/product-master/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/product-master/insert", "POST", undefined, formData);
+        });
+
+        document.getElementById("cancelButton").addEventListener("click", () => {
+            reloadSite();
+        });
+        document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Sv("product",userDatas.product);
+                Sv("uniquekey",userDatas.uniqueid);
+                const metals = userDatas.metalname.split("^");
+                if(metals.length===2)
+                    Ss("metal",metals[0]);
+                else
+                {
+                    Sv("how",metals.length-1);
+                    Ss("types","multi");
+                    setTimeout(() => {
+                    for(let v=1;v<metals.length;v++)
+                        Ss("metal"+parseInt(v),metals[v-1]);
+                    },1000);
+                }
+                Si("saveButton", "Update");
+                document.getElementById('cancelButton').style.display="block";
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/product-master/delete", "POST", undefined, deleteKey);
+            }
+        });
+     });
+</script>
+{{> footer }}

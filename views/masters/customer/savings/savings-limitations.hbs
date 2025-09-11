@@ -1,0 +1,102 @@
+<style>
+    .addcssfortable{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+    .addcssfortable1{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        text-align: center;
+    }
+    .snowdiv{
+        text-align: center;
+    }
+    #cancel{
+        color: white;
+        background-color: red;
+        display: none;
+    }
+    
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="addcssfortable">
+        {{selectBox id="metal" options='nd:Scheme Types'}}
+        {{createInput id="scheme" type="text" placeholder="Scheme Name"}}
+        {{selectBox id="savingtypes" options='nd:Savings Types'}}
+        {{createInput id="min" type="number" placeholder="Minimum Amount"}}
+        {{createInput id="max" type="number" placeholder="Maximum Amount"}}
+        {{createInput id="step" type="number" placeholder="Steps"}}
+        {{createInputTa id="narration" placeholder="Naration"}}
+    </div><br>
+    <div class="addcssfortable1">
+        <input type="hidden" id="uniquekey" name="uniquekey" value="">
+        <button type="button" id="save">Create</button>
+        <button type="button" id="cancel">Cancel</button>
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+document.addEventListener("DOMContentLoaded", () => {
+    selectLoad('savingtypes', '/savings-limitations/savingType', content = 'application/json', undefined);
+    selectLoad('metal', '/savings-limitations/metal', content = 'application/json', undefined);
+    let thead = "<th>S.no</th><th>Scheme Name</th><th>Group ID</th><th>Savings Type</th><th>Scheme Type</th><th>Minimum Amount</th><th>Maximum Amount</th><th>status</th><th>Date</th><th>Action</th>";
+    let tfoot = "<td colspan='6'></td>";
+    if({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/savings-limitations/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+    document.getElementById("save").addEventListener("click", () => {
+        const formData = getFormData();
+        backEndCall(undefined,"/savings-limitations/insert","POST",undefined,formData);
+    });
+    document.addEventListener("click", async (event) => {
+        const clickedId = event.target.id;
+        if(event.target.classList=="edit-iconi")
+        {
+            const editVal = Val(clickedId,"datas");
+            scrollToElementById("form-for-get-input");
+            s("cancel")
+            Sv("uniquekey",editVal.uniqueid)
+            Ss("metal",editVal.type);
+            Ss("savingtypes",editVal.schemetype);
+            Sv("min",editVal.min);
+            Sv("max",editVal.max);
+            Sv("narration",editVal.narration);
+            Sv("scheme",editVal.schemename);
+        }
+        if(clickedId=="cancel")
+        {
+            reloadSite();
+        }
+        if(event.target.classList=="delete-iconi")
+        {
+            const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+            deleteKey = JSON.stringify({uniquekey: deleteId});
+            const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+            if(userConfirmed)
+                backEndCall(undefined, "/savings-limitations/delete", "POST", undefined, deleteKey);
+        }
+        if(event.target.classList=="just-check")
+        {
+            const updateSts = JSON.stringify({clickedId:clickedId});
+            backEndCall(undefined, "/savings-limitations/update", "POST", undefined, updateSts);
+        }
+    });
+});
+</script>
+{{> footer }}

@@ -1,0 +1,447 @@
+<style>
+    .addcssfortable{
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+.main {
+    color:black;
+}
+.cardio {
+    text-align: center;
+    box-shadow: 0px 0px 3px 3px #dddddd;
+    height: auto;
+    border-radius: 10px;
+}
+.ch{
+    color: cornflowerblue;
+    font-weight: 800;
+}
+.cardio .form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.form label {
+    cursor: pointer;
+}
+.cardio .form .input-radio {
+    box-shadow: 0px 0px 0px 1px #6d6d6d;
+    font-size: 3em;
+    width: 25px;
+    height: 25px;
+    margin-right: 7px;
+
+    border: 4px solid #fff;
+    background-clip: border-box;
+    border-radius: 50%;
+    appearance: none;
+    transition: background-color 0.3s, box-shadow 0.3s;
+
+}
+.cardio .form label {
+    display: flex;
+    margin: 10px 15px;
+}
+
+.input-radio.weightwaste:checked {
+    box-shadow: 0px 0px 0px 4px #00eb27;
+    background-color: #51ff6e;
+}
+.input-radio.pieceswaste:checked {
+    box-shadow: 0px 0px 0px 4px #eb0000;
+    background-color: #ff5151;
+}
+.input-radio.weightmc:checked {
+    box-shadow: 0px 0px 0px 4px #00eb27;
+    background-color: #51ff6e;
+}
+.input-radio.piecesmc:checked {
+    box-shadow: 0px 0px 0px 4px #eb0000;
+    background-color: #ff5151;
+}
+.input-radio.weightcomm:checked {
+    box-shadow: 0px 0px 0px 4px #00eb27;
+    background-color: #51ff6e;
+}
+.input-radio.piecescomm:checked {
+    box-shadow: 0px 0px 0px 4px #eb0000;
+    background-color: #ff5151;
+}
+.input-radio:focus {
+    box-shadow: 0px 0px 0px 4px grey;
+    background-color: gray;
+}
+/* Adding a border for focused element */
+input[type="radio"]:focus {
+    outline: 3px solid #0078d4;
+}
+.item-master-btn{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+  {{selectBox id="product" options='nd:Category'}}
+  {{createInput type="text" id="jewelname" placeholder="Jewel Type"}}
+  {{createInput type="text" id="jewelcode" placeholder="Jewel Code"}}
+  {{selectBox id="measure" options='nd:Measurement'}}
+  {{selectBox id="typeofjewel" options='nd:Type of Jewel'}}
+  {{imageUpload id="jewelimg" noncei=nonce placeholder="Default Image For Jewel"}}
+</div>
+<div class="snowdiv">
+    <div class="addcssfortable">
+        {{createInput type="text" id="subtype" placeholder="Sub Type"}}
+        {{createInput type="number" id="minwt" placeholder="Min Weight"}}
+        {{createInput type="number" id="maxwt" placeholder="Max Weight"}}
+        
+        {{selectBox id="spltype" options='nd:Gift type'}}
+        {{createInput type="number" id="splprice" placeholder="Gift Price"}}
+        {{selectBox id="wastetype" options='nd:Waste type'}}
+        {{createInput type="number" id="minwaste" placeholder="Min Waste"}}
+        {{createInput type="number" id="maxwaste" placeholder="Max Waste"}}
+        {{selectBox id="mctype" options='nd:Mc type'}}
+        {{createInput type="number" id="minmc" placeholder="Min Mc"}}
+        {{createInput type="number" id="maxmc" placeholder="Max Mc"}}
+        {{selectBox id="comtype" options='nd:Commission type'}}
+        {{createInput type="number" id="commission" placeholder="Commission"}}
+    </div><br>
+    <div class="item-master-btn">
+        <button type="button" id="Add" name="Add">Add</button>
+    </div>
+</div>
+<div class="snowdiv">
+  <div>
+    <table class="table-bordered">
+        <thead>
+            <tr><th>S.no</th><th>Sub</th><th>Wt</th><th>Spl</th><th>Waste</th><th>Mc</th><th>Commission</th><th>Action</th></tr>
+        </thead>
+        <tbody id="subtype-adder">
+
+        </tbody>
+    </table>
+    <br>
+    <div class="item-master-btn">
+        <button type="button" id="Addt" name="Addt">Add</button>
+        <button type="button" id="cancelt" name="cancelt">cancel</button>
+        {{#if (checkingRights data=rights action="print")}}
+        <button type="button" id="pdft" name="pdft">Print</button>
+        {{/if}}
+    </div>
+  </div>
+</div>
+<input type="hidden" id="editjeweltype" name="editjeweltype" value="">
+<input type="hidden" id="editcategory" name="editcategory" value="">
+<input type="hidden" id="rowedit" name="rowedit" value="0">
+<input type="hidden" name="allrowid" id="allrowid" value="">
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        const pdfBtn = document.getElementById("pdft");
+        if ({{checkingRights data=rights action="print"}}) {
+            pdfBtn.addEventListener("click", async () => {
+                await openPDF("/item-master/pdf");
+            });
+        }
+        selectLoad('product', '/item-master/loadCate', content = 'application/json', undefined);
+        selectLoad('measure', '/item-master/loadMeasure', content = 'application/json', undefined);
+        selectLoad('typeofjewel', '/item-master/typeJewel', content = 'application/json', undefined);
+        selectLoad('wastetype', '/item-master/wasteType', content = 'application/json', undefined);
+        selectLoad('spltype', '/item-master/giftType', content = 'application/json', undefined);
+        selectLoad('mctype', '/item-master/mcType', content = 'application/json', undefined);
+        selectLoad('comtype', '/item-master/comType', content = 'application/json', undefined);
+        let thead = "<th>S.no</th><th>Category</th><th>Product</th><th>Sub</th><th>Wt</th><th>Waste</th><th>Mc</th><th>Commission</th><th>Action</th>";
+        let tfoot = "<td colspan='9'></td>";
+        if ({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/item-master/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        document.getElementById("Addt").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/item-master/insert", "POST", undefined, formData);
+        });
+
+        let editingRow = null; // To keep track of the row being edited
+
+// Add event listener for the "Add" button to capture the input and add to the table
+document.getElementById("Add").addEventListener("click", () => {
+    // Collect input values
+    const subtype = Val("subtype");
+    const minwt = Val("minwt");
+    const maxwt = Val("maxwt");
+    const spltype = Val("spltype");
+    const splprice = Val("splprice");
+    const wastetype = Val("wastetype");
+    const minwaste = Val("minwaste");
+    const maxwaste = Val("maxwaste");
+    const mctype = Val("mctype");
+    const minmc = Val("minmc");
+    const maxmc = Val("maxmc");
+    const comtype = Val("comtype");
+    const commission = Val("commission");
+    debugger
+    // Ensure all required fields are filled
+    if (subtype && minwt && maxwt && ((wastetype!="nd" && minwaste && maxwaste) || (mctype!="nd" && minmc && maxmc)) && (!spltype || spltype === 'nd' || (spltype !== 'nd' && valNum(splprice) > 0))) {
+        // Create new row in the table
+        const tableBody = document.getElementById("subtype-adder");
+        const newRow = document.createElement("tr");
+
+        let rowId = new Date().getTime(); // This can be replaced with any unique identifier method.
+        if (Val("rowedit") !== "0") {
+            rowId = Val("rowedit");
+            Sv("rowedit", "0");
+        }
+
+        newRow.setAttribute("id", "tr" + rowId);
+
+        newRow.innerHTML = `
+            <td>${tableBody.children.length + 1}</td>
+            <td>${formatText(subtype)}</td>
+            <td>${formatNumberWithCommas(minwt)} - ${formatNumberWithCommas(maxwt)}</td>
+            <td>${caps(spltype)} - ${formatNumberWithCommas(splprice)}</td>
+            <td>(${wastetype}) ${formatNumberWithCommas(minwaste)} - ${formatNumberWithCommas(maxwaste)}</td>
+            <td>(${mctype}) ${formatNumberWithCommas(minmc)} - ${formatNumberWithCommas(maxmc)}</td>
+            <td>(${comtype}) ${formatNumberWithCommas(commission)}</td>
+            <td><div class='flex-with-space-edit-delete'>
+                <img src="/images/edit.png" width="25" height="25" class="edit-icon" title="Edit" id="edit-user${rowId}" data-id="${rowId}"/>
+                <img src="/images/delete.png" class="delete-icon" title="Delete" width="25" height="25" id="delete-user${rowId}" data-id="${rowId}"/>
+                </div>
+            </td>
+        `;
+
+        // Append the new row to the table
+        tableBody.appendChild(newRow);
+
+        // Store values in hidden elements for future reference
+        const hiddenInputs = document.createElement('div');
+        hiddenInputs.style.display = 'none';
+        hiddenInputs.setAttribute('data-id', rowId);  // Store the dynamic row ID
+        hiddenInputs.innerHTML = `
+            <input type="hidden" id="subtype-${rowId}" name="subtype-${rowId}" value="${subtype}" />
+            <input type="hidden" id="minwt-${rowId}" name="minwt-${rowId}" value="${minwt}" />
+            <input type="hidden" id="maxwt-${rowId}" name="maxwt-${rowId}" value="${maxwt}" />
+            <input type="hidden" id="spltype-${rowId}" name="spltype-${rowId}" value="${spltype}" />
+            <input type="hidden" id="splprice-${rowId}" name="splprice-${rowId}" value="${splprice}" />
+            <input type="hidden" id="wastetype-${rowId}" name="wastetype-${rowId}" value="${wastetype}" />
+            <input type="hidden" id="minwaste-${rowId}" name="minwaste-${rowId}" value="${minwaste}" />
+            <input type="hidden" id="maxwaste-${rowId}" name="maxwaste-${rowId}" value="${maxwaste}" />
+            <input type="hidden" id="mctype-${rowId}" name="mctype-${rowId}" value="${mctype}" />
+            <input type="hidden" id="minmc-${rowId}" name="minmc-${rowId}" value="${minmc}" />
+            <input type="hidden" id="maxmc-${rowId}" name="maxmc-${rowId}" value="${maxmc}" />
+            <input type="hidden" id="comtype-${rowId}" name="comtype-${rowId}" value="${comtype}" />
+            <input type="hidden" id="commission-${rowId}" name="commission-${rowId}" value="${commission}" />
+        `;
+        newRow.appendChild(hiddenInputs);  // Append the hidden inputs to the body (or anywhere you prefer)
+
+        // Add rowId to allrowid hidden input
+        updateRowIds(rowId);
+
+        // Reset input fields
+        Sv("minwt", '');
+        Sv("maxwt", '');
+        Sv("minwaste", '');
+        Sv("maxwaste", '');
+        Sv("minmc", '');
+        Sv("maxmc", '');
+        Sv("commission", '');
+        On("subtype");
+    } else {
+        alert("Please fill in all fields before adding.");
+    }
+});
+document.getElementById("cancelt").addEventListener("click", () => {
+    reloadSite();
+});
+// Update the allrowid hidden input
+function updateRowIds(rowId) {
+    const allRowIdsInput = document.getElementById("allrowid");
+    let allRowIds = allRowIdsInput.value ? allRowIdsInput.value.split(",") : [];
+    allRowIds.push(rowId);  // Add the new rowId
+    allRowIdsInput.value = allRowIds.join(",");  // Update the hidden input
+}
+
+document.addEventListener("click", (event) => {
+    if(event.target.classList=="delete-row")
+    {
+        const category = document.getElementById(event.target.id).getAttribute('category');
+        const jeweltype = document.getElementById(event.target.id).getAttribute('jeweltype');
+        deleteKey = JSON.stringify({category, jeweltype});
+        const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+        if(userConfirmed)
+        backEndCall(undefined, "/item-master/delete", "POST", undefined, deleteKey);
+    }
+    if(event.target.classList=="edit-row")
+    {
+        debugger
+        const data = Val(event.target.id,"datas");
+        Ss("product",data.category);
+        Sv("editcategory",data.category);
+        Sv("editjeweltype",data.jeweltype);
+        Sv("jewelname",data.jeweltype);
+        Sv("jewelcode",data.code);
+        Ss("measure",data.measure);
+        Ss("typeofjewel",data.saletype);
+        Si("Addt", "Update");
+        // Create new row in the table
+        document.getElementById("subtype-adder").innerHTML = "";
+        const tableBody = document.getElementById("subtype-adder");
+
+        const combineEntries = data.combine.split(',');
+
+        combineEntries.forEach((entry, index) => {
+            const entryParts = entry.split('[r~1]');
+            
+            // Example: Extracting the minwt, maxwt, and other values from each entry
+            const subtype = entryParts[0];
+            const minwt = parseFloat(entryParts[1]);
+            const maxwt = parseFloat(entryParts[2]);
+            const wastetype = entryParts[3];
+            const minwaste = parseFloat(entryParts[4]);
+            const maxwaste = parseFloat(entryParts[5]);
+            const mctype = entryParts[6];
+            const minmc = parseFloat(entryParts[7]);
+            const maxmc = parseFloat(entryParts[8]);
+            const comtype = entryParts[9];
+            const commission = parseFloat(entryParts[10]);
+            
+            // Create a unique row ID
+            const rowId = new Date().getTime() + index; // Ensures unique ID for each row
+
+            // Create the new row element
+            const newRow = document.createElement("tr");
+
+            newRow.setAttribute("id", "tr" + rowId);
+
+            newRow.innerHTML = `
+                <td>${tableBody.children.length + 1}</td>
+                <td>${formatText(subtype)}</td>
+                <td>${formatNumberWithCommas(minwt)} - ${formatNumberWithCommas(maxwt)}</td>
+                <td></td>
+                <td>(${wastetype}) ${formatNumberWithCommas(minwaste)} - ${formatNumberWithCommas(maxwaste)}</td>
+                <td>(${mctype}) ${formatNumberWithCommas(minmc)} - ${formatNumberWithCommas(maxmc)}</td>
+                <td>(${comtype}) ${formatNumberWithCommas(commission)}</td>
+                <td><div class='flex-with-space-edit-delete'>
+                    <img src="/images/edit.png" width="25" height="25" class="edit-icon" title="Edit" id="edit-user${rowId}" data-id="${rowId}"/>
+                    <img src="/images/delete.png" class="delete-icon" title="Delete" width="25" height="25" id="delete-user${rowId}" data-id="${rowId}"/>
+                    </div>
+                </td>
+            `;
+
+            // Append the new row to the table
+            tableBody.appendChild(newRow);
+
+            // Store values in hidden elements for future reference
+            const hiddenInputs = document.createElement('div');
+            hiddenInputs.style.display = 'none';
+            hiddenInputs.setAttribute('data-id', rowId);  // Store the dynamic row ID
+            hiddenInputs.innerHTML = `
+                <input type="hidden" id="subtype-${rowId}" name="subtype-${rowId}" value="${subtype}" />
+                <input type="hidden" id="minwt-${rowId}" name="minwt-${rowId}" value="${minwt}" />
+                <input type="hidden" id="maxwt-${rowId}" name="maxwt-${rowId}" value="${maxwt}" />
+                <input type="hidden" id="wastetype-${rowId}" name="wastetype-${rowId}" value="${wastetype}" />
+                <input type="hidden" id="minwaste-${rowId}" name="minwaste-${rowId}" value="${minwaste}" />
+                <input type="hidden" id="maxwaste-${rowId}" name="maxwaste-${rowId}" value="${maxwaste}" />
+                <input type="hidden" id="mctype-${rowId}" name="mctype-${rowId}" value="${mctype}" />
+                <input type="hidden" id="minmc-${rowId}" name="minmc-${rowId}" value="${minmc}" />
+                <input type="hidden" id="maxmc-${rowId}" name="maxmc-${rowId}" value="${maxmc}" />
+                <input type="hidden" id="comtype-${rowId}" name="comtype-${rowId}" value="${comtype}" />
+                <input type="hidden" id="commission-${rowId}" name="commission-${rowId}" value="${commission}" />
+            `;
+            newRow.appendChild(hiddenInputs);  // Append the hidden inputs to the body (or anywhere you prefer)
+
+            // Add rowId to allrowid hidden input
+            updateRowIds(rowId);
+            document.dispatchEvent(edit_event);
+        });
+    }
+});
+
+// Delete and Edit functionality using event delegation
+document.getElementById("subtype-adder").addEventListener("click", (event) => {
+    const target = event.target;
+    const rowId = target.getAttribute("data-id");
+
+    if (target.classList.contains("edit-icon")) {
+        // Edit functionality
+        const row = document.getElementById("tr" + rowId);
+        Sv("subtype", row.querySelector(`#subtype-${rowId}`).value);
+        Sv("minwt", row.querySelector(`#minwt-${rowId}`).value);
+        Sv("maxwt", row.querySelector(`#maxwt-${rowId}`).value);
+        Sv("minwaste", row.querySelector(`#minwaste-${rowId}`).value);
+        Sv("maxwaste", row.querySelector(`#maxwaste-${rowId}`).value);
+        Sv("minmc", row.querySelector(`#minmc-${rowId}`).value);
+        Sv("maxmc", row.querySelector(`#maxmc-${rowId}`).value);
+        Sv("commission", row.querySelector(`#commission-${rowId}`).value);
+        Sv("rowedit", rowId);
+
+        // Set editingRow to this row
+        editingRow = row;
+        row.remove();
+    }
+
+    if (target.classList.contains("delete-icon")) {
+        // Delete functionality
+        const row = document.getElementById("tr" + rowId);
+        row.remove();
+
+        // Remove the rowId from the allrowid input
+        removeRowId(rowId);
+    }
+    // Refresh the serial numbers
+    refreshSerialNumbers();
+});
+
+// Remove the rowId from the allrowid hidden input
+function removeRowId(rowId) {
+    const allRowIdsInput = document.getElementById("allrowid");
+    let allRowIds = allRowIdsInput.value ? allRowIdsInput.value.split(",") : [];
+    allRowIds = allRowIds.filter(id => id !== rowId);  // Remove the rowId
+    allRowIdsInput.value = allRowIds.join(",");  // Update the hidden input
+}
+
+// Refresh the serial numbers
+function refreshSerialNumbers() {
+    const tableBody = document.getElementById("subtype-adder");
+    const rows = tableBody.querySelectorAll("tr");
+    
+    rows.forEach((row, index) => {
+        const serialCell = row.querySelector("td:first-child");
+        if (serialCell) {
+            serialCell.textContent = index + 1;  // Update the serial number
+        }
+    });
+}
+
+// Cancel button to reset the form
+document.getElementById("cancelt").addEventListener("click", () => {
+    Sv("subtype", '');
+    Sv("minwt", '');
+    Sv("maxwt", '');
+    Sv("minwaste", '');
+    Sv("maxwaste", '');
+    Sv("minmc", '');
+    Sv("maxmc", '');
+    Sv("commission", '');
+    editingRow = null; // Reset the editing row
+});
+
+    });
+</script>
+
+{{> footer }}

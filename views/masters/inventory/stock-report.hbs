@@ -1,0 +1,78 @@
+<style>
+    .display-flexing{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .exchange-list{
+        display: none;
+    }
+    .green{
+        color: red;
+        font-weight: 800;
+    }
+    .red{
+        color: green;
+        font-weight: 800;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+
+<div class="snowdiv addcssfortable">
+    <div class="display-flexing">
+    {{createInput id="fdate" type="date" placeholder="From"}}
+    {{selectBox id="counter" options='nd:Counter'}}
+    {{selectBox id="metals" options='nd:Metal'}}
+    {{selectBox id="category" options='nd:Category'}}
+    {{selectBox id="jeweltype" options='nd:Jeweltype'}}
+    <button type="button" id="loadrepot">Load</button>
+    <button type="button" id="printing">Print</button>
+</div>
+<br>
+  <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        selectLoad('metals', '/stock-report/metal', content = 'application/json', undefined);
+        selectLoad('counter', '/stock-report/counter', content = 'application/json', undefined);
+        selectLoad('category', '/stock-report/loadCate', content = 'application/json', undefined);
+        let thead = "<th>S.no</th><th>Counter</th><th>Category</th><th>Jewel</th><th>Sub</th><th>Weight</th><th>Pcs</th>";
+        let tfoot = "<td colspan='6'></td>";
+        if({{checkingRights data=rights action="view"}})
+            fetchTableData('content', '1000', '1', 'content', '', '/stock-report/select', '50vh', 'lazy-content',  {fdate:Val("fdate")}, thead, tfoot);
+
+        document.getElementById('metals').addEventListener('change', function(event) {
+            selectLoad('product', '/stock-report/loadCate', content = 'application/json', event.target.value);
+        });
+        document.getElementById('category').addEventListener('change', function(event) {
+            selectLoad('typeofjewel', '/stock-report/loadJewel', content = 'application/json', event.target.value);
+        });
+    });
+    document.addEventListener("click", async (event) => {
+        const clickedId = event.target.id;
+        if(event.target.id=="printing")
+        {
+            await openPDF("/stock-report/pdf","POST",{"fdate":Val("fdate"), "todate":Val("todate")});
+        }
+        if(clickedId=="loadrepot")
+        {
+            load_balance();
+        }
+    });
+</script>
+{{> footer }}

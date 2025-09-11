@@ -1,0 +1,49 @@
+<style>
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+    {{createInput type="number" id="cgst" placeholder="CGST"}}
+    {{createInput type="number" id="sgst" placeholder="SGST"}}
+    {{createInput type="number" id="igst" placeholder="IGST"}}
+    {{createInput type="number" id="discount" placeholder="Discount percentage"}}
+    {{createInput type="number" id="discountamt" placeholder="Discount Amount"}}
+    <center><button type="button" id="Addt">Save</button></center>
+    <input type="hidden" name="uniquekey" id="uniquekey" value="">
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        backEndCall("load_details", "/fix-tax-limits/showTax", "GET", undefined, undefined);
+    });
+    document.getElementById("Addt").addEventListener("click", () => {
+        const formData=getFormData();
+        backEndCall(undefined, "/fix-tax-limits/insert", "POST", undefined, formData);
+    });
+    
+    function backEndCall_load_details(result)
+    {
+        debugger;
+        Sv("cgst", result.response[0].cgst);
+        Sv("sgst", result.response[0].sgst);
+        Sv("igst", result.response[0].igst);
+        Sv("discount", result.response[0].discount);
+        Sv("discountamt", result.response[0].discount);
+        Sv("uniquekey", result.response[0].uniqueid);
+    }u
+</script>
+{{> footer }}

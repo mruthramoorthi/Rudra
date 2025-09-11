@@ -1,0 +1,73 @@
+<style>
+        body { font-family: Arial, sans-serif; }
+        #qr-code { margin: 20px auto; text-align: center; }
+        #sendMessageBtn { margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        #sendMessageBtn:disabled { background-color: #ddd; }
+        .main-tabs{
+            display: none !important;
+        }
+    </style>
+    {{> header }}
+    {{> navbar }}
+    {{!-- <div id="qr-code">
+        <h3>Scan the QR Code below:</h3>
+        <div id="qr"></div>
+    </div>
+
+    <div id="message-form" style="display: none;">
+        <label for="phone">Phone Number (with country code):</label>
+        <input type="text" id="phone" placeholder="e.g., +1234567890">
+        <br><br>
+        <label for="message">Message:</label>
+        <textarea id="message" placeholder="Type your message here..."></textarea>
+        <br><br>
+        <button id="sendMessageBtn">Send Message</button>
+    </div> --}}
+
+{{!-- // Fetch QR code from server
+        fetch('/qr')
+            .then(response => response.json())
+            .then(data => {
+                if (data.qr) {
+                    document.getElementById('qr').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?data=${data.qr}" alt="QR Code" />`;
+                }
+            });
+
+        // Once the client is ready, show the message form
+        fetch('/qr')
+            .then(response => response.json())
+            .then(data => {
+                if (data.qr === undefined) {
+                    document.getElementById('message-form').style.display = 'block';
+                }
+            });
+
+        // Send the message to the server
+        document.getElementById('sendMessageBtn').addEventListener('click', function () {
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+
+            fetch('/send-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ to: `whatsapp:${phone}`, message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }); --}}
+
+    {{> dtb }}
+    <script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        selectLoad('search-page', '/home/loadRightsPage', content = 'application/json', undefined);
+        
+    });
+    </script>
+{{> footer }}

@@ -1,0 +1,64 @@
+<style>
+    .addcssfortable{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="addcssfortable">
+        {{createInput type="date" id="from" placeholder="from"}}
+        {{createInput type="date" id="to" placeholder="to"}}
+        <button type="button" id="search">Search</button>
+        <button type="button" id="print-report">Print</button>
+    </div><br>
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    let thead = "<th>S.no</th><th>Particular</th><th>ID</th><th>Bank</th><th>Bank.Rec</th><th>Bank.Pay</th>";
+    let tfoot = "<td colspan='7'></td>";
+    fetchTableData('content', '1000', '1', 'content', '', '/bankbook/select', '50vh', 'lazy-content', {from:Val("from"),to:Val("to")}, thead, tfoot);
+    function pageView()
+    {
+        let thead = "<th>S.no</th><th>Particular</th><th>ID</th><th>Rec</th><th>Bank.Rec</th><th>Pay</th><th>Bank.Pay</th>";
+        let tfoot = "<td colspan='7'></td>";
+        fetchTableData('content', '1000', '1', 'content', '', '/bankbook/select', '50vh', 'lazy-content', {from:Val("from"),to:Val("to")}, thead, tfoot);
+    }
+    document.addEventListener("click", (event) => {
+            const clickId = event.target.id;
+            if(event.target.classList=="print-iconi")
+            {
+                const pdfBtn = document.getElementById(event.target.id);
+                if ({{checkingRights data=rights action="print"}}) {
+                    openPDF("/deposit-report/pdf","POST",{"id":pdfBtn.getAttribute("deposit")});
+                }
+            }
+            if(clickId=="print-report")
+            {
+                const pdfBtn = document.getElementById(event.target.id);
+                const from =Val("from");
+                const to =Val("to");
+                if ({{checkingRights data=rights action="print"}}) {
+                        openPDF("/bankbook/pdfReport","POST",{from,to});
+                }
+            }
+            if(clickId=="search")
+            {
+                pageView()
+            }
+    });
+</script>
+{{> footer }}

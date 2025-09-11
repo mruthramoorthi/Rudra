@@ -1,0 +1,62 @@
+<style>
+.addcssfortable{
+    display: flex;
+    gap:10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+    {{createInput type="text" id="counter" placeholder="Counter"}}
+    <input type="hidden" name="uni" id="uni" value="">
+    <button type="button" id="add">Add</button>
+</div>
+{{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+{{/if}}
+{{> formend }}
+{{> view }}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th>Counter</th><th>Action</th>";
+        let tfoot = "<td colspan='9'></td>";
+        if ({{checkingRights data=rights action="view"}})
+            fetchTableData('content', '1000', '1', 'content', '', '/create-counter/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        document.addEventListener("click", (event) => {
+            if(event.target.classList=="delete-icon")
+            {
+                const uniquekey = document.getElementById(event.target.id).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey});
+                const userConfirmed = window.confirm("Are you sure you want to delete this Counter?");
+                if(userConfirmed)
+                backEndCall(undefined, "/create-counter/delete", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="edit-icon")
+            {
+                debugger
+                const data = Val(event.target.id,"datas");
+                Sv("counter",data.counter);
+                Sv("uni",data.uniqueid);
+                Si("Add", "Update");
+            }
+        });
+    });
+    document.getElementById("add").addEventListener("click", () => {
+        const formData = getFormData();
+        backEndCall(undefined,"/create-counter/insert","POST",undefined,formData);
+    });
+    
+</script>
+{{> footer }}

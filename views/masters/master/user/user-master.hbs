@@ -1,0 +1,100 @@
+<style>
+.flexing{
+   display: flex;
+   flex-wrap: wrap;
+   gap: 10px;
+   align-items: center;
+}
+.button{
+   display: flex;
+   gap: 10px;
+   text-align: center;
+}
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+   </style>
+{{> header}}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+   <div class="flexing">
+      {{selectBox id="users" options='nd:Users'}}
+      {{selectBox id="branch" options='nd:Branches'}}
+      <br>
+      {{selectBox id="roles" options='nd:Roles'}}
+      {{createInput type="text" id="display" placeholder="Display Name"}}
+      {{createInput type="text" id="user" placeholder="User Name"}}
+      {{createInput type="text" id="password" placeholder="Password"}}
+      
+        <input type="hidden" id="uniquekey" name="uniquekey">
+   <br>
+   </div>
+   <div class="button">
+      <button id="insertDataButton" type="button">Create</button>
+      <button id="cancelButton" class="center" type="button">Cancel</button>
+      <button id="pdfBtns" type="button">Print</button>
+   </div>
+</div>
+{{> formend }}
+{{> view}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{> viewend}}
+{{> dtb }}
+
+<script nonce="{{nonce}}">
+   document.getElementById("pdfBtns").addEventListener("click", async () => {
+        await openPDF("/user-master/pdf");
+    });
+   document.getElementById("insertDataButton").addEventListener("click", () => {
+      const formData=getFormData();
+      console.log(formData);
+      backEndCall(undefined, "/user-master/insert", "POST", undefined, formData);
+   });
+   document.getElementById("cancelButton").addEventListener("click", () => {
+      reloadSite();
+   });
+   let thead = "<th>S.no</th><th>User</th><th>Role</th><th>Branch</th><th>Action</th>";
+   let tfoot = "<td colspan='4'></td>";
+   // Call the fetchTableData function and wait for it to complete
+   fetchTableData('content', '1000', '1', 'content', '', '/user-master/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+
+   const lazyContentElement = document.getElementById("lazy-content");
+   // Add the scroll event listener only if the element exists
+   lazyContentElement.addEventListener('scroll', () => {
+      lazy_table_Loading(lazyContentElement);
+   });
+document.addEventListener("DOMContentLoaded", () => {
+   debugger;
+   selectLoad('users', '/user-master/loaduser', content = 'application/json', undefined);
+   selectLoad('roles', '/user-master/loadrole', content = 'application/json', undefined);
+   selectLoad('branch', '/user-master/branch', content = 'application/json', undefined);
+    document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                debugger;
+                Ss("users",userDatas.userid+"[u=1]"+userDatas.name);
+                Ss("roles",userDatas.roles);
+                Sv("display",userDatas.recognition);
+                Sv("uniquekey",userDatas.uniqueid);
+                document.getElementById('cancelButton').style.display="block";
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/user-master/delete", "POST", undefined, deleteKey);
+            }
+        });
+});
+</script>
+{{> footer }}

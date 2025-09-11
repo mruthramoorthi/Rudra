@@ -1,0 +1,323 @@
+<style>
+    .lot{
+        color: blue;
+        font-weight: 800;
+    }
+    .dealercode{
+        color: red;
+    }
+    .tagged{
+        width: 20px;
+    }
+    .counter{
+        color: green;
+        font-weight: 800;
+    }
+    .tagoptionsi{
+        display: flex;
+        justify-content: center;
+        align-items: end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .get-tag{
+        text-align: center;
+        font-style: italic;
+        margin: 0 auto;
+        display: block;
+        background: deepskyblue;
+        border-radius: 10px;
+    }
+    .tagoptions{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+    .tagging{
+        display: none;
+    }
+    .inventory{
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    .taggin-details{
+        display: flex;
+        gap: 10px;
+    }
+    .tagtable{
+        width: -webkit-fill-available;
+    }
+    .cancel-tag{
+        background: red;
+        color: white;
+    }
+    .notag{
+        text-align: center;
+        color: red;
+        font-weight: 800;
+        display: block;
+    }
+    .get-remove{
+        background: orange;
+        color: white;
+        font-weight: 800;
+    }
+    .purchaseid{
+        color: orangered;
+    }
+    .extras{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .addon-del{
+        width: 20px;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    .stones-del{
+        width: 20px;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="tagoptionsi">
+    {{createInputTa id='tags-collab' placeholder='Re-print Tag'}}
+    <button type="button">Print</button>
+</div>
+<br>
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+<input type="hidden" name="addonpart" id="addonpart" value="0">
+<input type="hidden" name="stonepart" id="stonepart" value="0">
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th colspan='3'>Particulars</th>";
+        let tfoot = "";
+        fetchTableData('content', '1000', '1', 'content', '', '/jewel-tagger/select', '50vh', 'lazy-content', undefined, thead, tfoot, "tagtable");
+        document.addEventListener("keyup", (event) => {
+            const clickId = event.target.id;
+            if(event.target.classList=="carat")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                stCalculation(lot)
+            }
+        });
+        document.addEventListener("click", (event) => {
+            debugger
+            const clickId = event.target.id;
+            if(event.target.classList=="add-on-btn")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                const addons = parseInt(Val("addonpart")) + 1;
+                let html = '';
+                html += `<div class='extras shadows'>`+selectBoxes({id:"addons"+lot+addons, options:"nd:Add-on", classes:'addon-select-class'});
+                html +=createInputElement({type:"number", id:'addonqty'+lot+addons, placeholder:'Add-on Qty', className: "addon"});
+                html += createInputElement({type:"number", id:'addonprc'+lot+addons, placeholder:'Add-on Price', className: "addon"});
+                html += createInputElement({type:"number", id:'addontotalprc'+lot+addons, placeholder:'Total Add-on Price', className: "addon"})+`<img src='/images/delete.png' class='addon-del' id='add${addons}' lot='${lot+addons}'></div>`;
+                Sa("addondetails"+lot,'addon'+lot+addons,html);
+                selectLoad("addons"+lot+addons, '/jewel-tagger/loadAddon', content = 'application/json', undefined);
+                Sv("addonpart",addons);
+            }
+            if(event.target.classList=="stone-btn")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                let html = '';
+                const stones = parseInt(Val("stonepart")) + 1;
+                html += `<div class='extras shadows'>`+selectBoxes({id:"stones"+lot+stones, options:"nd:Stone Types", classes:'stone-select-class'});
+                html += createInputElement({id: "stc" + lot+stones, type: "number", placeholder: "No of Stones"});
+                html += createInputElement({id: "stw" + lot+stones, type: "number", placeholder: "Stone Weight"});
+                html += createInputElement({id: "caratsize" + lot+stones, type: "number", placeholder: "Carat Size", className: "carat", att: "lot", attValue: lot+stones});
+                html += createInputElement({id: "caratprice" + lot+stones, type: "number", placeholder: "Carat Price", className: "carat", att: "lot", attValue: lot+stones});
+                html += `<label>Total Stone Price : <font id='total_carat_price${lot+stones}'>0</font><input type='hidden' id='stonetotal${lot+stones}' name='stonetotal${lot+stones}' value='0'></label><img src='/images/delete.png' class='stones-del' id='ston${stones}' lot='${lot+stones}'></div>`;
+                Sa("stonedetails"+lot,'stone'+lot+stones,html);
+                selectLoad("stones"+lot+stones, '/jewel-tagger/loadStone', content = 'application/json', undefined);
+                Sv("stonepart",stones);
+            }
+            if(event.target.classList[1]=="is-select")
+            {
+                const id = event.target.classList[0].split("addons")[1];
+                if(id)
+                {
+                    const addonvalue = Val("addons"+id)
+                    const addon = JSON.stringify({addonvalue,id});
+                    backEndCall("addon", "/jewel-tagger/addonPrice", "POST", undefined, addon);
+                }
+            }
+            if(event.target.classList[1]=="is-select")
+            {
+                const id = event.target.classList[0].split("stones")[1];
+                if(id)
+                {
+                    const stonevalue = Val("stones"+id)
+                    const stone = JSON.stringify({stonevalue,id});
+                    backEndCall("stone", "/jewel-tagger/stonePrice", "POST", undefined, stone);
+                }
+            }
+            if(event.target.classList=="addon-del")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                document.getElementById("addon"+lot).remove();
+            }
+            if(event.target.classList=="stones-del")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                document.getElementById("stone"+lot).remove();
+            }
+            if(event.target.classList=="get-tag")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                const displayTagId = "tagging"+lot;
+                s(displayTagId);
+                const jt = Val("jt"+lot);
+                const st = Val("st"+lot);
+                const ct = Val("category"+lot);
+                if(st=="nd" || !st)
+                selectLoad('subtype'+lot, '/jewel-tagger/subtype', content = 'application/json', JSON.stringify({jt,ct}));
+            }
+            if(event.target.classList=="carat")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                stCalculation(lot)
+            }
+            if(event.target.classList=="cancel-tag")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                const displayTagId = "tagging"+lot;
+                h(displayTagId);
+            }
+            if(event.target.classList=="tag")
+            {
+                const lot = document.getElementById(clickId).getAttribute('lot');
+                const code = Val('code' + lot);
+                const category = Val('category' + lot);
+                const counter = Val("counter" + lot);
+                const purity = Val('purity' + lot);
+                const jeweltype = Val('jt' + lot);
+                const subtype = Val('subtype' + lot);
+                const pcs = Val('pcs' + lot);
+                const piece = Val("piece" + lot);
+                const wt = Val("wt" + lot);
+                const weight = Val('weight' + lot);
+                const image = Val("imgpath_jewelpic" + lot);
+                const addonpart = Val("addonpart");
+                const stonepart = Val("stonepart");
+
+                // Create an array for add-ons and stones
+                let addons = [];
+                let stones = [];
+
+                // Loop over addonpart and collect all addon-related data
+                for (let i = 1; i <= addonpart; i++) {
+                    const addon = Val("addons" + lot + i);
+                    const addon_qty = Val("addonqty" + lot + i);
+                    const addon_price = Val("addonprc" + lot + i);
+                    const addon_total = Val("addontotalprc" + lot + i);
+                    
+                    // Push addon data to the array
+                    addons.push({addon,addon_qty,addon_price,addon_total});
+                }
+
+                // Loop over stonepart and collect all stone-related data
+                for (let j = 1; j <= stonepart; j++) {
+                    const stone = Val("stones" + lot + j);
+                    const stone_count = Val("stc" + lot + j);
+                    const stone_weight = Val("stw" + lot + j);
+                    const stone_size = Val("caratsize" + lot + j);
+                    const stone_carat = Val("caratprice" + lot + j);
+                    const stone_total = Val("stonetotal" + lot + j);
+                    
+                    // Push stone data to the array
+                    stones.push({stone,stone_count,stone_weight,stone_size,stone_carat,stone_total});
+                }
+
+                // Construct the tag object with all the data
+                const tag = JSON.stringify({lot,category,counter,purity,piece,wt,pcs,code,jeweltype,subtype,weight,image,addons,stones});
+
+                // Make the backend call with the tagged data
+                backEndCall("tagged", "/jewel-tagger/tagged", "POST", undefined, tag);
+
+            }
+        });
+    });
+    function backEndCall_addon(msg)
+    {
+        Sv(msg.id,msg.rate);
+    }
+    function backEndCall_stone(msg)
+    {
+        Sv(msg.id,msg.rate);
+    }
+    function backEndCall_tagged(msg)
+    {
+        const lot = msg.lot;
+        Si("tagged_gram_details"+lot,msg.weight);
+        Si("tagged_pcs_details"+lot,msg.pcs);
+        Si("remin_tagged_gram_details"+lot,money(msg.reminweight,3,0));
+        Si("remin_tagged_pcs_details"+lot,money(msg.reminpcs,3.0));
+        downloadTextFile();
+        refreshTag(lot)
+    }
+    function downloadTextFile(filename = "file.txt", text = "hello") {
+    // Create a Blob with the provided text
+    const blob = new Blob([text], { type: 'text/plain' });
+
+    // Create an anchor element
+    const link = document.createElement('a');
+    
+    // Set the download attribute with the desired file name
+    link.download = filename;
+    
+    // Create an object URL for the Blob and set it as the href of the link
+    link.href = URL.createObjectURL(blob);
+
+    // Append the link to the document body (necessary for some browsers)
+    document.body.appendChild(link);
+    
+    // Programmatically click the link to trigger the download
+    link.click();
+    
+    // Clean up by removing the link from the DOM
+    document.body.removeChild(link);
+}
+
+
+
+    function stCalculation(lot)
+    {
+        debugger;
+        const stone_carat = valNum(Val("caratsize"+lot));
+        const stone_carat_price = valNum(Val("caratprice"+lot));
+        let total_price = parseFloat(stone_carat) * parseFloat(stone_carat_price);
+        if(stone_carat=="0"||!stone_carat)
+            total_price = stone_carat_price;
+        Si("total_carat_price"+lot,money(total_price,3,1))
+        Sv("stonetotal"+lot,total_price);
+    }
+    function refreshTag(lot)
+    {
+        Si("stonedetails"+lot, "");
+        Si("addondetails"+lot, "");
+        let inputField = document.getElementById('subtype'+lot);
+        if (inputField) inputField.focus();
+    }
+</script>
+{{> footer }}

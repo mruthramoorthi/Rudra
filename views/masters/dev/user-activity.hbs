@@ -1,0 +1,50 @@
+<style>
+    .dots{
+        width: 20px;
+    }
+    .reject{
+        width: 30px;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+    <div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+  
+</div>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th>Photo</th><th>Name</th><th>Branch</th><th>Status</th><th>Page</th><th>System Info</th><th>Action</th>";
+        let tfoot = "";
+        fetchTableData('content', '1000', '1', 'content', '', '/user-activity/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        setInterval(()=>{
+            fetchTableData('content', '1000', '1', 'content', 'no', '/user-activity/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        },3000);
+        document.addEventListener("click", (event) => {
+            const clickId = event.target.id;
+            if(event.target.classList=="reject")
+            {
+                const key = Val(clickId,"uniquekey");
+                deleteKey = JSON.stringify({uniquekey: key});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                    backEndCall(undefined, "/user-activity/delete", "POST", undefined, deleteKey);
+            }
+        });
+    });
+    
+</script>
+{{> footer }}

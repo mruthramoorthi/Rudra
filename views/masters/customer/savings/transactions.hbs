@@ -1,0 +1,128 @@
+<style>
+    .dates{
+        display: flex;
+        justify-content: space-around;
+    }
+    #overall-bal{
+        width: fit-content;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    {{#if (checkingRights data=rights action="date_change")}}
+        <div class="dates">
+            {{createInput type="date" id="from" placeholder="From Date"}}
+            {{createInput type="date" id="to" placeholder="To Date"}}
+        </div>
+        <center><button type="button" id="opening">Search</button></center>
+    {{/if}}
+    {{#if (checkingRights data=rights action="view")}}
+    <div id="overall-bal" class="snowdiv right-align">
+
+    </div>
+    {{/if}}
+    <br>
+    <center><h3>Daily Transactions</h3></center>
+    {{#if (checkingRights data=rights action="date_change")}}
+        <div class="dates">
+            {{createInput type="date" id="fromdate" placeholder="From Date"}}
+            {{createInput type="date" id="todate" placeholder="To Date"}}
+        </div>
+    {{/if}}
+        <center><button type="button" id="search">Search</button></center>
+        <br>
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+</div>
+<div class="snowdiv">
+    <center><h3>Individual Transactions</h3></center>
+    <div class="dates">
+        <input type="hidden" id="navigate" name="navigate" value="next">
+        {{selectBox id="scheme" options='nd:Group'}}
+        <br>
+        {{selectBox id="count" options='nd:Savings Number'}}
+    </div>
+    <br>
+    <div id="lazy-content2">
+    </div>
+    <div id="loading2">
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+{{> viewend }}
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function Transactions()
+    {
+        let thead = "<th>S.no</th><th>Date</th><th>Scheme</th><th>Name</th><th>Phone</th><th>Amount</th><th>Amountin</th><th>Bank Name</th><th>Cash</th><th>Bank</th>";
+        let tfoot = "";
+        const formData=getFormData();
+            fetchTableData('content', '1000', '1', 'content', '', '/transactions/select', '50vh', 'lazy-content', formData, thead, tfoot);
+    }
+    function individual()
+    {
+        // Sv("navigate",direction);
+        let thead = "<th>S.no</th><th>Date</th><th>Amount</th><th>Amountin</th><th>Bank Name</th><th>Rate</th><th>Gram</th><th>Cash</th><th>Bank</th><th>Action</th>";
+        let tfoot = "";
+        const formData=getFormData();
+            fetchTableData('content2', '1000', '1', 'content2', '', '/transactions/individual', '50vh', 'lazy-content2', formData, thead, tfoot);
+    }
+    function backEndCall_savings_balance(msg)
+    {
+        Si("overall-bal",msg.response);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        Transactions(); 
+        individual();  
+        selectLoad('scheme', '/transactions/group', content = 'application/json', undefined);
+        const formData=getFormData();
+        backEndCall("savings_balance","/transactions/balance", "POST", undefined, formData);
+        document.getElementById('scheme').addEventListener('change', function(event) {
+            selectLoad('count', '/transactions/savings', content = 'application/json', event.target.value);
+        });     
+        document.getElementById('count').addEventListener('change', function(event) {
+            individual();
+        });
+        document.addEventListener("click", (event) => {
+            if(event.target.classList=="delete-icon")
+            {
+                const uniquekey = document.getElementById(event.target.id).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey});
+                const userConfirmed = window.confirm("Are you sure you want to delete this Counter?");
+                if(userConfirmed)
+                backEndCall(undefined, "/create-counter/delete", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="edit-icon")
+            {
+                debugger
+                const data = Val(event.target.id,"datas");
+                Sv("counter",data.counter);
+                Sv("uni",data.uniqueid);
+                Si("Add", "Update");
+            }
+            if(event.target.id=="search")
+            {
+                Transactions()
+            }
+            if(event.target.id=="opening")
+            {
+                const formData=getFormData();
+                backEndCall("savings_balance","/transactions/balance", "POST", undefined, formData);
+            }
+            if(event.target.classList=="navigates")
+            {
+                individual(event.target.id)
+            }
+        });
+    });
+    
+</script>
+{{> footer }}

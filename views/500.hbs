@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>500 - Server Error</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS -->
+  <style>
+    @import url(https://fonts.googleapis.com/css?family=Roboto:400,100,300,500);
+
+    body { 
+      background-color: red; 
+      color: #fff;
+      font-size: 100%;
+      font-family: "Roboto", sans-serif;
+    }
+
+    .button {
+      font-weight: 300;
+      color: #fff;
+      font-size: 1.2em;
+      text-decoration: none;
+      border: 1px solid #efefef;
+      padding: .5em;
+      border-radius: 3px;
+      float: left;
+      margin: 6em 0 0 -155px;
+      left: 50%;
+      position: relative;
+      transition: all .3s linear;
+    }
+
+    .button:hover {
+      background-color: red;
+      color: #fff;
+    }
+
+    p {
+      font-size: 2em;
+      text-align: center;
+      font-weight: 100;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 10em;
+      font-weight: 100;
+      text-shadow: #cc0000 1px 1px, #cc0000 2px 2px, #cc0000 3px 3px, 
+             #cc0000 4px 4px, #cc0000 5px 5px, #cc0000 6px 6px, 
+             #cc0000 7px 7px, #d10000 8px 8px, #d10000 9px 9px, 
+             #d20000 10px 10px, #d20000 11px 11px, #d30000 12px 12px, 
+             #d30000 13px 13px, #d40000 14px 14px, #d40000 15px 15px, 
+             #d50000 16px 16px, #d50000 17px 17px, #d60000 18px 18px, 
+             #d60000 19px 19px, #d70000 20px 20px, #d70000 21px 21px, 
+             #d80000 22px 22px, #d80000 23px 23px, #d90000 24px 24px, 
+             #d90000 25px 25px, #da0000 26px 26px, #da0000 27px 27px, 
+             #db0000 28px 28px, #db0000 29px 29px, #dc0000 30px 30px, 
+             #dc0000 31px 31px, #dd0000 32px 32px, #dd0000 33px 33px, 
+             #de0000 34px 34px, #de0000 35px 35px, #df0000 36px 36px, 
+             #df0000 37px 37px, #e00000 38px 38px, #e00000 39px 39px, 
+             #e10000 40px 40px, #e10000 41px 41px, #e20000 42px 42px, 
+             #e20000 43px 43px, #e30000 44px 44px, #e30000 45px 45px, 
+             #e40000 46px 46px, #e40000 47px 47px, #e50000 48px 48px, 
+             #e50000 49px 49px, #e60000 50px 50px, #e60000 51px 51px, 
+             #e70000 52px 52px, #e70000 53px 53px, #e80000 54px 54px, 
+             #e80000 55px 55px, #e90000 56px 56px, #e90000 57px 57px, 
+             #ea0000 58px 58px, #ea0000 59px 59px, #eb0000 60px 60px, 
+             #eb0000 61px 61px, #ec0000 62px 62px, #ec0000 63px 63px, 
+             #ed0000 64px 64px, #ed0000 65px 65px, #ee0000 66px 66px, 
+             #ee0000 67px 67px, #ef0000 68px 68px, #ef0000 69px 69px, 
+             #f00000 70px 70px, #f00000 71px 71px, #f10000 72px 72px, 
+             #f10000 73px 73px, #f20000 74px 74px, #f20000 75px 75px, 
+             #f30000 76px 76px, #f30000 77px 77px, #f40000 78px 78px, 
+             #f40000 79px 79px, #f50000 80px 80px, #f50000 81px 81px, 
+             #f60000 82px 82px, #f60000 83px 83px, #f70000 84px 84px, 
+             #f70000 85px 85px, #f80000 86px 86px, #f80000 87px 87px, 
+             #f90000 88px 88px, #f90000 89px 89px, #fa0000 90px 90px, 
+             #fa0000 91px 91px, #fb0000 92px 92px, #fb0000 93px 93px, 
+             #fc0000 94px 94px, #fc0000 95px 95px, #fd0000 96px 96px, 
+             #fd0000 97px 97px, #fe0000 98px 98px, #fe0000 99px 99px, 
+             #ff0000 100px 100px;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>500</h1>
+    <p>Oops! Something went wrong.</p>
+    <a class="button" href="/" tabindex="0"><i class="icon-home"></i> Go back to the login page, it's better.</a>
+  </div>
+
+  <script nonce="{{nonce}}">
+    // Set focus to the anchor tag on page load
+    document.addEventListener('DOMContentLoaded', function() {
+  const button = document.querySelector('a.button');
+  if (button) {
+    button.focus();
+  }
+});
+  </script>
+</body>
+</html>

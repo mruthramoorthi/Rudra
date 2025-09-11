@@ -1,0 +1,13 @@
+.photos-pass{
+    width: 100px;
+    border-radius: 50%;
+}
+
+.photos-icons{
+    width: 30px;
+    border-radius: 100%;
+}
+
+.photos-icons-icon{
+    width: 30px;
+}

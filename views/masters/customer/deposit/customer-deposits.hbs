@@ -1,0 +1,204 @@
+<style>
+    .flex-box{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .customer_card{
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+        border-radius: 10px;
+        padding: 10px;
+        display: none;
+    }
+    .savings-profile{
+        width: 75px;
+    }
+    .address{
+        width: 250px;
+    }
+    .hr-margin{
+        margin: 10px 0 !important;
+    }
+    .display-f{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+    .stones-del{
+        width: 20px;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+    <div class="flex-box">
+        <div>
+            {{selectBox id="customer" options='nd:Customer'}}
+        </div>
+        <div class="customer_card">
+            {{createInput type="text" id="customername" placeholder="Customer Name"}}
+            <div id="customer_details">
+            </div>
+        </div>
+    </div>
+    <hr class="hr-margin">
+    <div class="flex-box">
+        {{createInput type="date" id="bonddate" placeholder="Change Date"}}
+        {{createInput type="date" id="maturitydate" placeholder="Maturity Date" othersForInput="readonly"}}
+        {{createInput type="number" id="amount" placeholder="Cash Amount" className="calculation"}}
+        {{selectBox id="banks" options="nd:Banks"}}
+        {{selectBox id="transactiontype" options="nd:Transaction Type"}}
+        {{createInput type="number" id="bank" placeholder="Bank Amount" value='0' className="calculation"}}
+
+        <label for="total">Total Deposit Amount: <font id="deposited-amount">0</font></label>
+        <label for="total">Total Deposit Gram : <font id="deposited-gram">0</font></label>
+        <input type="hidden" name="total_deposit_amount" id="total_deposit_amount" value="0">
+        <input type="hidden" name="total_deposit_weight" id="total_deposit_weight" value="0">
+        <input type="hidden" name="rate" id="rate" value="6000">
+    </div>
+    <div id="olddetails"></div><br>
+    <button id='old-btn' type='button'>Add Old</button>
+    <br>
+    <center><button type="button" id="add" name="add">Add</button></center>
+</div>
+<input type="hidden" name="oldpart" id="oldpart" value="0">
+<input type="hidden" name="exchangeFunction" id="exchangeFunction" class="exchangeFunction" value="0">
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function backEndCall_load_price(msg)
+    {
+        Sa("form-for-get-input","prices",msg.response);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        Sv("maturitydate",FutureDate(Val("bonddate"),365));
+        let thead = "<th>S.no</th><th>ID</th><th>Date</th><th>Delivery Date</th><th>Customer</th><th>Amount</th><th>Available</th><th>Balance</th><th>Action</th>";
+        let tfoot = "<td colspan='9'></td>";
+        if ({{checkingRights data=rights action="view"}})
+            fetchTableData('content', '1000', '1', 'content', '', '/customer-deposits/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        backEndCall("load_price", "/auth/price", "POST", undefined, undefined);
+        selectLoad('banks', '/customer-deposits/bank', content = 'application/json', event.target.value);
+        selectLoad('transactiontype', '/customer-deposits/transactionType', content = 'application/json', undefined);
+        selectLoad('customer', '/customer-deposits/customer', content = 'application/json', undefined);
+        document.addEventListener("click", (event) => {
+            const clickId = event.target.id;
+            if(event.target.classList=="print-iconi")
+            {
+                const pdfBtn = document.getElementById(event.target.id);
+                if ({{checkingRights data=rights action="print"}}) {
+                    pdfBtn.addEventListener("click", async () => {
+                        await openPDF("/customer-deposits/pdf","POST",{"id":pdfBtn.getAttribute("deposit")});
+                    });
+                }
+            }
+            if(event.target.classList=="exchangeFunction")
+            {
+                main_calculation()
+            }
+            if(event.target.classList=="stones-del")
+            {
+                main_calculation()
+            }
+            if(event.target.classList=="delete-iconi")
+            {
+                const uniquekey = document.getElementById(event.target.id).getAttribute('uniquekey');
+                const deleteKey = JSON.stringify({uniquekey});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/customer-deposits/delete", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="edit-iconi")
+            {
+                debugger
+                scrollToElementById("tabs-container");
+                const datas = Val(event.target.id,"datas");
+                setTimeout(()=>{
+                    Ss("customer",datas["id"]+"[r~12]"+datas["name"]);
+                },500);
+                setTimeout(()=>{
+                    Sv("customername",datas["savingname"]);
+                },1000);
+                Ss("group",datas["schemecode"]);
+                Sv("uniquekey",datas["uniqueid"]);
+                Sv("savingnumbers",datas["savings_number"]);
+                Sv("savingcount",datas["savings_count"]);
+                document.dispatchEvent(edit_event);
+            }
+        });
+        document.getElementById("bonddate").addEventListener("change", () => {
+            Sv("maturitydate",FutureDate(Val("bonddate"),365));
+        });
+        document.getElementById("customer").addEventListener("change", () => {
+            const formData=getFormData();
+            backEndCall("show_details_of_customer", "/customer-deposits/fetchDetails", "POST", undefined, formData);
+        });
+        function main_calculation()
+        {
+            const ex = document.querySelectorAll('.extras');
+            let extras_total = 0;
+            // Loop through each element and add its value to the sum
+            ex.forEach(input => {
+                extras_total += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+            });
+            const cash = Val("amount");
+            const bank = Val("bank");
+            const total = parseInt(valNum(cash)) + parseInt(valNum(bank)) + parseInt(valNum(extras_total));
+            const gram = parseFloat(total / valNum(Val("rate")));
+            Sv("total_deposit_amount",money(total,3,0));
+            Si("deposited-amount",money(total,3,0));
+            Sv("total_deposit_weight",money(gram,3,0));
+            Si("deposited-gram",money(gram,3,0));           
+        }
+    });
+    
+    document.getElementById("add").addEventListener("click", () => {
+        const formData=getFormData();
+        backEndCall(undefined, "/customer-deposits/insert", "POST", undefined, formData);
+    });
+    
+    function backEndCall_show_details_of_customer(msg)
+    {
+        debugger;
+        const datas = msg.response[0];
+        let design = "";
+        if(datas)
+        {
+            design = `<div class='flex-box'>
+                        <div>
+                            <img src='/images/profile.png' class='savings-profile'>
+                        </div>
+                        <div>
+                            <label>${caps(datas.name)}</label>
+                            <br>
+                            <label>${datas.primaryphonenumber}, ${datas.secondaryphonenumber}</label>
+                            <br>
+                            <label class='address'>${datas.address}</label>
+                        </div>
+                        <input type="hidden" name="ph1" id="ph1" value="${datas.primaryphonenumber}">
+                        <input type="hidden" name="ph2" id="ph2" value="${datas.secondaryphonenumber}">
+                        <input type="hidden" name="address" id="address" value="${datas.address}">
+                    </div>`;
+                    Sv("customername",datas.name);
+                showClass("customer_card");
+        }
+        else
+            h("customer_card");
+        document.getElementById("customer_details").innerHTML = design;
+    }
+</script>
+{{> footer }}

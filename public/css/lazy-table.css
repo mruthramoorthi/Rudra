@@ -1,0 +1,64 @@
+
+td, th{
+    padding: 0 10px;
+  }
+  
+  #lazy-content-div{
+    text-align: -webkit-center;
+    position: relative;
+  }
+  
+  .tfoot-lazy{
+    position: sticky;
+    bottom: 0;
+    background: royalblue;
+    color: white;
+    font-weight: 500;
+
+    left: 0;
+    z-index: 2;
+  }
+
+  .thead-lazy{
+    position: sticky;
+    background: royalblue;
+    color: white;
+    font-weight: 500;
+    top: 0;
+    z-index: 2;
+  }
+  
+  .right-cornor{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+
+  .lazy_inputs
+  {
+    width: 100px;
+    text-align: right;
+  }
+
+  .lazy_statistics{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 5px 15px;
+    color: white;
+    background: royalblue;
+    padding: 5px 10px;
+    border-radius: 10px;
+    width: 90%;
+  }
+
+  .laz-tbl{
+    border-collapse: collapse;
+  }
+
+  .laz-table-contain{
+    position: relative;
+    z-index: 1;
+    overflow: scroll;
+    max-height: 500px;
+  }

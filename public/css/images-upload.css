@@ -1,0 +1,82 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css');
+
+.image-upload-image-container {
+  display: none;
+  margin-top: 20px;
+}
+.image-upload-options {
+  margin-bottom: 20px;
+}
+.image-upload-video-container {
+  position: relative;
+  display: none;
+  width: 100%;
+}
+.image-upload-video {
+  width: 30%;
+  border: 1px solid black;
+}
+.crop-shape-btn {
+  margin-right: 10px;
+  cursor: pointer;
+}
+.drop-zone-for-image.over {
+  background-color: #f0f0f0;
+  color: #333;
+}
+.file-input-for-image {
+  display: none;
+}
+.image-upload-image-item {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+.image-upload-image-item img {
+  max-width: 115px;
+  border-radius: 8px;
+  height: 80px;
+  cursor: pointer;
+  object-fit: cover;
+}
+.image-upload-delete-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: auto 0 !important;
+  width: 25px;
+  font-size: 15px;
+  height: 25px;
+  text-align: center;
+}
+.image-upload-upload-img{
+  width: 50px;
+}
+.image-upload-upload-img:focus{
+  border: 2px solid grey;
+  background: lightgrey;
+  border-radius: 10px;;
+}
+.image-upload-access{
+  display: flex;
+  gap:10px;
+}
+.image-upload-label{
+  color:red;
+}
+.image-upload-place{
+text-align:center;
+color: blue;
+font-weight: 800;
+}
+.uploaders-img{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+}

@@ -1,0 +1,63 @@
+.custom-checkbox{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  
+  /* Hide the default checkbox but make it focusable */
+  .custom-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;  /* Makes the checkbox invisible */
+    pointer-events: auto;  /* Allow interactions with it */
+    margin-right: 10px;
+  }
+  
+  /* Custom checkbox style */
+  .custom-checkbox .checkbox {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #888;
+    border-radius: 20px;
+    display: inline-block;
+    position: relative;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  
+  /* Style for checked state */
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox {
+    background-color: lightgreen;  /* Checked background */
+    border-color: rgb(1, 245, 1);  /* Border color when checked */
+  }
+  
+  /* Add a checkmark using pseudo-element */
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox::before {
+    content: "✔";
+    position: absolute;
+    top: 2px;
+    left: 7px;
+    font-size: 14px;
+    color: white;
+  }
+  
+  /* Focus state styling */
+  .custom-checkbox input[type="checkbox"]:focus + .checkbox {
+    outline: 2px solid #007bff;  /* Outline on focus */
+    outline-offset: 2px;
+    border-color: #0056b3;
+  }
+  
+  /* Optional hover effect for custom checkbox */
+  .custom-checkbox .checkbox:hover {
+    border-color: #555;
+  }
+  
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox:hover {
+    background-color: #0056b3;
+    border-color: #00408d;
+  }
+  
+  /* Ensure the checkbox is still focusable (important for keyboard navigation) */
+  .custom-checkbox input[type="checkbox"]:focus + .checkbox {
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Add a focus ring for visibility */
+  }
+  

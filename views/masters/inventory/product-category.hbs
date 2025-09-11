@@ -1,0 +1,277 @@
+<style>
+#metal-boxes{
+    display: none;
+}
+
+#howmany{
+    display: none;
+}
+
+.display-f{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+#addcancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+#stonecancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+.toggle-div{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+.toggles{
+    background: royalblue;
+    color: white;
+    font-weight: 800;
+    text-align: center;
+    border-radius: 10px;
+    width: 40%;
+}
+#pro-slider-div{
+    height: 2px;
+    background: black;
+    margin: 10px auto 0 auto;
+    width: 20%;
+}
+#add-slider-div{
+    height: 2px;
+    background: black;
+    margin: 10px auto 0 auto;
+    width: 20%;
+    visibility: hidden;
+}
+#stone-slider-div{
+    height: 2px;
+    background: black;
+    margin: 10px auto 0 auto;
+    width: 20%;
+    visibility: hidden;
+}
+#addon-div{
+    display: none;
+}
+#stone-div{
+    display: none;
+}
+.main-tabs{
+    display: none !important;
+}
+    </style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="toggle-div"><label for="pro" id="pro" class="toggles">Product</label><label for="add" id="add" class="toggles">Add-On Product</label><label for="stone" id="stone" class="toggles">Stones</label></div>
+<div class="toggle-div"><div id="pro-slider-div"></div><div id="add-slider-div"></div><div id="stone-slider-div"></div></div>
+<div id="product-div">
+    <div class="snowdiv">
+        <div class="display-f">
+            {{selectBox id="products" options='nd: Product' classes='data-load'}}
+                {{createInput type="text" id="category" placeholder="Category Name"}}
+            {{createInput type="text" id="percentage" placeholder="Percentage"}}
+            <input type="hidden" id="uniquekey" name="uniquekey">
+        </div>
+        <div class="display-f">
+            <button id="saveButton" class="center" type="button">Save</button>
+            <button id="cancelButton" class="center" type="button">Cancel</button>
+        </div>
+    </div>
+    {{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+    {{/if}}
+</div>
+<br>
+<div id="addon-div">
+    <div class="snowdiv">
+        <div class="display-f">
+            {{createInput type="text" id="addontype" placeholder="Add-On Type"}}
+            {{createInput type="text" id="addonname" placeholder="Add-on Name"}}
+            <input type="hidden" id="adduniquekey" name="adduniquekey">
+        </div>
+        <div class="display-f">
+            <button id="addsaveButton" class="center" type="button">Save</button>
+            <button id="addcancelButton" class="center" type="button">Cancel</button>
+        </div>
+    </div>
+    <br>
+    {{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content-add">
+    </div>
+    <div id="loading-add">
+    </div>
+    {{/if}}
+</div>
+<div id="stone-div">
+    <div class="snowdiv">
+        <div class="display-f">
+            {{createInput type="text" id="stonetype" placeholder="Stone Type"}}
+            {{createInput type="text" id="stonename" placeholder="Stone Name"}}
+            <input type="hidden" id="stoneuniquekey" name="stoneuniquekey">
+        </div>
+        <div class="display-f">
+            <button id="stonesaveButton" class="center" type="button">Save</button>
+            <button id="stonecancelButton" class="center" type="button">Cancel</button>
+        </div>
+    </div>
+    <br>
+    {{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content-stone">
+    </div>
+    <div id="loading-stone">
+    </div>
+    {{/if}}
+</div>
+{{> formend }}
+{{> view }}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+     document.addEventListener("DOMContentLoaded", () => {
+        selectLoad('products', '/product-category/products', content = 'application/json', undefined);
+        
+        let thead = "<th>S.no</th><th>Product</th><th>Ctegory</th><th>Percentage</th><th>Action</th>";
+        let tfoot = "<td colspan='5'></td>";
+        if ({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/product-category/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        let thead1 = "<th>S.no</th><th>Type</th><th>Name</th><th>Status</th><th>Action</th>";
+        let tfoot2 = "<td colspan='5'></td>";
+        if ({{checkingRights data=rights action="view"}})
+        fetchTableData('content-add', '1000', '1', 'content-add', '', '/product-category/addonSelect', '50vh', 'lazy-content-add', undefined, thead1, tfoot2);
+        let thead3 = "<th>S.no</th><th>Type</th><th>Name</th><th>Status</th><th>Action</th>";
+        let tfoot4 = "<td colspan='5'></td>";
+        if ({{checkingRights data=rights action="view"}})
+        fetchTableData('content-stone', '1000', '1', 'content-add', '', '/product-category/stoneSelect', '50vh', 'lazy-content-stone', undefined, thead3, tfoot4);
+        document.getElementById("add").addEventListener("click", () => {
+            document.getElementById("add-slider-div").style.visibility = "visible";
+            document.getElementById("pro-slider-div").style.visibility = "hidden";
+            document.getElementById("stone-slider-div").style.visibility = "hidden";
+            document.getElementById("addon-div").style.display = "block";
+            document.getElementById("product-div").style.display = "none";
+            document.getElementById("stone-div").style.display = "none";
+        });
+        document.getElementById("pro").addEventListener("click", () => {
+            document.getElementById("pro-slider-div").style.visibility = "visible";
+            document.getElementById("add-slider-div").style.visibility = "hidden";
+            document.getElementById("stone-slider-div").style.visibility = "hidden";
+            document.getElementById("product-div").style.display = "block";
+            document.getElementById("addon-div").style.display = "none";
+            document.getElementById("stone-div").style.display = "none";
+        });
+        document.getElementById("stone").addEventListener("click", () => {
+            document.getElementById("pro-slider-div").style.visibility = "hidden";
+            document.getElementById("add-slider-div").style.visibility = "hidden";
+            document.getElementById("stone-slider-div").style.visibility = "visible";
+            document.getElementById("product-div").style.display = "none";
+            document.getElementById("addon-div").style.display = "none";
+            document.getElementById("stone-div").style.display = "block";
+        });
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/product-category/insert", "POST", undefined, formData);
+        });
+
+        document.getElementById("addsaveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/product-category/insertAdd", "POST", undefined, formData);
+        });
+
+        document.getElementById("stonesaveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/product-category/insertStone", "POST", undefined, formData);
+        });
+
+        document.getElementById("cancelButton").addEventListener("click", () => {
+            reloadSite();
+        });
+        document.getElementById("addcancelButton").addEventListener("click", () => {
+            reloadSite();
+        });
+        document.getElementById("stonecancelButton").addEventListener("click", () => {
+            reloadSite();
+        });
+        document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Ss("products",userDatas.product);
+                Sv("uniquekey",userDatas.uniqueid);
+                Sv("category",userDatas.category);
+                Sv("percentage",userDatas.percentage);
+                Si("saveButton", "Update");
+                document.getElementById('cancelButton').style.display="block";
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/product-category/delete", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="edit-icon-add")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Sv("adduniquekey",userDatas.uniqueid);
+                Sv("addontype",userDatas.type);
+                Sv("addonname",userDatas.name);
+                Si("addsaveButton", "Update");
+                document.getElementById('addcancelButton').style.display="block";
+            }
+            if(event.target.classList=="edit-icon-stone")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Sv("stoneuniquekey",userDatas.uniqueid);
+                Sv("stonetype",userDatas.type);
+                Sv("stonename",userDatas.name);
+                Si("stonesaveButton", "Update");
+                document.getElementById('stonecancelButton').style.display="block";
+            }
+            if(event.target.classList=="delete-icon-add")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this Add-on item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/product-category/deleteAdd", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="delete-icon-stone")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this Stone item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/product-category/deleteStone", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="just-check")
+            {
+                const updateSts = JSON.stringify({clickedId:clickedId});
+                backEndCall(undefined, "/product-category/update", "POST", undefined, updateSts);
+            }
+        });
+     });
+</script>
+{{> footer }}

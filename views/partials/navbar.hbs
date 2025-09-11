@@ -1,0 +1,161 @@
+<style>
+  /* Initially hide the Sun icon */
+  .brand-withbar{
+    display: flex;
+  }
+  .burger-icon2 {
+  width: 33px;
+  }
+  .brand{
+    margin-left: 3rem;
+  }
+  a{
+    color: black !important;
+  }
+  .moon-icon{
+    filter: invert(1);
+  }
+  .searchPages{
+    background: white !important;
+  }
+</style>
+
+</head>
+<body>
+<div class="overall-div">
+<div class="main-head-of-sw">
+<nav>
+  <div class="brand-withbar">
+    {{#if user }}
+  <div class="wrapper-sidebar-sidebar">
+      <input type="checkbox" id="btn-sidebar" hidden>
+      <label for="btn-sidebar" class="menu-btn">
+        <img class="fas fa-bars burger-icon2" src="/images/burger-menu.png">
+        <img class="fas fa-times burger-icon2" src="/images/burger-cross.png">
+      </label>
+      <div id="sidebar-sidebar">
+        <div class="title-sidebar">Recent Menu</div>
+      <div class="list-items-sidebar">
+          {{selectBox id="search-page" options='nd:Search' classes="searchPages"}}
+          {{!-- <div class="icons-sidebar">
+            <a href="#"><i class="fab fa-facebook-f li-sidebar"></i></a>
+            <a href="#"><i class="fab fa-twitter li-sidebar"></i></a>
+            <a href="#"><i class="fab fa-github li-sidebar"></i></a>
+            <a href="#"><i class="fab fa-youtube li-sidebar"></i></a>
+          </div> --}}
+        </div>
+      </div>
+    </div>
+    {{/if}}
+</div>
+<div id="notify-div">
+{{#if msg}}
+    <div class="custom-alert {{msg_type}}-alert" role="alert">
+      {{msg}}
+    </div>
+{{/if}}
+</div>
+    <div class="menu">
+{{#if user }}
+<div class="wrapper">
+    <a alt="Left" id="left-indi" tabindex="0"><img src="/images/leftArrow.png" id="left-in" class="burger-icon arrows"></a><div class="tooltip">Left</div></div>
+<div class="wrapper">
+    <a alt="right" id="right-indi" tabindex="0"><img src="/images/rightArrow.png" id="right-in" class="burger-icon arrows"></a><div class="tooltip">Right</div></div>
+<div class="wrapper">
+    <a href="/home" alt="Home" id="home-in"><img src="/images/home.png" class="burger-icon"></a><div class="tooltip">Home</div></div>
+<div class="wrapper">
+    <a href="/profile" alt="Profile" id="profile-sts"><img src="/images/profile.png" class="burger-icon"></a><div class="tooltip">Profile</div></div>
+<div class="wrapper">
+<a href="/auth/theme" alt="theme" id="theme-changer">
+  <!-- Moon Icon -->
+  {{#if (ifEquals user.theme "dstyle")}}
+  <svg id="theming-c"
+    xmlns="http://www.w3.org/2000/svg"
+    width="38"
+    height="38"
+    viewBox="0 0 24 24"
+    class="moon-icon"
+  >
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M12 3a6 6 0 0 0 9 9a9 9 0 1 1-9-9"
+    />
+  </svg>
+  {{else}}
+  <!-- Sun Icon -->
+  <svg id="theming-m"
+    xmlns="http://www.w3.org/2000/svg"
+    width="38"
+    height="38"
+    viewBox="0 0 24 24"
+    class="sun-icon"
+  >
+    <g
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+    </g>
+  </svg>
+  {{/if}}
+</a>
+<div class="tooltip">Theme</div>
+</div> 
+<div class="wrapper">
+    <a href="/auth/logout" alt="Logout" id="sign-out"><img src="/images/logout.png" class="burger-icon"></a><div class="tooltip">Logout</div></div>
+{{else}}
+    {{!-- <a href="/register">Register</a> --}}
+    {{!-- <a href="/">Login</a> --}}
+{{/if}}
+    </div>
+</nav>
+<hr>
+{{#if user }}
+  {{#if user.rights.length }}
+    {{{ routers }}}
+  {{/if}}
+<hr>
+{{!-- <div class="curve_container">
+  <div class="curve_shape">
+    <span class="curve_text">This is a sample text for the curve.</span>
+  </div>
+</div> --}}
+
+ <div id="tabs-container">
+    <div class="tabs" id="tabs">
+      <!-- Dynamic tabs will be added here -->
+    </div>
+    <div class="tab-content" id="tab-content">
+      <!-- Content of the active tab will be shown here -->
+    </div>
+  </div>
+  </div>
+  <input type="hidden" id="system_msg_type" name="system_msg_type" value="{{msg_type}}">
+<div id="definite-container">
+{{/if}}
+<input type="hidden" id="non-id" name="non-id" value="{{nonce}}">
+<div id="danger-alert">
+</div>
+
+<!-- Modal for displaying the original image -->
+    <div id="imgModal" class="modals">
+        <span class="close" id="closeModal">&times;</span>
+        <div class="modal-contents">
+            <img id="modalImg" src="" alt="Original Image">
+        </div>
+    </div>
+      <!-- Tab navigation -->
+    <div class="main-tabs">  
+      {{#if user }}
+        <label class="main-tab" id="entry-tab" tabindex="0">Entry</label>
+        <label class="main-tab" id="view-tab" tabindex="0">View</label>
+      {{/if}}
+    </div>

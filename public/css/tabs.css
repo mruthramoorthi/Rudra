@@ -1,0 +1,61 @@
+/* Basic styling for tabs */
+.tabs {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+  }
+  .sno-of-tab{
+    color: red;
+  }
+  .tab {
+    display: flex;
+    align-items: center;
+    padding: 0 3px;
+    cursor: pointer;
+    background-color: gray;
+    margin-right: 2px;
+    border-radius: 8px 8px 0 0;
+    transition: background-color 0.3s ease;
+  }
+  .full-width-l{
+    width: max-content;
+  }
+  .tab:hover {
+    background-color: lightgrey;
+    color: black;
+  }
+  .tab.active {
+    background-color: lightgrey;
+    color: black;
+  }
+  .tab-close:hover{
+    background: #cbcbcb;
+  }
+  .tab-close {
+    margin-left: 10px;
+    cursor: pointer;
+    color: #4c4040;
+    border-radius: 35px;
+    height: 25px;
+    font-size: larger;
+    text-align: center;
+    width: 25px;
+  }
+  .tab-reload {
+    cursor: pointer;
+    width: 25px;
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 15px;
+  }
+  .tab-reload:hover {
+    background: #cbcbcb;
+  }
+  .tab-content {
+    display: none;
+    margin-top: 20px;
+  }
+  
+  .tab-anchor{
+  display: none;
+  }

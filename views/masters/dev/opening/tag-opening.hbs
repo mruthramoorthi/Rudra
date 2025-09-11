@@ -1,0 +1,186 @@
+<style>
+    #join_op{
+        display: none;
+    }
+    .addcssfortable{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-around;
+        align-items: center;
+    }
+    #search{
+        padding: 5px;
+        border-radius: 50px !important;
+    }
+    #search-img{
+        width: 30px;
+    }
+    #search-div{
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+    .jewel-pic{
+        width: 50px; border-radius: 51%; padding: 2px; object-fit: cover; height: 50px;
+    }
+    .jewel-detail-div{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .tagged-jewel {
+        width: max-content;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+        font-family: Arial, sans-serif;
+    }
+    .tagged-jewel-title{
+        font-weight: 800;
+        color: royalblue;
+    }
+    .jwl-qty{
+        display: flex;
+        gap: 2px;
+    }
+    .pcswt{
+        width: 110px !important;
+    }
+    .date-time{
+        width: 120px !important;
+    }
+    .lotcode{
+        background: red;
+        color: white;
+        font-weight: 800;
+        padding: 2px 5px;
+        border-radius: 50%;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="addcssfortable">
+        {{selectBox id="counter" options='nd:Counter'}}
+        {{selectBox id="product" options='nd:Category'}}
+        {{selectBox id="typeofjewel" options='nd:Jewel Type'}}
+        {{selectBox id="subtype" options='nd:Sub Type'}}
+        {{selectBox id="lotno" options='nd:Lot'}}
+    <div>
+        <label>Weight : <font id="Weight">0</font></label><br>
+        <label>Pcs : <font id="Pcs">0</font></label>
+    </div>
+        {{createInput type="date" id="date" placeholder="Date" className="pcswt"}}
+        {{imageUpload id="photo" noncei=nonce placeholder="Jewels Photo"}}
+    </div>
+    <hr style="margin: 10px 0 !important;">
+    <div class="addcssfortable">
+        {{createInput type="text" id="tag" placeholder="Tag" className="pcswt"}}
+        {{createInput type="number" id="purity" placeholder="Purity" className="pcswt"}}
+        {{createInput type="number" id="weight" placeholder="Weight" className="pcswt"}}
+        {{createInput type="number" id="pcs" placeholder="Pcs" className="pcswt"}}
+        {{createInput type="text" id="stone" placeholder="Stone Name" className="pcswt"}}
+        {{createInput type="number" id="scount" placeholder="Stone Count" className="pcswt"}}
+        {{createInput type="number" id="sweight" placeholder="Stone Wt" className="pcswt"}}
+        {{createInput type="number" id="sprice" placeholder="Stone Cost" className="pcswt"}}
+        {{createInput type="number" id="caratsize" placeholder="Carat Size" className="pcswt"}}
+        <div>
+            {{createInput type="number" id="caratprice" placeholder="Carat Price" className="pcswt"}}
+            <label>Price : <font id="carat_cals">0</font></label>
+        </div>
+    </div>
+    <br>
+    <center><button type="button" id="save">Save</button></center>
+</div>
+
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th>Tag</th><th>Jeweltype</th><th>Subtype</th><th>Counter</th><th>Weight</th><th>Pcs</th><th>Month</th><th>Date</th><th>Action</th>";
+        let tfoot = "";
+        fetchTableData('content', '1000', '1', 'content', '', '/tag-opening/select', '50vh', 'lazy-content', undefined, thead, tfoot, "tagtable");
+        selectLoad('counter', '/tag-opening/counter', content = 'application/json', undefined);
+        document.getElementById('counter').addEventListener('change', function(event) {
+            selectLoad('product', '/tag-opening/loadCate', content = 'application/json', event.target.value);
+        });
+        document.getElementById('product').addEventListener('change', function(event) {
+            selectLoad('typeofjewel', '/tag-opening/loadJewel', content = 'application/json', event.target.value);
+        });
+        document.getElementById('typeofjewel').addEventListener('change', function(event) {
+            selectLoad('subtype', '/tag-opening/subType', content = 'application/json', event.target.value+"[w~12]"+Val("product"));
+        });
+        document.getElementById('subtype').addEventListener('change', function(event) {
+            const counter = Val("counter");
+            const product = Val("product");
+            const jeweltype = Val("typeofjewel");
+            const subtype = Val("subtype");
+            const allData = JSON.stringify({counter,product,jeweltype,subtype});
+            selectLoad('lotno', '/tag-opening/lot', content = 'application/json', allData);
+        });
+        document.getElementById('lotno').addEventListener('change', function(event) {
+            const formData = getFormData();
+            backEndCall("tag_details", "/tag-opening/tagDetails", "POST", undefined, formData);
+        });
+        document.addEventListener("click", (event) => {
+            const clickId = event.target.id;
+            if(clickId=="save")
+            {
+                const formData=getFormData();
+                backEndCall(undefined, "/tag-opening/insert", "POST", undefined, formData);
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                    backEndCall(undefined, "/tag-opening/delete", "POST", undefined, deleteKey);
+            }
+        });
+        document.addEventListener('keyup', function(event) {
+            const clickId = event.target.id;
+            if(clickId=="caratsize")
+            {
+                carat_calc(clickId);
+            }
+            if(clickId=="caratprice")
+            {
+                carat_calc(clickId);
+            }
+        });
+    });
+    function carat_calc(id)
+    {
+        const caratsize = valNum(Val("caratsize"));
+        const caratprice = valNum(Val("caratprice"));
+        let carat_price = 0;
+        carat_price = parseFloat(caratsize * caratprice);
+        Si("carat_cals", money(carat_price, 3, 1));
+    }
+    function backEndCall_tag_details(msg)
+    {
+        Si("Weight","0");
+        Si("Pcs","0");
+        if(msg.success)
+        {
+            Si("Weight",msg.weight);
+            Si("Pcs",msg.pcs);
+        }
+    }
+</script>
+{{> footer }}

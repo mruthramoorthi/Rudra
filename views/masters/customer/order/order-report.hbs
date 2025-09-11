@@ -1,0 +1,96 @@
+<style>
+    .display-flexing{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .exchange-list{
+        display: none;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+
+<div class="snowdiv addcssfortable">
+    <div class="display-flexing">
+    {{createInput id="fdate" type="date" placeholder="From"}}
+    {{createInput id="todate" type="date" placeholder="To"}}
+    {{selectBox id="decide" options="nd: - Report on - ,1:allotment,2:non-allotment,3:delivered,4:cancelled"}}
+    <button type="button" id="loadrepot">Load</button>
+    <button type="button" id="printing">Print</button>
+</div>
+<br>
+  <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function load_report()
+    {
+        let thead = "<th>S.no</th><th>Order ID</th><th>Customer</th><th>Jewel</th><th>Pcs</th><th>Weight</th><th>Date</th><th>Advance</th><th>Total</th><th>Action</th><th>D-Date</th><th>C-Date</th><th>Assign</th>";
+        let tfoot = "<td colspan='6'></td>";
+        fetchTableData('content', '1000', '1', 'content', '', '/order-report/select', '50vh', 'lazy-content', {fdate:Val("fdate"),todate:Val("todate"),decide:Val("decide")}, thead, tfoot);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        load_report();
+    });
+    document.addEventListener("click", async (event) => {
+        const clickedId = event.target.id;
+        const dynamic = clickedId.split("smith")[1];
+        if(dynamic)
+        selectLoad('smith'+dynamic, '/order-report/smith', content = 'application/json', undefined);
+        const classList = event.target.classList;
+        if(classList=="assign-btn")
+        {
+            const clickedId = event.target.id;
+            const dynamic = clickedId.split("assign")[1];
+            const orderid = Val("orderid"+dynamic);
+            const ordercode = Val("ordercode"+dynamic);
+            const smith = Val("smith"+dynamic);
+            const smithdate = Val("smithddate"+dynamic);
+            const customerdate = Val("smithcdate"+dynamic);
+            const unique = Val("unique"+dynamic);
+            backEndCall("allotment", "/order-report/allot", "POST", undefined, JSON.stringify({orderid,ordercode,smith,smithdate,customerdate,unique}));
+        }
+        if(event.target.id=="printing")
+        {
+            await openPDF("/order-report/pdf","POST",{"fdate":Val("fdate"), "todate":Val("todate"), "decide":Val("decide")});
+        }
+        if(event.target.closest('tr.exchange-list'))
+        {
+            const elements = document.querySelectorAll('.exchange-list');
+            elements.forEach(el => {
+                el.style.display = 'none';
+            });
+            if(document.getElementById(clickedId).style.display!="block")
+                s(clickedId,"block");
+        }
+        if(clickedId=="loadrepot")
+        {
+            load_report();
+        }
+    });
+    document.addEventListener("focusin", async (event) => {
+        const clickedId = event.target.id;
+        const dynamic = clickedId.split("smith")[1];
+        if(dynamic)
+        selectLoad('smith'+dynamic, '/order-report/smith', content = 'application/json', undefined);
+    });
+    function backEndCall_allotment(msg)
+    {
+
+    }
+</script>
+{{> footer }}

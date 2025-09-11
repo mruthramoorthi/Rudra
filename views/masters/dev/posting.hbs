@@ -1,0 +1,41 @@
+<style>
+.main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+    <button type="button" id="posting">Post</button>
+    <br>
+    <button type="button" id="down">Download</button>
+</div>
+<div id="apis">
+<a href="http://localhost:5000/routes/dev-scr/dump/powerbase_backup.sql" download>
+  Download powerbase_backup.sql
+</a>
+</div>
+
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    backEndCall("show_tables", "/posting/showDb", "GET", undefined, undefined);
+    function backEndCall_show_tables(msg)
+    {
+        msg.files.forEach(file => {
+            // Si("apis",`<a href='http://localhost:5000/routes/dev-scr/dump/${file}' method='get' download='${file}' download>Download DB1</a>`);
+        });
+    }
+    document.getElementById("posting").addEventListener("click", async () => {
+        backEndCall(undefined, "/posting/copyTable", "POST", undefined, undefined);
+    });
+    document.getElementById("down").addEventListener("click", async () => {
+        backEndCall(undefined, "/posting/downloadTable", "GET", undefined, undefined);
+    });
+</script>
+{{> footer }}

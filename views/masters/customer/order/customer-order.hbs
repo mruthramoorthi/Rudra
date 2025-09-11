@@ -1,0 +1,1132 @@
+<style>
+.jewels-permenent{
+    display: none;
+}
+.addcssfortable{
+    display: flex;
+    gap:10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.addcssfortable1{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.addcssfortable2{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.buy-with-cash-div{
+    display: none;
+}
+.final-calc{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+}
+.extras{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.stones-del{
+    width: 20px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+.addon-stn-del{
+    width: 20px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+.display-f{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+.adding{
+    background: burlywood;
+    border-radius: 10px;
+    margin:5px 0;
+}
+.stone{
+    width: 20px;
+}
+#cancel{
+    background: red;
+    color: white;
+}
+.adjust{
+    display: flex;
+    gap: 10px;
+}
+.wastage-change{
+    width: 100%;
+}
+.mc-change{
+    width: 100%;
+}
+.input-containeri{
+    width: "";
+}
+.magining{
+    margin:5px 0;
+}
+.pcswt{
+    width: 8% !important;
+}
+.wtmc{
+    width: 70% !important;
+}
+.adj-box:focus{
+    border: 2px solid grey !important;
+}
+.adj-box{
+    width: 80px;
+    text-align: right;
+    height: 20px;
+}
+.adj{
+    justify-content: space-between;
+}
+.readonly{
+    display: none;
+}
+.approx{
+    float: right;
+}
+#jewel_price{
+    color: red;
+}
+.customer_card{
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+}
+.flex-box{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.savings-profile{
+        width: 75px;
+    }
+    .address{
+        width: 250px;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="flex-box">
+        {{selectBox id="customer" options='nd:Customer'}}
+        <div class="customer_card">
+            {{createInput type="text" id="customername" placeholder="Customer Name"}}
+            <div id="customer_details">
+            </div>
+        </div>
+    </div>
+     <div class="addcssfortable">
+        {{selectBox id="product" options='nd:Category'}}
+        {{selectBox id="typeofjewel" options='nd:Jewel Type'}}
+        {{selectBox id="subtype" options='nd:Sub Type'}}
+        {{createInput type="number" id="pcs" placeholder="Pieces" othersForDiv="pcswt"}}
+        {{createInput type="number" id="totalweight" placeholder="Total Weight" className='jewel_calculation' othersForDiv="pcswt"}}
+        {{imageUpload id="photo" noncei=nonce placeholder="Jewels Photo"}}
+        <div id="adjusters">
+            
+        </div>
+        <div>
+            <button id='stone-btn' type='button'><img src="/images/stone.png" class="stone"> Add Stone</button><br><br>
+            <label for="" class="approx">Price : <font id="jewel_price">0</font></label>
+        </div>
+        <input type="hidden" id="addid" name="addid" value="">
+        <input type="hidden" id="jewelamount" name="jewelamount" value="0">
+    </div>
+    <div class='stonedetails' id='stonedetails'></div>
+    <div class="addcssfortable1 adding">
+        <button type="button" id="add">Add Jewel</button>
+        <button type="button" id="refresh">Refresh</button>
+    </div>
+    <div>
+        <center><table class="table-bordered"><thead><tr><th>Photo</th><th>Pcs</th><th>Jewel Details</th><th>Stone</th><th>Wt</th><th>Amount</th><th>Action</th></tr></thead><tbody id="order-adder"></tbody></table></center>
+    </div>
+</div>
+<div class="snowdiv">
+    <div style="display: flex; gap: 10px; width: 100%;">
+        <div style="width: 50%;">
+            {{exchange}}
+            <center>
+                <div class="addcssfortable magining">
+                    {{createInput type="date" id="orderdate" placeholder="Change Date"}}
+                    {{createInput type="date" id="deliverydate" placeholder="Delivery Date"}}
+                    {{createInput type="number" id="advance" placeholder="Advance Amount (cash)" className="calculation"}}
+                </div>
+                <div class="addcssfortable magining">
+                    {{selectBox id="att1" options="nd:primary Atteneder"}}
+                    {{selectBox id="att2" options="nd:secondary Attender"}}
+                    {{selectBox id="att3" options="nd:Final Attender"}}
+                </div>
+                <div class="addcssfortable1 magining">
+                    <button type="button" id="save">Save</button>
+                    <button type="button" id="save_quot">quotation</button>
+                    <button type="button" id="cancel">Cancel</button>
+                </div>
+            </center>
+        </div>
+        <div style="width: 50%;">
+            <div style="display: flex; justify-content:space-between;">
+                <div>
+                    {{bank_transactions}}
+                </div>
+                <div>
+                    <table>
+                        <tr><th>Grand Total (<font id="total_weights">0</font>.G)</th><td>:</td><td class="right-align"> <font id="grand_amounts">0</font></td></tr>
+                        <tr><th>GST</th><td>:</td><td class="right-align"> (<font id="gst_perc">0</font>%) <font id="gst_value">0</font></td></tr>
+                        <tr><th>Advance<br>(B)<font id="advance_bank_amounts">0</font><br>(C)<font id="advance_amounts">0</font></th><td>:</td><td class="right-align"><font id="advanced">0</font></td></tr>
+                        <tr><th>Old (<font id="old_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="old_amounts">0</font></td></tr>
+                        <tr><th>Pure (<font id="pure_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="pure_amounts">0</font></td></tr>
+                        <tr><th>Jewel (<font id="exchange_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="ex_amounts">0</font></td></tr>
+                        <tr><th>Coin (<font id="coin_weights">0</font> .G)</th><td>:</td><td class="right-align"> <font id="coin_amounts">0</font></td></tr>
+                        <tr><th>Total With GST</th><td>:</td><td class="right-align"> <font id="gst_amounts">0</font></td></tr>
+                        <tr><th>After Reduction</th><td>:</td><td class="right-align"> <font id="reduction_amounts">0</font></td></tr>
+                        <tr><th>Discount</th><td>:</td><td class="right-align"> <font id="discount_amounts">0</font></td></tr>
+                        <tr><th>Round Off</th><td>:</td><td class="right-align"> <font id="round_off_amounts">0</font></td></tr>
+                        <tr><th>Net Total</th><td>:</td><td class="right-align"> <font id="net_amounts">0</font></td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+        <br>
+    <div class="final-calc">
+        <div>
+            <input type="hidden" id="rowedit" name="rowedit" value="0">
+            <input type="hidden" name="allrowid" id="allrowid" value="">
+            <input type="hidden" name="orderid" id="orderid" value="">
+            <input type="hidden" name="order_id" id="order_id" value="">
+            <input type="hidden" name="stonepart" id="stonepart" value="">
+            <input type="hidden" name="oldpart" id="oldpart" value="">
+            <input type="hidden" name="exchangeFunction" id="exchangeFunction" class="exchangeFunction" value="0">
+        </div>
+        <div>
+            <input type="hidden" name="total_weights_value" id="total_weights_value" value="">
+            <input type="hidden" name="total_amounts_value" id="total_amounts_value" value="">
+            <input type="hidden" name="advance_bank_amounts_value" id="advance_bank_amounts_value" value="">
+            <input type="hidden" name="advance_amounts_value" id="advance_amounts_value" value="">
+            <input type="hidden" name="old_weights_value" id="old_weights_value" value="">
+            <input type="hidden" name="old_waste_value" id="old_waste_value" value="">
+            <input type="hidden" name="old_amounts_value" id="old_amounts_value" value="">
+            <input type="hidden" name="pure_weights_value" id="pure_weights_value" value="">
+            <input type="hidden" name="pure_amounts_value" id="pure_amounts_value" value="">
+            <input type="hidden" name="exchange_weights_value" id="exchange_weights_value" value="">
+            <input type="hidden" name="ex_amounts_value" id="ex_amounts_value" value="">
+            <input type="hidden" name="coin_weights_value" id="coin_weights_value" value="">
+            <input type="hidden" name="coin_amounts_value" id="coin_amounts_value" value="">
+            <input type="hidden" name="reduction_amounts_value" id="reduction_amounts_value" value="">
+            <input type="hidden" name="grand_amounts_value" id="grand_amounts_value" value="">
+            <input type="hidden" name="gst_perc_value" id="gst_perc_value" value="">
+            <input type="hidden" name="gst_value_value" id="gst_value_value" value="">
+            <input type="hidden" name="gst_amounts_value" id="gst_amounts_value" value="">
+            <input type="hidden" name="discount_amounts_value" id="discount_amounts_value" value="">
+            <input type="hidden" name="round_off_amounts_value" id="round_off_amounts_value" value="">
+            <input type="hidden" name="net_amounts_value" id="net_amounts_value" value="">
+        </div>
+    </div>
+</div>
+<input type="hidden" name="gst" id="gst" value="3">
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    const pdfs = sessionStorage.getItem('pdf');
+    if(pdfs)
+    {
+        openPDF("/customer-order/pdf","POST",{"id":pdfs});
+    }
+function backEndCall_load_jewels(msg)
+{
+    refrshing();
+    Sat("order-adder",'jewel'+msg.id,msg.html);
+    Sv("addid",Val("addid")+msg.id+"[s~1]");
+    final_calculation()
+}
+function backEndCall_load_price(msg)
+{
+    Sa("form-for-get-input","prices",msg.response);
+}
+function backEndCall_jewel_control(msg)
+{
+    if(msg.success)
+    {
+        const product = Val("product");
+        const product_rate = valNum(Val(product));
+        let rate = 0;
+        if(msg.response.spltype!='nd' && msg.response.spltype)
+            rate = msg.response.splprice;
+        else
+            rate = product_rate;
+        const stonetotalweights = document.querySelectorAll('.stonetotalweights');
+        let stonetotalweight = 0;
+        // Loop through each element and add its value to the sum
+        stonetotalweights.forEach(input => {
+            stonetotalweight += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+        });
+        const totalweight = parseFloat(valNum(Val("totalweight"))) -stonetotalweight;
+        let min_w_gram = 0;
+        let min_w_amount = 0;
+        let min_w_perc = 0;
+        if (msg.response.wastetype == "perc")
+        {
+            min_w_perc = msg.response.minwaste;
+            min_w_gram = parseFloat(valNum(msg.response.minwaste / 100)) * parseFloat(valNum(totalweight));
+            min_w_amount = parseFloat(valNum(min_w_gram)) * parseFloat(valNum(rate));
+        }
+        else if (msg.response.wastetype == "amt")
+        {
+            min_w_amount = parseFloat(valNum(msg.response.minwaste)) * parseFloat(valNum(totalweight));
+        }
+        let max_w_gram = 0;
+        let max_w_amount = 0;
+        let max_w_perc = 0;
+        let w_read_only = "";
+        let mc_read_only = "";
+        if (msg.response.wastetype == "perc")
+        {
+            max_w_perc = msg.response.maxwaste;
+            max_w_gram = parseFloat(valNum(msg.response.maxwaste / 100)) * parseFloat(valNum(totalweight));
+            max_w_amount = parseFloat(valNum(max_w_gram)) * parseFloat(valNum(rate));
+        }
+        else if (msg.response.wastetype == "amt")
+        {
+            w_read_only = "readonly";
+            max_w_amount = parseFloat(valNum(msg.response.maxwaste)) * parseFloat(valNum(totalweight));
+        }
+        let min_mc_gram = 0;
+        let min_mc_amount = 0;
+        let min_mc_perc = 0;
+        if (msg.response.mctype == "perc")
+        {
+            min_mc_perc = msg.response.minmc;
+            min_mc_gram = parseFloat(valNum(msg.response.minmc / 100)) * parseFloat(valNum(totalweight));
+            min_mc_amount = parseFloat(valNum(min_mc_gram)) * parseFloat(valNum(rate));
+        }
+        else if (msg.response.mctype == "amt")
+        {
+            min_mc_amount = parseFloat(valNum(msg.response.minmc)) * parseFloat(valNum(totalweight));
+        }
+        let max_mc_gram = 0;
+        let max_mc_amount = 0;
+        let max_mc_perc = 0;
+        if (msg.response.mctype == "perc")
+        {
+            max_mc_perc = msg.response.maxmc;
+            max_mc_gram = parseFloat(valNum(msg.response.maxmc / 100)) * parseFloat(valNum(totalweight));
+            max_mc_amount= parseFloat(valNum(max_mc_gram)) * parseFloat(valNum(rate));
+        }
+        else if (msg.response.mctype == "amt")
+        {
+            mc_read_only = "readonly";
+            max_mc_amount= parseFloat(valNum(msg.response.maxmc)) * parseFloat(valNum(totalweight));
+        }
+        document.getElementById('notify-div').innerHTML='';
+        Si("adjusters",`<div class="display-f adj"><label><b>Waste</b></label>
+        <input type="hidden" name="minwastep" id="minwastep" value="${min_w_perc}"/>
+        <input type="hidden" name="minwasteg" id="minwasteg" value="${min_w_gram}"/>
+        <input type="hidden" name="minwastea" id="minwastea" value="${min_w_amount}"/>
+        <input type="hidden" name="maxwastep" id="maxwastep" value="${max_w_perc}"/>
+        <input type="hidden" name="maxwasteg" id="maxwasteg" value="${max_w_gram}"/>
+        <input type="hidden" name="maxwastea" id="maxwastea" value="${max_w_amount}"/>
+        <div><input type="number" name="wastep" id="wastep" class='adj-box range_adjusters ${w_read_only}' value="${max_w_perc}"/><label>.%</label></div>
+        <div><input type="number" name="wasteg" id="wasteg" class='adj-box range_adjusters ${w_read_only}' value="${max_w_gram}"/><label>.G</label></div>
+        <div><input type="number" name="wastea" id="wastea" class='adj-box range_adjusters' value="${max_w_amount}"/><label>./-</label></div></div>
+            <input type='range' id='waste' name='waste' class='range_adjusters' step='1' ctype='${msg.response.wastetype}' minwaste='${min_w_perc}' maxwaste='${max_w_perc}' min='${min_w_amount}' max='${max_w_amount}' value='${max_w_amount}'>
+            
+            <div class="display-f adj"><label><b>MC</b></label>
+            <input type="hidden" name="minmcp" id="minmcp" value="${min_mc_perc}"/>
+            <input type="hidden" name="minmcg" id="minmcg" value="${min_mc_gram}"/>
+            <input type="hidden" name="minmca" id="minmca" value="${min_mc_amount}"/>
+            <input type="hidden" name="maxmcp" id="maxmcp" value="${max_mc_perc}"/>
+            <input type="hidden" name="maxmcg" id="maxmcg" value="${max_mc_gram}"/>
+            <input type="hidden" name="maxmca" id="maxmca" value="${max_mc_amount}"/>
+            <div><input type="number" name="mcp" id="mcp" class='adj-box range_adjusters ${mc_read_only}' value="${max_mc_perc}"/><label>.%</label></div>
+            <div><input type="number" name="mcg" id="mcg" class='adj-box range_adjusters ${mc_read_only}' value="${max_mc_gram}"/><label>.G</label></div>
+            <div><input type="number" name="mca" id="mca" class='adj-box range_adjusters' value="${max_mc_amount}"/><label>./-</label></div></div>
+            <input type='range' id='mc' name='mc' class='range_adjusters' step='1' ctype='${msg.response.mctype}' minmc='${min_mc_perc}' maxmc='${max_mc_perc}' min='${min_mc_amount}' max='${max_mc_amount}' value='${max_mc_amount}'>
+            <input type="hidden" name="splprice" id="splprice" ctype='${msg.response.spltype}' value="${msg.response.splprice}"/>`);
+    }
+}
+function range_adjusters(id)
+{
+    const waste = valNum(Val("waste"));
+    const mc = valNum(Val("mc"));
+    const wastep = valNum(Val("wastep"));
+    const mcp = valNum(Val("mcp"));
+    const wasteg = valNum(Val("wasteg"));
+    const mcg = valNum(Val("mcg"));
+    const wastea = valNum(Val("wastea"));
+    const mca = valNum(Val("mca"));
+    const waste_type = Val("waste","ctype");
+    const mc_type = Val("mc","ctype");
+    const product = Val("product");
+    const product_rate = valNum(Val(product));
+    const splprice = valNum(Val("splprice"));
+    const spltype = Val("splprice","ctype");
+    const totalweight = valNum(Val("totalweight"));
+    const minwastep = money(valNum(Val("minwastep")),3,0);
+    const minwasteg = money(valNum(Val("minwasteg")),3,0);
+    const minwastea = money(valNum(Val("minwastea")),3,0);
+    const maxwastep = money(valNum(Val("maxwastep")),3,0);
+    const maxwasteg = money(valNum(Val("maxwasteg")),3,0);
+    const maxwastea = money(valNum(Val("maxwastea")),3,0);
+    const minmcp = money(valNum(Val("minmcp")),3,0);
+    const minmcg = money(valNum(Val("minmcg")),3,0);
+    const minmca = money(valNum(Val("minmca")),3,0);
+    const maxmcp = money(valNum(Val("maxmcp")),3,0);
+    const maxmcg = money(valNum(Val("maxmcg")),3,0);
+    const maxmca = money(valNum(Val("maxmca")),3,0);
+    const stonetotalweights = document.querySelectorAll('.stonetotalweights');
+    let stonetotalweight = 0;
+    // Loop through each element and add its value to the sum
+    stonetotalweights.forEach(input => {
+        stonetotalweight += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+    const weight = valNum(totalweight) - valNum(stonetotalweight);
+    let rate = 0;
+    if(spltype!='nd' && spltype)
+        rate = splprice;
+    else
+        rate = product_rate;
+    if(id=="waste" || id=="wastea")
+    {
+        let waste_gram = 0;
+        let waste_percentage = 0;
+        if(waste_type=="perc")
+        {
+            waste_gram = parseFloat(valNum(waste)) / parseFloat(valNum(rate));
+            waste_percentage = (waste_gram / parseFloat(valNum(weight))) * 100;
+        }
+        Sv("wastep",money(waste_percentage,3,0));
+        Sv("wasteg",money(waste_gram,3,0));
+        if(id=="waste")
+        Sv("wastea",money(waste,3,0));
+        else
+        Sv("waste",money(wastea,3,0));
+    }
+    if(id=="mc" || id=="mca")
+    {
+        let mc_gram = 0;
+        let mc_percentage = 0;
+        if(mc_type=="perc")
+        {
+            mc_gram = parseFloat(valNum(mc)) / parseFloat(valNum(rate));
+            mc_percentage = (mc_gram / parseFloat(valNum(weight))) * 100;
+        }
+        Sv("mcp",money(mc_percentage,3,0));
+        Sv("mcg",money(mc_gram,3,0));
+        if(id=="mc")
+        Sv("mca",money(mc,3,0));
+        else
+        Sv("mc",money(mca,3,0));
+    }
+    if(id=="mcp")
+    {
+        let mc_gram = 0;
+        let mc_amount = 0;
+        if(waste_type=="perc")
+        {
+            mc_gram = parseFloat(valNum(mcp / 100)) * parseFloat(valNum(weight));
+            mc_amount = parseFloat(valNum(mc_gram)) * parseFloat(valNum(rate));
+        }
+        else
+        {
+            mc_amount = mc;
+        }
+        Sv("mc",money(mc_amount,3,0));
+        Sv("mcg",money(mc_gram,3,0));
+        Sv("mca",money(mc_amount,3,0));
+    }
+    if(id=="wastep")
+    {
+        let waste_gram = 0;
+        let waste_amount = 0;
+        if(waste_type=="perc")
+        {
+            waste_gram = parseFloat(valNum(wastep / 100)) * parseFloat(valNum(weight));
+            waste_amount = parseFloat(valNum(waste_gram)) * parseFloat(valNum(rate));
+        }
+        else
+        {
+            waste_amount = waste;
+        }
+        Sv("waste",money(waste_amount,3,0));
+        Sv("wasteg",money(waste_gram,3,0));
+        Sv("wastea",money(waste_amount,3,0));
+    }
+    if(id=="mcg")
+    {
+        let mc_percentage = 0;
+        let mc_amount = 0;
+        if(waste_type=="perc")
+        {
+            mc_percentage = (mcg / weight) * 100;
+            mc_amount = mcg * rate;
+        }
+        else
+        {
+            mc_amount = mc;
+        }
+        Sv("mc",money(mc_amount,3,0));
+        Sv("mcp",money(mc_percentage,3,0));
+        Sv("mca",money(mc_amount,3,0));
+    }
+    if(id=="wasteg")
+    {
+        let waste_percentage = 0;
+        let waste_amount = 0;
+        if(waste_type=="perc")
+        {
+            waste_percentage = (wasteg / weight) * 100;
+            waste_amount = wasteg * rate;
+        }
+        else
+        {
+            waste_amount = mc;
+        }
+        Sv("waste",money(waste_amount,3,0));
+        Sv("wastep",money(waste_percentage,3,0));
+        Sv("wastea",money(waste_amount,3,0));
+    }
+    jewel_calculation()
+}
+function backEndCall_edit_jewels(msg)
+{
+    setTimeout(()=>{
+        Ss("customer",msg.userid);
+    },500);
+    Sv("orderid",msg.orderid);
+    Sv("order_id",msg.order_id);
+    Sv("addid",msg.id);
+    Si("order-adder",msg.html);
+    Si("olddetails","");
+    Sv("orderdate",rawDateFormat(msg.item.orderdate,'ymd'));
+    Sv("deliverydate",rawDateFormat(msg.item.deliverydate,'ymd'));
+    Ss("banks",msg.item.bank);
+    Ss("transactiontype",msg.item.transactiontype);
+    Sv("bank",msg.item.advance_bank);
+    Sv("advance",msg.item.advance_cash);
+    Ss("att1",msg.item.attender1);
+    Ss("att2",msg.item.attender2);
+    Ss("att3",msg.item.attender3);
+    oldSet(msg.ex);
+    final_calculation();
+    scrollToElementById("form-for-get-input");
+    document.dispatchEvent(edit_event);
+}
+function jwl_range_adjusters(id)
+{
+    const ids = id.split("_");
+    const waste = valNum(Val("waste_"+ids[1]));
+    const mc = valNum(Val("mc_"+ids[1]));
+    const wastep = valNum(Val("wastep_"+ids[1]));
+    const mcp = valNum(Val("mcp_"+ids[1]));
+    const wasteg = valNum(Val("wasteg_"+ids[1]));
+    const mcg = valNum(Val("mcg_"+ids[1]));
+    const wastea = valNum(Val("wastea_"+ids[1]));
+    const mca = valNum(Val("mca_"+ids[1]));
+    const waste_type = Val("waste_"+ids[1],"ctype");
+    const mc_type = Val("mc_"+ids[1],"ctype");
+    const product = Val("product_"+ids[1]);
+    const product_rate = valNum(Val(product));
+    const splprice = valNum(Val("splprice_"+ids[1]));
+    const spltype = Val("splprice_"+ids[1],"ctype");
+    const totalweight = valNum(Val("individual-jwl-wt"+ids[1]));
+    const minwastep = money(valNum(Val("minwastep_"+ids[1])),3,0);
+    const minwasteg = money(valNum(Val("minwasteg_"+ids[1])),3,0);
+    const minwastea = money(valNum(Val("minwastea_"+ids[1])),3,0);
+    const maxwastep = money(valNum(Val("maxwastep_"+ids[1])),3,0);
+    const maxwasteg = money(valNum(Val("maxwasteg_"+ids[1])),3,0);
+    const maxwastea = money(valNum(Val("maxwastea_"+ids[1])),3,0);
+    const minmcp = money(valNum(Val("minmcp_"+ids[1])),3,0);
+    const minmcg = money(valNum(Val("minmcg_"+ids[1])),3,0);
+    const minmca = money(valNum(Val("minmca_"+ids[1])),3,0);
+    const maxmcp = money(valNum(Val("maxmcp_"+ids[1])),3,0);
+    const maxmcg = money(valNum(Val("maxmcg_"+ids[1])),3,0);
+    const maxmca = money(valNum(Val("maxmca_"+ids[1])),3,0);
+    const stonetotalweight = money(valNum(Val("stone_total_weight_"+ids[1])),3,0);
+    const weight = valNum(totalweight) - valNum(stonetotalweight);
+    let rate = 0;
+    let jewel_rate = 0;
+    if(spltype!='nd' && spltype)
+    {
+        rate = splprice;
+        if(spltype=="gram")
+        jewel_rate = parseFloat(valNum(rate)) * parseFloat(valNum(weight));
+        else
+        jewel_rate = parseFloat(valNum(rate));
+    }
+    else
+    {
+        rate = product_rate;
+        jewel_rate = parseFloat(valNum(rate)) * parseFloat(valNum(weight));
+    }
+    const jewel_raw_Amount = jewel_rate;
+    const stoneprice = parseFloat(valNum("stone_total_price_"+ids[1]));
+    if(ids[0]=="waste" || ids[0]=="wastea")
+    {
+        let waste_gram = 0;
+        let waste_percentage = 0;
+        if(waste_type=="perc")
+        {
+            waste_gram = parseFloat(valNum(waste)) / parseFloat(valNum(rate));
+            waste_percentage = (waste_gram / parseFloat(valNum(weight))) * 100;
+        }
+        Sv("wastep_"+ids[1],money(waste_percentage,3,0));
+        Sv("wasteg_"+ids[1],money(waste_gram,3,0));
+        if(ids[0]=="waste")
+        Sv("wastea_"+ids[1],money(waste,3,0));
+        else
+        Sv("waste_"+ids[1],money(wastea,3,0));
+    }
+    if(ids[0]=="mc" || ids[0]=="mca")
+    {
+        let mc_gram = 0;
+        let mc_percentage = 0;
+        if(mc_type=="perc")
+        {
+            mc_gram = parseFloat(valNum(mc)) / parseFloat(valNum(rate));
+            mc_percentage = (mc_gram / parseFloat(valNum(weight))) * 100;
+        }
+        Sv("mcp_"+ids[1],money(mc_percentage,3,0));
+        Sv("mcg_"+ids[1],money(mc_gram,3,0));
+        if(ids[0]=="mc")
+        Sv("mca_"+ids[1],money(mc,3,0));
+        else
+        Sv("mc_"+ids[1],money(mca,3,0));
+    }
+    if(ids[0]=="mcp")
+    {
+        let mc_gram = 0;
+        let mc_amount = 0;
+        if(waste_type=="perc")
+        {
+            mc_gram = parseFloat(valNum(mcp / 100)) * parseFloat(valNum(weight));
+            mc_amount = parseFloat(valNum(mc_gram)) * parseFloat(valNum(rate));
+        }
+        else
+        {
+            mc_amount = mc;
+        }
+        Sv("mc_"+ids[1],money(mc_amount,3,0));
+        Sv("mcg_"+ids[1],money(mc_gram,3,0));
+        Sv("mca_"+ids[1],money(mc_amount,3,0));
+    }
+    if(ids[0]=="wastep")
+    {
+        let waste_gram = 0;
+        let waste_amount = 0;
+        if(waste_type=="perc")
+        {
+            waste_gram = parseFloat(valNum(wastep / 100)) * parseFloat(valNum(weight));
+            waste_amount = parseFloat(valNum(waste_gram)) * parseFloat(valNum(rate));
+        }
+        else
+        {
+            waste_amount = waste;
+        }
+        Sv("waste_"+ids[1],money(waste_amount,3,0));
+        Sv("wasteg_"+ids[1],money(waste_gram,3,0));
+        Sv("wastea_"+ids[1],money(waste_amount,3,0));
+    }
+    if(ids[0]=="mcg")
+    {
+        let mc_percentage = 0;
+        let mc_amount = 0;
+        if(waste_type=="perc")
+        {
+            mc_percentage = (mcg / weight) * 100;
+            mc_amount = mcg * rate;
+        }
+        else
+        {
+            mc_amount = mc;
+        }
+        Sv("mc_"+ids[1],money(mc_amount,3,0));
+        Sv("mcp_"+ids[1],money(mc_percentage,3,0));
+        Sv("mca_"+ids[1],money(mc_amount,3,0));
+    }
+    if(ids[0]=="wasteg")
+    {
+        let waste_percentage = 0;
+        let waste_amount = 0;
+        if(waste_type=="perc")
+        {
+            waste_percentage = (wasteg / weight) * 100;
+            waste_amount = wasteg * rate;
+        }
+        else
+        {
+            waste_amount = mc;
+        }
+        Sv("waste_"+ids[1],money(waste_amount,3,0));
+        Sv("wastep_"+ids[1],money(waste_percentage,3,0));
+        Sv("wastea_"+ids[1],money(waste_amount,3,0));
+    }
+    const total_jewel_amount = parseFloat(stoneprice) + parseFloat(mc) + parseFloat(waste) + parseFloat(jewel_raw_Amount);
+    Sv("individual-jwl"+ids[1],money(total_jewel_amount,3,0));
+    Si("individual_jwl_amt_"+ids[1],money(total_jewel_amount,2,1));
+    final_calculation();
+}
+function jewel_calculation()
+{
+    const product = Val("product");
+    const product_rate = valNum(Val(product));
+    const totalweight = valNum(Val("totalweight"));
+    const waste = valNum(Val("waste"));
+    const mc = valNum(Val("mc"));
+    const splprice = valNum(Val("splprice"));
+    const spltype = Val("splprice","ctype");
+    const stonetotalweights = document.querySelectorAll('.stonetotalweights');
+    let stonetotalweight = 0;
+    // Loop through each element and add its value to the sum
+    stonetotalweights.forEach(input => {
+        stonetotalweight += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+    const weight = valNum(totalweight) - valNum(stonetotalweight);
+    let rate = 0;
+    let jewel_rate = 0;
+    if(spltype!='nd' && spltype)
+    {
+        rate = splprice;
+        if(spltype=="gram")
+        jewel_rate = parseFloat(valNum(rate)) * parseFloat(valNum(weight));
+        else
+        jewel_rate = parseFloat(valNum(rate));
+    }
+    else
+    {
+        rate = product_rate;
+        jewel_rate = parseFloat(valNum(rate)) * parseFloat(valNum(weight));
+    }
+    const jewel_raw_Amount = jewel_rate;
+    const stoneprice = document.querySelectorAll('.stonestotalprices');
+    let stonetotalprice = 0;
+    // Loop through each element and add its value to the sum
+    stoneprice.forEach(input => {
+        stonetotalprice += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+    const total_jewel_amount = parseFloat(stonetotalprice) + parseFloat(mc) + parseFloat(waste) + parseFloat(jewel_raw_Amount);
+    Si("jewel_price",money(total_jewel_amount,3,1));
+    Sv("jewelamount",money(total_jewel_amount,3,0));
+}
+function final_calculation()
+{
+    debugger
+    const all_jewels_weight = document.querySelectorAll('.all_jewel_weight');
+    let total_jewel_weight = 0;
+    // Loop through each element and add its value to the sum
+    all_jewels_weight.forEach(input => {
+        total_jewel_weight += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const all_jewels_Amount = document.querySelectorAll('.all_jewel_amount');
+    let total_jewel_amount = 0;
+    // Loop through each element and add its value to the sum
+    all_jewels_Amount.forEach(input => {
+        total_jewel_amount += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const exchanges = document.querySelectorAll('.extras');
+    let total_exchange_amount = 0;
+    // Loop through each element and add its value to the sum
+    exchanges.forEach(input => {
+        total_exchange_amount += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const exchanges_old = document.querySelectorAll('.extras_old_weight');
+    let total_exchange_old = 0;
+    // Loop through each element and add its value to the sum
+    exchanges_old.forEach(input => {
+        total_exchange_old += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const exchanges_old_waste = document.querySelectorAll('.extras_old_waste');
+    let total_exchange_old_waste = 0;
+    // Loop through each element and add its value to the sum
+    exchanges_old_waste.forEach(input => {
+        total_exchange_old_waste += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const exchanges_pure = document.querySelectorAll('.extras_pure_weight');
+    let total_exchange_pure = 0;
+    // Loop through each element and add its value to the sum
+    exchanges_pure.forEach(input => {
+        total_exchange_pure += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const exchanges_coin = document.querySelectorAll('.extras_coin_weight');
+    let total_exchange_coin = 0;
+    // Loop through each element and add its value to the sum
+    exchanges_coin.forEach(input => {
+        total_exchange_coin += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const exchanges_ex = document.querySelectorAll('.extras_ex_weight');
+    let total_exchange_ex = 0;
+    // Loop through each element and add its value to the sum
+    exchanges_ex.forEach(input => {
+        total_exchange_ex += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const old_totalprices = document.querySelectorAll('.old_totalprice');
+    let old_totalprice = 0;
+    // Loop through each element and add its value to the sum
+    old_totalprices.forEach(input => {
+        old_totalprice += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const pure_totalprices = document.querySelectorAll('.pure_totalprice');
+    let pure_totalprice = 0;
+    // Loop through each element and add its value to the sum
+    pure_totalprices.forEach(input => {
+        pure_totalprice += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const coin_totalprices = document.querySelectorAll('.coin_totalprice');
+    let coin_totalprice = 0;
+    // Loop through each element and add its value to the sum
+    coin_totalprices.forEach(input => {
+        coin_totalprice += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const ex_totalprices = document.querySelectorAll('.ex_totalprice');
+    let ex_totalprice = 0;
+    // Loop through each element and add its value to the sum
+    ex_totalprices.forEach(input => {
+        ex_totalprice += parseFloat(input.value) || 0; // Convert value to float and add to sum (if it's a valid number)
+    });
+
+    const gst = parseFloat(valNum(Val("gst")));
+    const advance_Cash = valNum(Val("advance"));
+    const advance_bank = valNum(sumCls("bankcalculations"));
+    const total_without_gst = parseFloat(valNum(total_jewel_amount));
+    const gstValue = parseFloat(total_without_gst * (gst/100));
+    const total_with_gst = parseFloat(valNum(gstValue)) + parseFloat(total_without_gst);
+    const total_after_reduction = parseFloat(valNum(gstValue)) + parseFloat(total_without_gst) - parseFloat(valNum(total_exchange_amount)) - parseFloat(advance_Cash) - parseFloat(advance_bank);
+    const tens = roundOff10(valNum(total_after_reduction));
+    const round_off = parseFloat(tens) - parseFloat(total_after_reduction);
+    const discounts = 0;
+    const grand_amounts = parseFloat(valNum(total_jewel_amount));
+    Si("total_weights",money(total_jewel_weight,3,1));
+    Si("advance_amounts",money(advance_Cash,3,1));
+    Si("advanced",money(parseFloat(valNum(advance_Cash))+parseFloat(valNum(advance_bank)),3,1));
+    Si("advance_bank_amounts",money(advance_bank,3,1));
+    Si("old_weights",money(parseFloat(valNum(total_exchange_old)) - parseFloat(valNum(total_exchange_old_waste)),3,1));
+    Si("pure_weights",money(total_exchange_pure,3,1));
+    Si("exchange_weights",money(total_exchange_coin,3,1));
+    Si("coin_weights",money(total_exchange_ex,3,1));
+    Si("old_amounts",money(old_totalprice,3,1));
+    Si("pure_amounts",money(pure_totalprice,3,1));
+    Si("ex_amounts",money(ex_totalprice,3,1));
+    Si("coin_amounts",money(coin_totalprice,3,1));
+    Si("grand_amounts",money(grand_amounts,3,1));
+    Si("gst_perc",money(gst,3,1));
+    Si("gst_value",money(gstValue,3,1));
+    Si("reduction_amounts",money(total_after_reduction,3,1));
+    Si("gst_amounts",money(total_with_gst,3,1));
+    Si("discount_amounts",money(discounts,3,1));
+    Si("round_off_amounts",money(round_off,3,1));
+    Si("net_amounts",money(tens,3,1));
+
+    Sv("total_weights_value",money(total_jewel_weight,3,0));
+    Sv("advance_amounts_value",money(advance_Cash,3,0));
+    // Sv("advanced_value",money(parseFloat(valNum(advance_Cash))+parseFloat(valNum(advance_bank)),3,0));
+    Sv("advance_bank_amounts_value",money(advance_bank,3,0));
+    Sv("old_weights_value",money(total_exchange_old,3,0));
+    Sv("old_waste_value",money(total_exchange_old_waste,3,0));
+    Sv("pure_weights_value",money(total_exchange_pure,3,0));
+    Sv("exchange_weights_value",money(total_exchange_coin,3,0));
+    Sv("coin_weights_value",money(total_exchange_ex,3,0));
+    Sv("old_amounts_value",money(old_totalprice,3,0));
+    Sv("pure_amounts_value",money(pure_totalprice,3,0));
+    Sv("ex_amounts_value",money(ex_totalprice,3,0));
+    Sv("coin_amounts_value",money(coin_totalprice,3,0));
+    Sv("grand_amounts_value",money(grand_amounts,3,0));
+    Sv("gst_perc_value",money(gst,3,0));
+    Sv("reduction_amounts_value",money(total_after_reduction,3,0));
+    Sv("gst_value_value",money(gstValue,3,0));
+    Sv("gst_amounts_value",money(total_with_gst,3,0));
+    Sv("discount_amounts_value",money(discounts,3,0));
+    Sv("round_off_amounts_value",money(round_off,3,0));
+    Sv("net_amounts_value",money(tens,3,0));
+}
+function stones_calculation(id)
+{
+    const ids = id.split("_")[1];
+    if(ids)
+    {
+        const stone_price = parseFloat(valNum(Val("stp_"+ids)));
+        const carat_size = valNum(Val("caratsize_"+ids));
+        const carat_price = valNum(Val("caratprice_"+ids));
+        const carat_total_price = parseFloat(carat_size) * parseFloat(carat_price);
+        const total_stone_price = carat_total_price + stone_price;
+        Sv("carattotalprice"+ids, money(carat_total_price,3,0));
+        Sv("stonetotalprice"+ids, money(stone_price,3,0));
+        Sv("stonestotalprice"+ids, money(total_stone_price,3,0));
+        Si("total_carat_price"+ids, money(total_stone_price,3,1));
+        jewel_calculation()
+    }
+}
+// Function to reset the form fields
+function refrshing() {
+    debugger
+    Sv("stonepart","");
+    Ss("product","nd");
+    Ss("typeofjewel","nd");
+    Ss("subtype","nd");
+    Sv("pcs","0");
+    Sv("totalweight","0");
+    Si("adjusters","");
+    Si("stonedetails","");
+    Si("jewel_price","0");
+    Sv("jewelamount","0");
+    Si("image-gallery_photo","");
+    Sv("imgpath_photo","");
+}
+function backEndCall_show_details_of_customer(msg)
+{
+    const datas = msg.response[0];
+    let design = "";
+    if(datas && msg.success)
+    {
+        design = `<div class='flex-box'>
+                    <div>
+                        <img src='/images/profile.png' class='savings-profile'>
+                    </div>
+                    <div>
+                        <label>${caps(datas.name)}</label>
+                        <br>
+                        <label>${datas.primaryphonenumber}, ${datas.secondaryphonenumber}</label>
+                        <br>
+                        <label class='address'>${datas.address}</label>
+                    </div>
+                    <input type="hidden" name="ph1" id="ph1" value="${datas.primaryphonenumber}">
+                    <input type="hidden" name="ph2" id="ph2" value="${datas.secondaryphonenumber}">
+                    <input type="hidden" name="address" id="address" value="${datas.address}">
+                </div>`;
+                Sv("customername",datas.name);
+            showClass("customer_card","flex");
+    }
+    else
+        h("customer_card");
+    document.getElementById("customer_details").innerHTML = design;
+}
+document.addEventListener("DOMContentLoaded", () => {
+    Sv("deliverydate",FutureDate(Val("orderdate"),10));
+    backEndCall("load_price", "/auth/price", "POST", undefined, undefined);
+    selectLoad('att1', '/customer-order/staffs', content = 'application/json', undefined);
+    selectLoad('att2', '/customer-order/staffs', content = 'application/json', undefined);
+    selectLoad('att3', '/customer-order/staffs', content = 'application/json', undefined);
+    selectLoad('product', '/customer-order/loadCate', content = 'application/json', undefined);
+    selectLoad('customer', '/customer-order/customer', content = 'application/json', undefined);
+    let thead = "<th>S.no</th><th>Order ID</th><th>Customer</th><th>Jewel</th><th>Pcs</th><th>Weight</th><th>Date</th><th>D-Date</th><th>Advance</th><th>Total</th><th>Action</th>";
+    let tfoot = "<td colspan='6'></td>";
+    if({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/customer-order/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+    document.getElementById('product').addEventListener('change', function(event) {
+        selectLoad('typeofjewel', '/customer-order/loadJewel', content = 'application/json', event.target.value);
+    });
+    document.getElementById('totalweight').addEventListener('change', function(event) {
+        const formData = getFormData();
+        Si("adjusters",'');
+        backEndCall("jewel_control","/customer-order/jewel_control", "POST", undefined, formData);
+    });
+    document.getElementById('typeofjewel').addEventListener('change', function(event) {
+        selectLoad('subtype', '/customer-order/subType', content = 'application/json', event.target.value+"[w~12]"+Val("product"));
+    });
+    document.getElementById('cancel').addEventListener('click', function(event) {
+        reloadSite();
+    });
+    document.getElementById("customer").addEventListener("change", () => {
+        const formData=getFormData();
+        if(event.target.value!='nd')
+        backEndCall("show_details_of_customer", "/customer-order/fetchDetails", "POST", undefined, formData);
+    });
+
+    document.getElementById("refresh").addEventListener("click", () => {
+        refrshing();
+    });
+
+    document.addEventListener("keyup", event => {
+        const clickedId = event.target.id;
+        if(event.target.classList=="stone_calculation")
+        {
+            stones_calculation(clickedId);
+        }
+        if(event.target.classList=="jewel_calculation")
+        {
+            jewel_calculation();
+        }
+        if(event.target.classList.contains("range_adjusters"))
+        {
+            range_adjusters(clickedId);
+        }
+        if(event.target.classList.contains("jwl_range_adjusters"))
+        {
+            jwl_range_adjusters(clickedId);
+        }
+    });
+
+    document.addEventListener("input", event => {
+        const clickedId = event.target.id;
+        if(event.target.classList=="stone_calculation")
+        {
+            stones_calculation(clickedId);
+        }
+        if(event.target.classList=="jewel_calculation")
+        {
+            jewel_calculation();
+        }
+        if(event.target.classList.contains("range_adjusters"))
+        {
+            range_adjusters(clickedId);
+        }
+        if(event.target.classList.contains("jwl_range_adjusters"))
+        {
+            jwl_range_adjusters(clickedId);
+        }
+    });
+
+    document.addEventListener("change", event => {
+        const clickedId = event.target.id;
+        if(event.target.classList=="stone_calculation")
+        {
+            stones_calculation(clickedId);
+        }
+        if(event.target.classList=="jewel_calculation")
+        {
+            jewel_calculation();
+        }
+    });
+    
+    document.addEventListener("click", (event) => {
+        const clickedId = event.target.id;
+        if(event.target.classList=="stones-del")
+        {
+            const lot = Val(clickedId,"lot")
+            const id = "old"+lot;
+            document.getElementById(id).remove();
+        }
+        if(event.target.classList=="addon-stn-del")
+        {
+            const unique = Val(clickedId,"lot")
+            document.getElementById("addon-stn"+unique).remove();
+            removeId("stonepart","[s~1]",unique);
+        }
+        if(event.target.classList=="delete-addJewel")
+        {
+            const unique = Val(clickedId,"uniquekey");
+            document.getElementById("jewel"+unique).remove();
+            removeId("addid","[s~1]",unique);
+        }
+        if(event.target.classList=="edit-addJewel")
+        {
+            const unique = Val(clickedId,"uniquekey");
+            Ss("product",Val("product_"+unique));
+            setTimeout(()=>{
+                Ss("typeofjewel",Val("code_"+unique));
+            },500);
+            setTimeout(()=>{
+                Ss("subtype",Val("sub_type_"+unique));
+            },800);
+            setTimeout(()=>{
+                Sv("pcs",Val("pcs_"+unique));
+                Sv("totalweight",Val("individual-jwl-wt"+unique));
+                handleEvent("totalweight","change");
+                document.getElementById("jewel"+unique).remove();
+                removeId("addid","[s~1]",unique);
+            },1000);
+        }
+        if(clickedId=="stone-btn")
+        {
+            let html = '';
+            const stones = generateUniqueId();
+            html += `<div class='extras sheet'>`+selectBoxes({id:"stones_"+stones, options:"nd:Stone Types", classes:'stone-select-class'});
+            html += createInputElement({id: "stc_" +stones, type: "number", placeholder: "No of Stones"});
+            html += createInputElement({id: "stw_" +stones, type: "number", placeholder: "Total Stone Weight", className: "stone_calculation stonetotalweights"});
+            html += createInputElement({id: "stp_" +stones, type: "number", placeholder: "Total Stone Price", className: "stone_calculation"});
+            html += createInputElement({id: "caratsize_" +stones, type: "number", placeholder: "Carat Size", className: "stone_calculation", att: "lot", attValue: stones});
+            html += createInputElement({id: "caratprice_" +stones, type: "number", placeholder: "Carat Price", className: "stone_calculation", att: "lot", attValue: stones});
+            html += `<label>Total Stone Price : <font id='total_carat_price${stones}'>0</font><input type='hidden' id='stonetotalprice${stones}' name='stonetotalprice${stones}' value='0'><input type='hidden' id='carattotalprice${stones}' name='carattotalprice${stones}' value='0'><input type='hidden' id='stonestotalprice${stones}' name='stonestotalprice${stones}' class='stonestotalprices' value='0'></label><img src='/images/delete.png' class='addon-stn-del' id='addon-stn-${stones}' lot='${stones}'></div>`;
+            Sa("stonedetails",'addon-stn'+stones,html);
+            selectLoad("stones_"+stones, '/customer-order/loadStone', content = 'application/json', undefined);
+            Sv("stonepart",Val("stonepart")+stones+"[s~1]");
+        }
+        if(event.target.classList=="print-iconi")
+        {
+            debugger
+            const pdfBtn = document.getElementById(event.target.id);
+            if ({{checkingRights data=rights action="print"}}) {
+                openPDF("/customer-order/pdf","POST",{"id":pdfBtn.getAttribute("purchase")});
+            }
+        }
+        if(event.target.classList=="edit-iconi")
+        {
+            const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+            deleteKey = JSON.stringify({uniquekey: deleteId});
+            backEndCall("edit_jewels", "/customer-order/edit", "POST", undefined, deleteKey);
+        }
+        if(event.target.classList=="delete-iconi")
+        {
+            const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+            deleteKey = JSON.stringify({uniquekey: deleteId});
+            const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+            if(userConfirmed)
+                backEndCall(undefined, "/customer-order/delete", "POST", undefined, deleteKey);
+        }
+        if(event.target.classList=="exchangeFunction")
+        {
+            final_calculation();
+        }
+        if(event.target.classList=="stones-del")
+        {
+            final_calculation();
+        }
+    });
+    
+    let editingRow = null; // To keep track of the row being edited
+
+    // Add event listener for the "Add" button to capture the input and add to the table
+    document.getElementById("save").addEventListener("click", () => {
+        const formData = getFormData();
+        backEndCall(undefined,"/customer-order/insert","POST",undefined,formData);
+    });
+    document.getElementById("save_quot").addEventListener("click", () => {
+        const formData = getFormData();
+        backEndCall(undefined,"/customer-order/insert_quot","POST",undefined,formData);
+    });    
+    document.getElementById("add").addEventListener("click", () => {
+        const formData = getFormData();
+        backEndCall("load_jewels", "/customer-order/addJewel", "POST", undefined, formData);
+    });
+
+});
+</script>
+{{> footer }}

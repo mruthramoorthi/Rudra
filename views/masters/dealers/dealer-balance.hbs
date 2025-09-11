@@ -1,0 +1,75 @@
+<style>
+    .display-flexing{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .exchange-list{
+        display: none;
+    }
+    .green{
+        color: red;
+        font-weight: 800;
+    }
+    .red{
+        color: green;
+        font-weight: 800;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+
+<div class="snowdiv addcssfortable">
+    <div class="display-flexing">
+    {{createInput id="fdate" type="date" placeholder="From"}}
+    {{createInput id="todate" type="date" placeholder="To"}}
+    {{selectBox id="metals" options='nd:Metal'}}
+    {{selectBox id="decide" options='nd:Transactions,purchase:Purchase,payment:Payment,balance:Balance'}}
+    {{selectBox id="dealer" options='nd:Dealer'}}
+    {{selectBox id="place" options='nd:Area'}}
+    <button type="button" id="loadrepot">Load</button>
+    <button type="button" id="printing">Print</button>
+</div>
+<br>
+  <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function load_balance()
+    {
+        let thead = "<th>S.no</th><th>Date</th><th>ID</th><th>Dealer</th><th>Metal</th><th>Weight</th><th>Cash</th><th>Photo</th>";
+        let tfoot = "<td colspan='6'></td>";
+        fetchTableData('content', '1000', '1', 'content', '', '/dealer-balance/select', '50vh', 'lazy-content', {fdate:Val("fdate"),todate:Val("todate"),decide:Val("decide"),place:Val("place"),dealer:Val("dealer"),metals:Val("metals")}, thead, tfoot);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        selectLoad('metals', '/dealer-balance/metal', content = 'application/json', undefined);
+        selectLoad('dealer', '/dealer-balance/dealer', content = 'application/json', undefined);
+        selectLoad('place', '/dealer-balance/loadDistrict', content = 'application/json', undefined);
+        load_balance();
+    });
+    document.addEventListener("click", async (event) => {
+        const clickedId = event.target.id;
+        if(event.target.id=="printing")
+        {
+            await openPDF("/dealer-balance/pdf","POST",{"fdate":Val("fdate"), "todate":Val("todate")});
+        }
+        if(clickedId=="loadrepot")
+        {
+            load_balance();
+        }
+    });
+</script>
+{{> footer }}

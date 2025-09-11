@@ -1,0 +1,211 @@
+<style>
+.flex-box{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.adj-box:focus{
+    border: 2px solid grey !important;
+}
+.adj-box{
+    width: 80px;
+    text-align: right;
+    height: 20px;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="flex-box">
+        {{selectBox id="metal" options='cash:Scheme Type'}}
+        {{selectBox id="savingtype" options='cash:Schemes'}}
+        <div class="flex-box">
+            <div><input type="number" name="min" id="min" class='adj-box jwl_range_adjusters' value="0" readonly/><label>.Rs</label></div>
+            <input type='range' id="adj" name="adj" class='jwl_range_adjusters' step='0' min='0' max='0' value='0'>
+            <div><input type="number" name="max" id="max" class='adj-box jwl_range_adjusters' value="0" readonly/><label>.Rs</label></div>
+        </div>
+        <br>
+        <div class="flex-box">
+            {{createInput type="text" id="grp" placeholder="Group"}}
+            <div id="savingsnumber_div">
+                {{createInput type="text" id="savingsnumber" placeholder="Savings Number Start With"}}
+            </div>
+            {{createInput type="number" id="due" placeholder="Due Amount"}}
+            <div id="totalmonth_div">
+                {{createInput type="number" id="totalmonth" placeholder="Total Month"}}
+            </div>
+            <input type="hidden" name="total_amount" id="total_amount" value="0">
+            <label for="">Total : <font id="total">0</font></label>
+            <input type="hidden" name="uniquekey" id="uniquekey" value="">
+            <input type="hidden" name="exceedamount" id="exceedamount" value="0">
+            <input type="hidden" name="status" id="status" value="1">
+            <input type="hidden" name="scheme_id" id="scheme_id" value="">
+        </div>
+    </div>
+    <center><button type="button" id="add" name="add">Add</button></center>
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function backEndCall_set_min_max(msg)
+    {
+        if (msg.response[0]) {
+            const minVal = msg.response[0].min;
+            const maxVal = msg.response[0].max;
+            const step = msg.response[0].step;
+
+            Sv("min", minVal);
+            Sv("max", maxVal);
+
+            // Set range slider attributes
+            const slider = document.getElementById("adj");
+            if (slider) {
+                slider.min = minVal;
+                slider.max = maxVal;
+                slider.step = step;
+            }
+            Sv("adj",minVal);
+        }
+        else{
+
+            Sv("min", 0);
+            Sv("max", 0);
+            Sv("max", 0);
+
+            // Set range slider attributes
+            const slider = document.getElementById("adj");
+            if (slider) {
+                slider.min = 0;
+                slider.max = 0;
+            }
+            Sv("adj",0);
+        }
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        backEndCall("load_all_data", "/create-schemes/loadData", "GET", undefined, undefined);
+        let thead = "<th>S.no</th><th>Category</th><th>Saving Type</th><th>Scheme</th><th>Group</th><th>Due</th><th>Month</th><th>Total</th><th>Active</th><th>Action</th>";
+        let tfoot = "<td colspan='10'></td>";
+        if ({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/create-schemes/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        selectLoad('metal', '/create-schemes/metal', content = 'application/json', undefined);
+        document.getElementById('metal').addEventListener('change', function(event) {
+            selectLoad('savingtype', '/create-schemes/savingType', content = 'application/json', event.target.value);
+        });
+        document.addEventListener("click", (event) => {
+  
+            const bonusCheckbox = document.getElementById("bonus");
+            const gramCheckbox = document.getElementById("gram");
+
+            if (event.target.id === "bonus" && bonusCheckbox.checked) {
+                if (gramCheckbox.checked) 
+                    gramCheckbox.checked = false;
+                    Sv("status", "bonus");
+            } else if (event.target.id === "gram" && gramCheckbox.checked){
+                if (bonusCheckbox.checked)
+                    bonusCheckbox.checked = false;
+                    Sv("status", "gram");
+            }
+        });
+        document.addEventListener("keyup", (event) => {
+            if(event.target.id=="due")
+                Sv("adj", event.target.value)
+        });
+        document.getElementById("savingtype").addEventListener("change", (event) => {
+            const formData=getFormData();
+            backEndCall("set_min_max", "/create-schemes/fetchminmax", "POST", undefined, formData);
+        });
+        document.addEventListener("input", (event) => {
+            if(event.target.id=="adj")
+            {
+                Sv("due", event.target.value)
+                handleEvent("due","keyup")
+            }
+        });
+        document.addEventListener("click", (event) => {
+            debugger
+            const clickedId = event.target.id;
+            if(event.target.classList=="delete-icon")
+            {
+                const uniquekey = document.getElementById(event.target.id).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/create-schemes/delete", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="edit-icon")
+            {
+                scrollToElementById("tabs-container");
+                const datas = Val(event.target.id,"datas");
+                Ss("metal",datas["category"]);
+                Ss("savingtype",datas["savingtype"]+"[s~1]"+datas["scheme"]);
+                Sv("grp",datas["schemegroup"]);
+                Sv("adj",datas["due"]);
+                Sv("due",datas["due"]);
+                handleEvent("due","keyup")
+                Sv("savingsnumber",datas["savings_number_starts_with"]);
+                Sv("totalmonth",datas["month"]);
+                Sv("uniquekey",datas["uniqueid"]);
+                Sv("scheme_id",datas["schemecode"]);
+                if(datas["type"]==="bonus")
+                    document.getElementById("bonus").click();
+                else
+                    document.getElementById("gram").click();
+                document.dispatchEvent(edit_event);
+            }
+            if(event.target.classList=="just-check")
+            {
+                const updateSts = JSON.stringify({clickedId:clickedId});
+                backEndCall(undefined, "/create-schemes/update", "POST", undefined, updateSts);
+            }
+        });
+    });
+    // List of input IDs
+    const pureIds = ["due", "totalmonth"];
+    // Add event listener for keyup to all input elements
+    pureIds.forEach(id => {
+        document.getElementById(id).addEventListener("keyup", totalCalc);
+        document.getElementById(id).addEventListener("change", totalCalc);
+    });
+    document.getElementById("add").addEventListener("click", () => {
+        const formData=getFormData();
+        backEndCall(undefined, "/create-schemes/insert", "POST", undefined, formData);
+    });
+    function totalCalc()
+    {
+        const due = valNum(parseInt(Val("due")));
+        const totalmonth = valNum(parseInt(Val("totalmonth")));
+        const total_amount = due * totalmonth;
+        Sv("total_amount",total_amount);
+        Si("total",money(total_amount,0,1));
+    }
+    function backEndCall_load_all_data(msg)
+    {
+        debugger
+        if(msg.response[0])
+        {
+            Sv("savingsnumber",msg.response[0].savings_number_starts_with);
+            Sv("exceedamount",msg.response[0].savings_amount_upto);
+            Sv("totalmonth",msg.response[0].month);
+            if(msg.response[0].savings_number_edit)
+                s("savingsnumber_div");
+            else
+                h("savingsnumber_div");
+            if(msg.response[0].month_edit)
+                s("totalmonth_div");
+            else
+                h("totalmonth_div");
+        }
+    }
+</script>
+{{> footer }}

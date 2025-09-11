@@ -1,0 +1,164 @@
+<style>
+.alignment {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.alert-saving{
+    color: red;
+}
+.close-savings{
+    color: white;
+    background-color: red;
+}
+#saveButton{
+    display: block;
+    margin: 0 auto;
+}
+.savings-ele{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.paidalert{
+    color: green;
+    font-style: italic;
+}
+.nextdue{
+    color: mediumblue;
+    font-weight: 800;
+    font-size: large;
+}
+#bankdiv{
+    display: none;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.close-badge{
+    background: red;
+    padding: 2px 10px;
+    border-radius: 10px;
+    color: white;
+    width: 100px;
+}
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.main-tabs{
+    display: none !important;
+}
+.blink {
+    color: red;
+  animation: blink 1s infinite;
+}
+.addcssfortable{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+  {{selectBox id="group" options='nd:Group'}}
+  {{selectBox id="savingnum" options='nd:Savings Number'}}
+  {{createInput type="text" id="savingnumber" placeholder="Savings Number"}}
+  {{selectBox id="staff" options='nd:Attender'}}
+  <br>
+  <button type="button" id="search">Search</button>
+</div>
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> formend }}
+{{> view }}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    selectLoad('group', '/payment-due/group', content = 'application/json', undefined);
+    selectLoad('staff', '/payment-due/staffs', content = 'application/json', undefined);
+    document.getElementById('group').addEventListener('change', function(event) {
+        selectLoad('savingnum', '/payment-due/savings', content = 'application/json', event.target.value);
+    });
+    document.getElementById('savingnum').addEventListener('change', function(event) {
+        const datai = event.target.value;
+        Sv("savingnumber",datai);
+        document.getElementById("search").click();
+    });
+    document.getElementById('search').addEventListener('click', function(event) {
+        const datai = Val('savingnumber');
+        const data = JSON.stringify({datai});
+        // Call the fetchData function and wait for it to complete
+        // if ({{checkingRights data=rights action="view"}})
+        fetchDivData('content', '1000', '1', 'content', '', '/payment-due/select', '50vh', 'lazy-content', data);
+    });
+    document.addEventListener('keyup', function(event) {
+        if(event.target.id=="bank")
+        {
+            const balance = Val("realdue") - event.target.value;
+            Sv("due",balance);
+        }
+        if(event.target.id=="due")
+        {
+            let gram = parseFloat(event.target.value) / parseFloat(Val("rate"));
+            Sv("gram", money(gram, 3, 0))
+            Si("gram_lbl", money(gram, 3, 1))
+            Si("pay_cash_lbl", money(event.target.value, 3, 1))
+        }
+    });
+    document.addEventListener('click', function(event) {
+        if(event.target.id=="paid")
+        {
+            const formData=getFormData();
+            const userConfirmed = window.confirm("Is this customer now paying their dues?");
+            if(userConfirmed)
+            backEndCall(undefined, "/payment-due/insert", "POST", undefined, formData);
+        }
+        if(event.target.id=="close")
+        {
+            const formData=getFormData();
+            const userConfirmed = window.confirm("Is this customer now Close their Saving Scheme?");
+            if(userConfirmed)
+            backEndCall(undefined, "/payment-due/close", "POST", undefined, formData);
+        }
+    });
+    document.addEventListener('change', function(event) {
+        if(event.target.id=="paymenttype")
+        {
+            if(event.target.value=="bank")
+            {   
+                debugger
+                s("bankdiv","flex");
+                selectLoad('banks', '/payment-due/bank', content = 'application/json', event.target.value);
+                selectLoad('transactiontype', '/payment-due/transactionType', content = 'application/json', undefined);
+                Sv("bank",Val("realdue"));
+                Sv("due",0);
+            }
+            else if(event.target.value=="cash")
+            {
+                h("bankdiv");
+                Sv("bank",0);
+                Sv("due",Val("realdue"));
+            }
+        }
+    });
+</script>
+{{> footer }}

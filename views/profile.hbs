@@ -1,0 +1,37 @@
+<style>
+  .profile-flex{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .buttons-login{
+    background-color: royalblue;
+    color: white;
+  }
+</style>{{> header}}
+{{> navbar }}
+    <div class="snowdiv">
+      <h2>User Profile</h2>
+      <div class="profile-flex"><div>
+      <img class="photos-pass" src="/images/profile.png"/></div>
+      <div><h6><img class="photos-icons-icon" src="/images/name.png"/> {{user.name}}</h6>
+      <h6><img class="photos-icons-icon" src="/images/company.png"/> {{user.company}} ({{user.site}})</h6>
+      <h6><img class="photos-icons-icon" src="/images/medal.png"/> {{user.rights}}</h6>
+      <h6><img class="photos-icons-icon" src="/images/fingerprint.png"/> {{user.username}}</h6></div></div>
+      <div class="profile-flex">
+        {{selectBox id="companies" options='nd:Companies'}}
+        <a href="/forgot-password"><button type="button" class="buttons-login">Update Login Details</button></a>
+      </div>
+    </div>
+    {{> dtb }}
+<script nonce="{{nonce}}">
+  document.addEventListener("DOMContentLoaded", () => {
+    selectLoad('companies', '/profile/loadcomp', content = 'application/json', undefined);
+    document.getElementById('companies').addEventListener('change', function(event) {
+      const changeKey = JSON.stringify({company: event.target.value});
+      backEndCall(undefined, '/profile/changeShop', "POST", undefined, changeKey);
+    });
+  });
+</script>
+{{> footer }}

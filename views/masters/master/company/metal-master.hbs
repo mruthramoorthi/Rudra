@@ -1,0 +1,91 @@
+<style>
+#metal-boxes{
+    display: none;
+}
+
+#howmany{
+    display: none;
+}
+
+.display-f{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+.main-tabs{
+        display: none !important;
+    }
+    </style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="display-f">
+        {{createInput type="text" id="metal" placeholder="Metal Name"}}
+        <input type="hidden" id="uniquekey" name="uniquekey">
+    </div>
+    <div class="display-f">
+        <button id="saveButton" class="center" type="button">Save</button>
+        <button id="cancelButton" class="center" type="button">Cancel</button>
+    </div>
+</div>
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> formend }}
+{{> view }}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+     document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th>Metal</th><th>Action</th>";
+        let tfoot = "<td colspan='3'></td>";
+        if ({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/metal-master/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/metal-master/insert", "POST", undefined, formData);
+        });
+
+        document.getElementById("cancelButton").addEventListener("click", () => {
+            reloadSite();
+        });
+        document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Sv("metal",userDatas.nameofmetal);
+                Sv("uniquekey",userDatas.uniqueid);
+                Si("saveButton", "Update");
+                document.getElementById('cancelButton').style.display="block";
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/metal-master/delete", "POST", undefined, deleteKey);
+            }
+        });
+     });
+</script>
+{{> footer }}

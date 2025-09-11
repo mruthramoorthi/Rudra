@@ -1,0 +1,135 @@
+<style>
+.flex-box{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.customer_card{
+    display: none;
+}
+.savings-profile{
+    width: 75px;
+}
+.address{
+    width: 250px;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    
+    <div class="flex-box">
+        <div>
+            {{selectBox id="customer" options='nd:Customer'}}
+            <br>
+            <div class="flex-box">
+                {{selectBox id="group" options='nd:Group'}}
+                {{selectBox id="attender" options='nd:Attender'}}
+            </div>
+        </div>
+        <div class="customer_card sheet">
+            {{createInput type="text" id="customername" placeholder="Customer Name"}}
+            <div id="customer_details">
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="uniquekey" id="uniquekey" value="">
+    <input type="hidden" name="savingnumbers" id="savingnumbers" value="">
+    <input type="hidden" name="savingcount" id="savingcount" value="">
+    <br>
+    <center><button type="button" id="add" name="add">Add</button></center>
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th>Savings Number</th><th>Savings Count</th><th>Group</th><th>Name</th><th>Phone</th><th>Due</th><th>Month</th><th>Total</th><th>Action</th>";
+        let tfoot = "<td colspan='9'></td>";
+        if ({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/scheme-register/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        selectLoad('customer', '/scheme-register/customer', content = 'application/json', undefined);
+        selectLoad('group', '/scheme-register/group', content = 'application/json', undefined);
+        selectLoad('attender', '/scheme-register/staffs', content = 'application/json', undefined);
+        document.addEventListener("click", (event) => {
+            debugger
+            if(event.target.classList=="delete-icon")
+            {
+                const uniquekey = document.getElementById(event.target.id).getAttribute('uniquekey');
+                const deleteKey = JSON.stringify({uniquekey});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/scheme-register/delete", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="edit-icon")
+            {
+                scrollToElementById("tabs-container");
+                const datas = Val(event.target.id,"datas");
+                setTimeout(()=>{
+                    Ss("customer",datas["id"]+"[r~12]"+datas["name"]);
+                },500);
+                setTimeout(()=>{
+                    Sv("customername",datas["savingname"]);
+                },1000);
+                Ss("group",datas["schemecode"]);
+                Sv("uniquekey",datas["uniqueid"]);
+                Sv("savingnumbers",datas["savings_number"]);
+                Sv("savingcount",datas["savings_count"]);
+                document.dispatchEvent(edit_event);
+            }
+        });
+        document.getElementById("customer").addEventListener("change", () => {
+            const formData=getFormData();
+            backEndCall("show_details_of_customer", "/scheme-register/fetchDetails", "POST", undefined, formData);
+        });
+    });
+    
+    document.getElementById("add").addEventListener("click", () => {
+        const formData=getFormData();
+        backEndCall(undefined, "/scheme-register/insert", "POST", undefined, formData);
+    });
+    function selectLoad_customer(msg)
+    {
+        // alert(msg.data);
+    }
+    function backEndCall_show_details_of_customer(msg)
+    {
+        debugger;
+        const datas = msg.response[0];
+        let design = "";
+        if(datas)
+        {
+            design = `<div class='flex-box'>
+                        <div>
+                            <img src='/images/profile.png' class='savings-profile'>
+                        </div>
+                        <div>
+                            <label>${caps(datas.name)}</label>
+                            <br>
+                            <label>${datas.primaryphonenumber}, ${datas.secondaryphonenumber}</label>
+                            <br>
+                            <label class='address'>${datas.address}</label>
+                        </div>
+                        <input type="hidden" name="ph1" id="ph1" value="${datas.primaryphonenumber}">
+                        <input type="hidden" name="ph2" id="ph2" value="${datas.secondaryphonenumber}">
+                        <input type="hidden" name="address" id="address" value="${datas.address}">
+                    </div>`;
+                    Sv("customername",datas.name);
+                showClass("customer_card");
+        }
+        else
+            h("customer_card");
+        document.getElementById("customer_details").innerHTML = design;
+    }
+</script>
+{{> footer }}

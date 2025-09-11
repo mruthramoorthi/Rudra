@@ -1,0 +1,193 @@
+<style>
+    
+.display-f{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+.bank-details{
+    display: none;
+}
+    </style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="display-f"> 
+        {{selectBox id="header" options='nd:Header'}}
+        {{selectBox id="accountname" options='nd:Account Name'}}
+        {{selectBox id="wayoftransaction" options='nd:Way of Transaction'}}
+        {{checkBox id="cash" className="checkc" placeholder="Cash" style="" checked="checked"}}
+        {{checkBox id="bank" className="checkc" placeholder="Bank" style=""}}
+        <input type="hidden" id="footer" name="footer" value="1[v]cash">
+         <div class="bank-details">
+        {{selectBox id="transactiontype" options='nd:Transactions Type'}}
+        </div>
+        <div class="bank-details">
+        {{selectBox id="banks" options='nd:Banks'}}
+        </div>
+        <div class="bank-details">
+        {{createInput type="text" id="transactionid" placeholder="Transaction ID"}}
+        </div>
+         {{#if (checkingRights data=rights action="view")}}
+            {{createInput type="date" id="entrydate" placeholder="Transaction Date"}}
+        {{else}}
+          {{createInput type="date" id="entrydate" placeholder="Transaction Date" othersForInput="readonly"}}
+        {{/if}}
+        {{createInput type="number" id="amount" placeholder="Amount"}}
+        {{createInputTa id="description" placeholder="Description"}}
+        {{imageUpload id="proof" noncei=nonce placeholder="Supporting Proof"}}
+        {{selectBox id="payerrpayee" options='nd:Payer/Payee'}}
+        {{selectBox id="maker" options='nd:Maker'}}
+        {{selectBox id="auth" options='nd:Autherization'}}
+        {{createInput type="text" id="ref" placeholder="Reference"}}
+        <input type="hidden" id="uniquekey" name="uniquekey">
+    </div>
+    <div class="display-f">
+        <button id="saveButton" class="center" type="button">Save</button>
+        <button id="cancelButton" class="center" type="button">Cancel</button>
+    </div>
+    
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("click", (event) => {
+  
+  const bankCheckbox = document.getElementById("bank");
+  const cashCheckbox = document.getElementById("cash");
+
+  // If the bank checkbox is clicked and it's checked
+  if (event.target.id === "bank" && bankCheckbox.checked) {
+    // If the cash checkbox is checked, uncheck it and show bank details
+      Sv("footer", "11[v]bank");
+    if (cashCheckbox.checked) 
+    {
+      cashCheckbox.checked = false;  // Uncheck the cash checkbox directly
+      $(".bank-details").slideDown();
+    }
+    else
+      $(".bank-details").slideDown();
+  } else if (event.target.id === "cash" && cashCheckbox.checked){
+    // If the bank checkbox is unchecked, hide the bank details
+      Sv("footer", "1[v]cash");
+    if (bankCheckbox.checked) 
+    {
+      bankCheckbox.checked = false;  // Uncheck the bank checkbox directly
+      $(".bank-details").slideUp();
+    } else
+      $(".bank-details").slideUp();
+    Ss("banks","nd");
+    Ss("transactiontype","nd");
+    Sv("transactionid","");
+  }
+  else if((event.target.id === "cash" && !cashCheckbox.checked) || (event.target.id === "bank" && !bankCheckbox.checked))
+      Sv("footer", "");
+});
+
+
+        let thead = "<th>S.no</th><th>Name</th><th>Type</th><th>Amount</th><th>Date</th><th>Proof</th><th>Action</th>";
+        let tfoot = "<td colspan='7'></td>";
+        // selectLoad('header', '/bank-registration/loadHeader', content = 'application/json', undefined);
+        // Call the fetchTableData function and wait for it to complete
+        if({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/voucher/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/voucher/insert", "POST", undefined, formData);
+        });
+
+        document.getElementById("cancelButton").addEventListener("click", () => {
+            reloadSite();
+        }); 
+    selectLoad('header', '/voucher/loadHeader', content = 'application/json', undefined);
+    document.getElementById('header').addEventListener('change', function(event) {
+            selectLoad('accountname', '/voucher/loadAcc', content = 'application/json', event.target.value);
+        });
+    selectLoad('payerrpayee', '/voucher/users', content = 'application/json', undefined);
+    selectLoad('maker', '/voucher/users', content = 'application/json', undefined);
+    selectLoad('banks', '/voucher/bank', content = 'application/json', undefined);
+    selectLoad('auth', '/voucher/users', content = 'application/json', undefined);
+    selectLoad('wayoftransaction', '/voucher/wayOff', content = 'application/json', undefined);
+    selectLoad('transactiontype', '/voucher/transactionType', content = 'application/json', undefined);
+    document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                debugger;
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Ss("header",userDatas.header);
+                setTimeout(() => {
+                  Ss("accountname",userDatas.account);
+                }, 1000);
+                Ss("wayoftransaction",userDatas.wayoftransaction);
+                Sv("entrydate",rawDateFormat(userDatas.transactiondate, 'ymd'));
+                Sv("amount",userDatas.amount);
+                Sv("description",userDatas.description);
+                Sv("ref",userDatas.reference);
+                Ss("payerrpayee",userDatas.payerorpayee);
+                Ss("maker",userDatas.maker);
+                Ss("auth",userDatas.authorization);
+                Sv("uniquekey",userDatas.voucherno);
+                const imagePathParts = userDatas.proof.split("[pics~pics]").filter(item => item.trim() !== "");
+                // Loop through the path parts and generate the <img> tags
+                imagePathParts.forEach(item => {
+                    loadImg("proof", item);
+                });
+                const bankCheckbox = document.getElementById("bank");
+                const cashCheckbox = document.getElementById("cash");
+                if(userDatas.type=="cash" && !cashCheckbox.checked)
+                  cashCheckbox.click();
+                else if(userDatas.type=="bank" && !bankCheckbox.checked)
+                  bankCheckbox.click();
+                Si("saveButton", "Update");
+                Ss("banks",userDatas.banks);
+                Ss("transactiontype",userDatas.transactiontype);
+                Sv("transactionid",userDatas.transactionid);
+                document.getElementById('cancelButton').style.display="block";
+                document.dispatchEvent(edit_event);
+            }
+            if(event.target.classList=="print-iconi")
+            {
+                const pdfBtn = document.getElementById(event.target.id);
+                if ({{checkingRights data=rights action="print"}}) {
+                    pdfBtn.addEventListener("click", async () => {
+                        await openPDF("/voucher/pdf","POST",{"id":pdfBtn.getAttribute("voucher")});
+                    });
+                }
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/voucher/delete", "POST", undefined, deleteKey);
+            }
+        });
+    });
+</script>
+{{> footer }}

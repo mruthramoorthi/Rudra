@@ -1,0 +1,526 @@
+<style>
+    .addcssfortable1{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-around;
+        align-items: center;
+    }
+    .pcswt2{
+        width: 100px !important;
+    }
+    #cash{
+        width: 40vh;
+        color: red;
+    }
+    #cashamt{
+        font-size: x-large;
+    }
+    #total{
+        font-size: x-large;
+    }
+    #totalamount{
+        width: 40vh;
+        color: red;
+    }
+    .balance{
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        background: gray;
+        padding: 10px 20px;
+        border-radius: 10px;
+        gap:10px;
+    }
+    #notcash{
+        display: none;
+    }
+    #bankdiv{
+        display: none;
+    }
+    .ratecut{
+        background: darkkhaki;
+        border-radius: 10px;
+        padding: 10px;
+        position: relative;
+        width: 50%;
+    }
+    .ratecut-head{
+        position: absolute;
+        top:10px;
+        left: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .actions{
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+    .weight_and_cash{
+        display: flex;
+        justify-content: space-between;
+    }
+    .toggle-div{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+.toggles{
+    background: royalblue;
+    color: white;
+    font-weight: 800;
+    text-align: center;
+    border-radius: 10px;
+    width: 40%;
+}
+#pro-slider-div{
+    height: 2px;
+    background: black;
+    margin: 10px auto 0 auto;
+    width: 20%;
+}
+#add-slider-div{
+    height: 2px;
+    background: black;
+    margin: 10px auto 0 auto;
+    width: 20%;
+    visibility: hidden;
+}
+#stone-slider-div{
+    height: 2px;
+    background: black;
+    margin: 10px auto 0 auto;
+    width: 20%;
+    visibility: hidden;
+}
+#addon-div{
+    display: none;
+}
+#realweight_lbl
+{
+    color: red;
+}
+#realcash_lbl
+{
+    color: red;
+}
+#realweight_lblpay
+{
+    color: red;
+}
+#realcash_lblpay
+{
+    color: red;
+}
+#wastage{
+    display: none;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv addcssfortable">
+    <div class="addcssfortable1">
+        {{selectBox id="dealer" options='nd:Dealers'}}
+        {{selectBox id="metal" options='nd:Metal' className="rat-cut"}}
+        <div class="balance">
+            <label for="" style="font-size: large;font-weight:800;color:white;">Pure Balance : <label id='Pureb' style="color:greenyellow;;">0</label></label>
+            <input type="hidden" name="Pure_balance" id="Pure_balance" value="0">
+            <label for="" style="font-size: large;font-weight:800;color:white;">Cash balance : <label id='Cashb' style="color:greenyellow;">0</label></label>
+            <input type="hidden" name="Cash_balance" id="Cash_balance" value="0">
+        </div>
+    </div>
+    <br>
+    <div class="actions">
+        <div id="ratecuts" class="ratecut">
+            <center><h4>Rate Cut</h4></center>
+            <div class="ratecut-head">
+                {{checkBox id="gramorpcs" className="rat-cut" placeholder=" " style="" checked="checked"}}
+                <input type="hidden" name="gramorcash" id="gramorcash" value="0">
+                <b><label for="" id="gramorpcslbl">Gram</label></b>
+            </div>
+            <br>
+            <div id="gramcut" class="addcssfortable1">
+                {{createInput type="number" id="weightcut" placeholder="Weight" othersForDiv="pcswt2" className="rat-cut"}}
+                {{createInput type="number" id="puritycut" placeholder="Purity" othersForDiv="pcswt2" className="rat-cut"}}
+                {{selectBox id="rate" options='nd:Rate' className="rat-cut"}}
+                {{createInput type="number" id="purerate" placeholder="Pure Rate" othersForDiv="pcswt2" className="rat-cut"}}
+                {{createInput type="number" id="totalcash" placeholder="Total Cash" othersForDiv="pcswt2" className="rat-cut"}}
+                <input type="hidden" name="realweight" id="realweight" value="0">
+                <input type="hidden" name="realcash" id="realcash" value="0">
+            </div>
+            <div class="weight_and_cash">
+                <label>Weight : <label id="realweight_lbl">0</label></label>
+                <label>Cash : <label id="realcash_lbl">0</label></label>
+            </div>
+                <br>
+            <button type="button" id="ratecut-btn">Rate Cut</button>
+                <center><h4>Rate Cut Balance</h4></center>
+            <center><div class="balance">
+                <label for="" style="font-size: large;font-weight:800;color:white;">Pure Balance : <label id='Pureb_cut' style="color:greenyellow;;">0</label></label>
+                <input type="hidden" name="Pure_balance_cut" id="Pure_balance_cut" value="0">
+                <label for="" style="font-size: large;font-weight:800;color:white;">Cash balance : <label id='Cashb_cut' style="color:greenyellow;">0</label></label>
+                <input type="hidden" name="Cash_balance_cut" id="Cash_balance_cut" value="0">
+            </div></center>
+        </div>
+        <br>
+        <div id="ratecuts" class="ratecut">
+            <center><h4>Payment</h4></center>
+            {{selectBox id="paymentin" options='nd:Payment in'}}
+            <div id="notcash" class="addcssfortable1">
+                {{createInput type="number" id="weightpay" placeholder="Weight" othersForDiv="pcswt2" className="rat-pay"}}
+                <div id="wastage">
+                    {{createInput type="number" id="waste" placeholder="Waste" othersForDiv="pcswt2" className="rat-pay"}}
+                </div>
+                {{createInput type="number" id="puritypay" placeholder="Purity" othersForDiv="pcswt2" className="rat-pay"}}
+                {{selectBox id="ratepay" options='nd:Rate' className="rat-pay"}}
+                {{createInput type="number" id="pureratepay" placeholder="Pure Rate" othersForDiv="pcswt2" className="rat-pay"}}
+                {{createInput type="number" id="totalcashpay" placeholder="Total Cash" othersForDiv="pcswt2" className="rat-pay"}}
+                </div>
+            <div id="bankdiv" class="addcssfortable1">
+                {{selectBox id="bank" options="nd:Banks"}}
+                {{selectBox id="transactiontype" options="nd:Type"}}
+                {{createInput type="number" id="cashs" placeholder="Cash" className="rat-cash" othersForDiv="pcswt2"}}
+                {{createInput type="number" id="banks" placeholder="Bank" className="rat-cash" othersForDiv="pcswt2"}}
+            </div>
+            <input type="hidden" name="realweightpay" id="realweightpay" value="0">
+            <input type="hidden" name="realcashpay" id="realcashpay" value="0">
+            <div class="weight_and_cash">
+                <label>Weight : <label id="realweight_lblpay">0</label></label>
+                <label>Cash : <label id="realcash_lblpay">0</label></label>
+            </div>
+            <br>
+            <button type="button" id="paynow-btn">Pay Now</button>
+            <center><h4>After Payment Balance</h4></center>
+            <center><div class="balance">
+                <label for="" style="font-size: large;font-weight:800;color:white;">Pure Balance : <label id='Pureb_bal' style="color:greenyellow;;">0</label></label>
+                <input type="hidden" name="Pure_balance_bal" id="Pure_balance_bal" value="0">
+                <label for="" style="font-size: large;font-weight:800;color:white;">Cash balance : <label id='Cashb_bal' style="color:greenyellow;">0</label></label>
+                <input type="hidden" name="Cash_balance_bal" id="Cash_balance_bal" value="0">
+            </div></center>
+        </div>
+    </div>
+    <input type="hidden" name="totalamt" id="totalamt" value="0">
+    <input type="hidden" name="ratecut_status" id="ratecut_status" value="gram">
+</div>
+{{> formend }}
+<br>
+{{> view }}
+<div id="product-div">
+{{#if (checkingRights data=rights action="view")}}
+<div class="toggle-div"><label for="pro" id="pro" class="toggles">Rate Cut</label><label for="add" id="add" class="toggles">Payment</label></div>
+<div class="toggle-div"><div id="pro-slider-div"></div><div id="add-slider-div"></div></div>
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+</div>
+<div id="addon-div">
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content2">
+</div>
+<div id="loading2">
+</div>
+{{/if}}
+</div>
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function backEndCall_balance(msg)
+    {
+        if(msg.success)
+        {
+            Sv("Pure_balance",money(msg.pure,3,0));
+            Sv("Cash_balance",money(msg.cash,3,0));
+            Si("Pureb",money(msg.pure,3,1));
+            Si("Cashb",money(msg.cash,3,1));
+        }
+    }
+    // Function to check if the checkbox is checked
+    function checkCheckboxStatus() {
+        const checkbox = document.getElementById('gramorpcs');
+        // Check if the checkbox is checked using the 'checked' property
+        if (checkbox.checked)
+        {
+            Si("gramorpcslbl","Gram");
+            Sv("ratecut_status","pcs");
+            Sv("gramorcash","0")
+        }
+        else
+        {
+            Si("gramorpcslbl","Cash");
+            Sv("ratecut_status","pcs");
+            Sv("gramorcash","1")
+        }
+    }
+    function backEndCall_rateCut(msg)
+    {
+        if(msg.success)
+        {
+            handleEvent("dealer","change");
+            refresh_ratecut()
+        }
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th>Purchase ID</th><th>Dealer</th><th>Metal</th><th>Weight</th><th>Cash</th><th>Action</th>";
+        let tfoot = "";
+        fetchTableData('content', '1000', '1', 'content', '', '/dealer-payment/select', '50vh', 'lazy-content', undefined, thead, tfoot, "tagtable");
+        let thead2 = "<th>S.no</th><th>Receipt ID</th><th>Dealer</th><th>Metal</th><th>Weight</th><th>Cash</th><th>Action</th>";
+        let tfoot2 = "";
+        fetchTableData('content2', '1000', '1', 'content2', '', '/dealer-payment/select2', '50vh', 'lazy-content2', undefined, thead2, tfoot2, "tagtable2");
+        selectLoad('metal', '/dealer-payment/metal', content = 'application/json', undefined);
+        document.getElementById('metal').addEventListener('change', function(event) {
+            selectLoad('rate', '/dealer-payment/rates', content = 'application/json', event.target.value);
+        });
+        document.getElementById('metal').addEventListener('change', function(event) {
+            selectLoad('ratepay', '/dealer-payment/rates', content = 'application/json', event.target.value);
+        });
+        selectLoad('paymentin', '/dealer-payment/paymentIn', content = 'application/json', undefined);
+        selectLoad('dealer', '/dealer-payment/dealer', content = 'application/json', undefined);
+        selectLoad('bank', '/dealer-payment/bank', content = 'application/json', undefined);
+        selectLoad('transactiontype', '/dealer-payment/transactionType', content = 'application/json', undefined);
+        document.getElementById('rate').addEventListener('change', function(event) {
+            Sv("purerate",event.target.value);
+        });
+        document.getElementById('ratepay').addEventListener('change', function(event) {
+            Sv("pureratepay",event.target.value);
+        });
+        document.getElementById('dealer').addEventListener('change', function(event) {
+            const dealer = event.target.value;
+            const metal = Val("metal");
+            if(metal!="nd" && dealer!="nd")
+            backEndCall("balance", "/dealer-payment/balance", "POST", undefined, JSON.stringify({dealer, metal})) ;
+        });
+        document.getElementById('metal').addEventListener('change', function(event) {
+            const metal = event.target.value;
+            const dealer = Val("dealer");
+            if(metal!="nd" && dealer!="nd")
+            backEndCall("balance", "/dealer-payment/balance", "POST", undefined, JSON.stringify({dealer, metal})) ;
+        });
+        document.getElementById('paymentin').addEventListener('change', function(event) {
+            h("notcash");
+            s("bankdiv","flex");
+            if(event.target.value!="cash" && event.target.value!="nd")
+            {
+                s("notcash","flex");
+                h("wastage");
+                Sv("waste",0);
+                if(event.target.value=="old")
+                    s("wastage","block");
+                h("bankdiv");
+            }
+        });
+        document.addEventListener("keyup", async (event) => {
+            const clickedId = event.target.id;
+            const classes = event.target.classList;
+            if(classes=="rat-cut")
+                ratecut_calc(clickedId)
+            if(classes=="rat-pay")
+                payment_calc(clickedId)
+            if(classes=="rat-cash")
+                payment_cash_calc(clickedId)
+        });
+        document.addEventListener("click", async (event) => {
+            const clickedId = event.target.id;
+            if(clickedId=="paynow-btn")
+            {
+                const formData = getFormData();
+                backEndCall(undefined,"/dealer-payment/paynow","POST",undefined,formData);
+            }
+            else if(clickedId=="ratecut-btn")
+            {
+                const formData = getFormData();
+                await backEndCall("rateCut","/dealer-payment/ratecut","POST",undefined,formData);
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                    backEndCall(undefined, "/dealer-payment/delete", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="delete-iconi")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                    backEndCall(undefined, "/dealer-payment/delete2", "POST", undefined, deleteKey);
+            }
+        });
+        document.getElementById("gramorpcs").addEventListener("click", () => {
+            checkCheckboxStatus()
+        });
+        document.getElementById('bank').addEventListener('keyup', function(event) {
+            const total_amount = valNum(Val("totalamt"));
+            const bank_amount = valNum(event.target.value);
+            const cash = total_amount - bank_amount;
+            Sv("cashs",cash);
+        });
+        document.getElementById("add").addEventListener("click", () => {
+            document.getElementById("add-slider-div").style.visibility = "visible";
+            document.getElementById("pro-slider-div").style.visibility = "hidden";
+            document.getElementById("addon-div").style.display = "block";
+            document.getElementById("product-div").style.display = "none";
+        });
+        document.getElementById("pro").addEventListener("click", () => {
+            document.getElementById("pro-slider-div").style.visibility = "visible";
+            document.getElementById("add-slider-div").style.visibility = "hidden";
+            document.getElementById("product-div").style.display = "block";
+            document.getElementById("addon-div").style.display = "none";
+        });
+    });
+    function ratecut_calc(id)
+    {
+        const Pureb = valNum(Val("Pure_balance"));
+        const Cashb = valNum(Val("Cash_balance"));
+        const weight = valNum(Val("weightcut"));
+        const purity = valNum(Val("puritycut"));
+        const rate = valNum(Val("rate"));
+        const purerate = valNum(Val("purerate"));
+        const total_cash = valNum(Val("totalcash"));
+        let pure = 0;
+        let value = 0;
+        if(id=="totalcash")
+        {
+            pure = total_cash / purerate;
+            value = total_cash;
+            Sv("weightcut",pure);
+        }
+        else
+        {
+            pure = parseFloat(parseFloat(weight) * parseFloat(purity) / 100);
+            value = pure * purerate; 
+            Sv("totalcash",value);
+        }
+        if(Val("gramorcash")=="0")
+        {
+            value = -value;
+            Sv("realweight",money(pure,3,0));
+            Sv("realcash",value);
+            Si("realweight_lbl",money(pure,3,1));
+            Si("realcash_lbl",money(value,3,1));
+        }
+        else
+        {
+            pure = -pure;
+            Sv("realweight",money(pure,3,0));
+            Sv("realcash",value);
+            Si("realweight_lbl",money(pure,3,1));
+            Si("realcash_lbl",money(value,3,1));
+        }
+        const pure_after_cut = parseInt(Pureb) + parseInt(pure);
+        const cash_after_cut = parseInt(Cashb) + parseInt(value);
+        Si("Pureb_cut",money(pure_after_cut,3,1));
+        Sv("Pure_balance_cut",money(pure_after_cut,3,0));
+        Si("Cashb_cut",money(cash_after_cut,3,1));
+        Sv("Cash_balance_cut",money(cash_after_cut,3,0));
+    }
+    function payment_calc(id)
+    {
+        debugger
+        const Pureb = valNum(Val("Pure_balance"));
+        const Cashb = valNum(Val("Cash_balance"));
+        const weight = valNum(Val("weightpay"));
+        const purity = valNum(Val("puritypay"));
+        const rate = valNum(Val("ratepay"));
+        const purerate = valNum(Val("pureratepay"));
+        const total_cash = valNum(Val("totalcashpay"));
+        const wastage = valNum(Val("waste"));
+        let pure = 0;
+        let value = 0;
+        if(id=="totalcashpay")
+        {
+            pure = parseFloat(total_cash / purerate);
+            Sv("weightpay",pure);
+        }
+        else
+        {
+            pure = parseFloat((weight) - parseFloat(wastage) * purity / 100);
+            value = pure * purerate
+            Sv("totalcashpay",value);
+        }
+        if(Val("paymentin")=="cash")
+        {
+            Sv("realweightpay",money(pure,3,0));
+            Sv("realcashpay",0);
+            Si("realweight_lblpay",money(pure,3,1));
+            Si("realcash_lblpay",money(0,3,1));
+        }
+        else
+        {
+            Sv("realweightpay",money(pure,3,0));
+            Sv("realcashpay",0);
+            Si("realweight_lblpay",money(pure,3,1));
+            Si("realcash_lblpay",money(0,3,1));
+        }
+        const pure_after_cut = parseInt(Pureb) - parseInt(pure);
+        const cash_after_cut = parseInt(Cashb) - parseInt(0);
+        Si("Pureb_bal",money(pure_after_cut,3,1));
+        Sv("Pure_balance_bal",money(pure_after_cut,3,0));
+        Si("Cashb_bal",money(cash_after_cut,3,1));
+        Sv("Cash_balance_bal",money(cash_after_cut,3,0));
+    }
+    function payment_cash_calc(id)
+    {
+        debugger
+        const Pureb = valNum(Val("Pure_balance"));
+        const Cashb = valNum(Val("Cash_balance"));
+        const cash = valNum(Val("cashs"));
+        const bank = valNum(Val("banks"));
+        let value = parseInt(cash) + parseInt(bank);
+        Sv("realweightpay",0);
+        Sv("realcashpay",money(pure,3,0));
+        Si("realweight_lblpay",money(0,3,1));
+        Si("realcash_lblpay",money(value,3,1));
+        const pure_after_cut = Pureb;
+        const cash_after_cut = parseInt(Cashb) - parseInt(value);
+        Si("Pureb_bal",money(pure_after_cut,3,1));
+        Sv("Pure_balance_bal",money(pure_after_cut,3,0));
+        Si("Cashb_bal",money(cash_after_cut,3,1));
+        Sv("Cash_balance_bal",money(cash_after_cut,3,0));
+    }
+    function refresh_ratecut()
+    {
+        Sv("weightcut","");
+        Sv("puritycut","");
+        Ss("rate","nd");
+        Ss("purerate","");
+        Sv("totalcash","");
+        Si("Pureb_cut","0");
+        Sv("Pure_balance_cut","");
+        Si("Cashb_cut","0");
+        Sv("Cash_balance_cut","");
+        Sv("realweight","0");
+        Sv("realcash","0");
+        Si("realweight_lbl","0");
+        Si("realcash_lbl","0");
+    }
+    function refresh_payment()
+    {
+        Sv("weightpay","");
+        Sv("waste","");
+        Sv("puritypay","");
+        Ss("ratepay","nd");
+        Ss("pureratepay","");
+        Sv("totalcashpay","");
+        Si("Pureb_bal","0");
+        Sv("Pure_balance_bal","");
+        Si("Cashb_bal","0");
+        Sv("Cash_balance_bal","");
+        Sv("realweightpay","0");
+        Sv("realcashpay","0");
+        Si("realweight_lblpay","0");
+        Si("realcash_lblpay","0");
+        Ss("bank","nd");
+        Ss("transactiontype","nd");
+        Sv("cashs","");
+        Sv("banks","");
+    }
+</script>
+{{> footer }}

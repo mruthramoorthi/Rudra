@@ -1,0 +1,129 @@
+<style>
+.addcssfortable{
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.addcssfortable1{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-around;
+    align-items: center;
+}
+.pcswt{
+    width: 90px !important;
+}
+.pcswt2{
+    width: 115px !important;
+}
+.vietnam{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+#cancel{
+    color: white;
+    background-color: red;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="addcssfortable1">
+        {{selectBox id="dealer" options='nd:Dealers'}}
+        {{selectBox id="counter" options='nd:Counter'}}
+        {{selectBox id="product" options='nd:Category'}}
+        {{selectBox id="typeofjewel" options='nd:Jewel Type'}}
+        {{selectBox id="subtype" options='nd:Sub Type'}}
+        {{createInput type="number" id="pcs" placeholder="Pieces" othersForDiv="pcswt"}}
+        {{createInput type="number" id="totalweight" placeholder="Weight" othersForDiv="pcswt"}}
+        {{createInput type="date" id="date" placeholder="Date" othersForDiv="pcswt2"}}
+        {{imageUpload id="photo" noncei=nonce placeholder="Jewels Photo"}}
+    </div>
+    <div class="vietnam">
+        <button type="button" id="save">Save</button>
+        <button type="button" id="cancel">Cancel</button>
+        {{#if (checkingRights data=rights action="print")}}
+        <button id="pdfBtns" type="button">Print</button>
+        {{/if}}
+    </div>
+    <input type="hidden" id="lotid" name="lotid" value="">
+    <input type="hidden" name="purchaseid" id="purchaseid" value="">
+    <input type="hidden" name="purchase_id" id="purchase_id" value="">
+</div>
+<br>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+    <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    document.addEventListener("DOMContentLoaded", () => {
+        selectLoad('dealer', '/stock-opening/dealer', content = 'application/json', undefined);
+        selectLoad('product', '/stock-opening/loadCate', content = 'application/json', undefined);
+        selectLoad('counter', '/stock-opening/counter', content = 'application/json', undefined);
+        let thead = "<th>S.no</th><th>stock-opening ID</th><th>Counter</th><th>Category</th><th>Jewel</th><th>Sub</th><th>Weight</th><th>Pcs</th><th>Date</th><th>Action</th>";
+        let tfoot = "<td colspan='6'></td>";
+        if({{checkingRights data=rights action="view"}})
+            fetchTableData('content', '1000', '1', 'content', '', '/stock-opening/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        document.getElementById('product').addEventListener('change', function(event) {
+            selectLoad('typeofjewel', '/stock-opening/loadJewel', content = 'application/json', event.target.value);
+        });
+        document.getElementById('typeofjewel').addEventListener('change', function(event) {
+            selectLoad('subtype', '/stock-opening/subType', content = 'application/json', event.target.value+"[w~12]"+Val("product"));
+        });
+        // Add event listener for the "Add" button to capture the input and add to the table
+        document.getElementById("save").addEventListener("click", () => {
+            const formData = getFormData();
+            backEndCall(undefined,"/stock-opening/insert","POST",undefined,formData);
+        });
+        document.addEventListener("click", async (event) => {
+            debugger
+        const clickedId = event.target.id;
+        if(event.target.classList=="edit-iconi")
+        {
+            const editVal = Val(clickedId,"datas");
+            scrollToElementById("form-for-get-input");
+            Ss("dealer",editVal.dealercode);
+            Ss("counter",editVal.counter);
+            Ss("product",editVal.category);
+            setTimeout(()=>{
+                Ss("typeofjewel",editVal.jeweltype);
+            }, 1000);
+            setTimeout(()=>{
+                Ss("subtype",editVal.subtype);
+            },1100);
+            Sv("purchaseid",editVal.openingid);
+            Sv("purchase_id",editVal.openingcode);
+            Sv("lotid",editVal.lotid);
+            Sv("date",rawDateFormat(editVal.date,'ymd',"-"));
+            Sv("totalweight",editVal.weight)
+            Sv("pcs",editVal.pcs);
+            document.dispatchEvent(edit_event);
+        }
+        if(clickedId=="cancel")
+        {
+            reloadSite();
+        }
+        if(event.target.classList=="delete-iconi")
+        {
+            const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+            deleteKey = JSON.stringify({uniquekey: deleteId});
+            const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+            if(userConfirmed)
+                backEndCall(undefined, "/stock-opening/delete", "POST", undefined, deleteKey);
+        }
+    });
+    });
+</script>
+{{> footer }}

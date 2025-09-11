@@ -1,0 +1,141 @@
+<style>
+    
+.display-f{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+    </style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="display-f"> 
+        {{selectBox id="account" options='nd:Accounts'}}
+        {{selectBox id="header" options='nd:Header'}}
+        {{createInput type="text" id="newheader" placeholder="New Header"}}
+        {{!-- {{selectBox id="accounttype" options='nd:Accounts Type'}} --}}
+        {{!-- {{selectBox id="accountname" options='nd:Account Name'}}
+        {{createInput type="text" id="newaccount" placeholder="New Account"}}
+        {{selectBox id="entitytype" options='nd:Entity Type'}}
+        {{createInput type="text" id="entity" placeholder="Entity"}} --}}
+    </div><br>
+    <div class="display-f">
+        <button id="saveButton" class="center" type="button">Save</button>
+        <button id="cancelButton" class="center" type="button">Cancel</button>
+         {{#if (checkingRights data=rights action="print")}}
+        <button id="pdfBtns" type="button">Print</button>
+        {{/if}}
+    </div>
+    
+</div>
+{{> formend }}
+{{> view }}
+ {{#if (checkingRights data=rights action="view")}}
+<div id="lazy-contents">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    const thead = `<th>S.no</th><th>Header</th><th>Account</th><th>Entity</th><th>Action</th>`;
+    const tfoot = ``;
+    // selectLoad('accounttype', '/ledger-and-accounts/accType', content = 'application/json', undefined);
+    if({{checkingRights data=rights action="print"}})
+    document.getElementById("pdfBtns").addEventListener("click", async () => {
+        await openPDF("/ledger-and-accounts/pdf");
+    });
+    document.getElementById("cancelButton").addEventListener("click", () => {
+            reloadSite();
+        });
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/ledger-and-accounts/insert", "POST", undefined, formData);
+        });
+        h("cus-div-newheader");
+        // h("cus-div-newaccount");
+        // h("cus-div-entity");
+        selectLoad('account', '/ledger-and-accounts/loadAccount', content = 'application/json', undefined);
+        document.getElementById('account').addEventListener('change', function(event) {
+            selectLoad('header', '/ledger-and-accounts/loadHeader', content = 'application/json', event.target.value);
+        });
+        // document.getElementById('header').addEventListener('change', function(event) {
+        //     selectLoad('accountname', '/ledger-and-accounts/loadAcc', content = 'application/json', event.target.value);
+        //     selectLoad('entitytype', '/ledger-and-accounts/loadEnt', content = 'application/json', event.target.value);
+        // });
+        document.getElementById('header').addEventListener('change', function(event) {
+            if(event.target.value=="others")
+                s("cus-div-newheader","flex");
+        });
+        // document.getElementById('accountname').addEventListener('change', function(event) {
+        // if(event.target.value=="others")
+        //      s("cus-div-newaccount","flex");
+        // });
+        // document.getElementById('entitytype').addEventListener('change', function(event) {
+        // if(event.target.value=="others")
+        //      s("cus-div-entity","flex");
+        //});
+        if({{checkingRights data=rights action="view"}})
+        fetchTableData('contentsOfTable', '1000', '1', 'contentsOfTable', '', '/ledger-and-accounts/select', '50vh', 'lazy-contents', undefined, thead, tfoot);
+    });
+    document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                debugger;
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Sv("name",userDatas.name);
+                Sv("lastname",userDatas.lastname);
+                Sv("dob",rawDateFormat(userDatas.dob, 'ymd'));
+                Sv("joinon",rawDateFormat(userDatas.joindate, 'ymd'));
+                Sv("aadhaar",userDatas.aadhaar);
+                Sv("pannum",userDatas.pan);
+                Sv("address",userDatas.address);
+                Sv("number1",userDatas.primaryphonenumber);
+                Sv("number2",userDatas.secondaryphonenumber);
+                Sv("uniquekey",userDatas.uniqueid)
+                Si("saveButton", "Update");
+                document.getElementById('cancelButton').style.display="block";
+                const profilePic = userDatas.profile;
+                const proof = userDatas.aadhaarproof;
+                const imagePathParts = profilePic.split("[pics~pics]").filter(item => item.trim() !== "");
+                const imageProofs = proof.split("[pics~pics]").filter(item => item.trim() !== "");
+
+                // Loop through the path parts and generate the <img> tags
+                imagePathParts.forEach(item => {
+                    loadImg("profile", item);
+                });
+
+                // Loop through the path parts and generate the <img> tags
+                imageProofs.forEach(item => {
+                    loadImg("proof", item);
+                });
+                document.dispatchEvent(edit_event);
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                const deleteId2 = document.getElementById(clickedId).getAttribute('uniquekey2');
+                deleteKey = JSON.stringify({uniquekey: deleteId, uniquekey2: deleteId2});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/ledger-and-accounts/delete", "POST", undefined, deleteKey);
+            }
+        });
+</script>
+{{> footer }}

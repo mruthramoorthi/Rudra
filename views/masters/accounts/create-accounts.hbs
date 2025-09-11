@@ -1,0 +1,146 @@
+<style>
+    #new_entity{
+        display: none;
+    }
+    .display-f{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="display-f"> 
+        {{selectBox id="header" options='nd:Header'}}
+        {{selectBox id="entitytype" options='nd:Entity Type'}}
+        <div id="new_entity">{{createInput type="text" id="newentity" placeholder="New Entity"}}</div>
+        {{createInput type="text" id="name" placeholder="Account Name"}}
+        {{createInput type="text" id="party" placeholder="Party Name"}}
+        {{createInput type="date" id="doj" placeholder="DOJ"}}
+        {{createInput type="number" id="number1" placeholder="Primary Number"}}
+        {{createInput type="number" id="number2" placeholder="Secondary Number"}}
+        {{createInputTa id="address" placeholder="Address"}}
+        {{createInput type="number" id="gstin" placeholder="GSTin"}}
+        {{createInput type="text" id="pannum" placeholder="PAN"}}
+        {{imageUpload id="profile" noncei=nonce placeholder="Profile"}}
+        {{imageUpload id="proof" noncei=nonce placeholder="Proof"}}
+        {{selectBox id="state" options='nd:State'}}
+        {{selectBox id="district" options='nd:District'}}
+        {{createInput type="number" id="pin" placeholder="PIN"}}
+        <label for="">Opening Balance</label>
+        {{createInput type="number" id="cr" placeholder="CR"}}
+        {{createInput type="number" id="dr" placeholder="DR"}}
+        <input type="hidden" id="uniquekey" name="uniquekey">
+    </div><br>
+    <div class="display-f">
+        <button id="saveButton" class="center" type="button">Save</button>
+        <button id="cancelButton" class="center" type="button">Cancel</button>
+         {{#if (checkingRights data=rights action="print")}}
+        <button id="pdfBtns" type="button">Print</button>
+        {{/if}}
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+{{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    selectLoad('header', '/create-accounts/loadHeader', content = 'application/json', undefined);
+    selectLoad('state', '/create-accounts/loadState', content = 'application/json', undefined);
+    document.getElementById('state').addEventListener('change', function(event) {
+        selectLoad('district', '/create-accounts/loadDistrict', content = 'application/json', event.target.value);
+    });
+    document.getElementById('header').addEventListener('change', function(event) {
+        selectLoad('entitytype', '/create-accounts/loadEnt', content = 'application/json',  event.target.value);
+    });
+    document.getElementById('entitytype').addEventListener('change', function(event) {
+        if(event.target.value=="others")
+            s("new_entity");
+        else
+        {
+            Sv("newentity","");
+            h("new_entity");
+        }
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+        let thead = "<th>S.no</th><th>Acc.id</th><th>Name</th><th>Party</th><th>Action</th>";
+        let tfoot = "<td colspan='7'></td>";
+        if({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/create-accounts/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/create-accounts/insert", "POST", undefined, formData);
+        });
+        document.addEventListener("click", (event)=>{
+            const clickedId = event.target.id;
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                deleteKey = JSON.stringify({uniquekey: deleteId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                    backEndCall(undefined, "/create-accounts/delete", "POST", undefined, deleteKey);
+            }
+            if(event.target.classList=="edit-icon")
+            {
+                const data = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Ss("header",data.account_id);
+                setTimeout(()=>{
+                    Ss("entitytype",data.entity_type);
+                },1000);
+                Ss("state",data.state);
+                setTimeout(()=>{
+                    Ss("district",data.district);
+                },1000);
+                Sv("uniquekey",data.id);
+                Sv("name",data.name);
+                Sv("party",data.alias);
+                Sv("doj",rawDateFormat(data.doj, 'ymd'));
+                Sv("number1",data.ph1);
+                Sv("number2",data.ph2);
+                Sv("address",data.address);
+                Sv("gstin",data.gstin);
+                Sv("pannum",data.pan);
+                Sv("pin",data.pin);
+                Sv("cr",data.cr);
+                Sv("dr",data.dr);
+                const profilePic = data.profile;
+                const proof = data.proof;
+                const imagePathParts = profilePic.split("[pics~pics]").filter(item => item.trim() !== "");
+                const imageProofs = proof.split("[pics~pics]").filter(item => item.trim() !== "");
+
+                // Loop through the path parts and generate the <img> tags
+                imagePathParts.forEach(item => {
+                    loadImg("profile", item);
+                });
+
+                // Loop through the path parts and generate the <img> tags
+                imageProofs.forEach(item => {
+                    loadImg("proof", item);
+                });
+                document.dispatchEvent(edit_event);
+            }
+        });
+    });
+</script>
+{{> footer }}

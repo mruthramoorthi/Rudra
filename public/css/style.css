@@ -1,0 +1,729 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+  font-family: 'Noto Sans', sans-serif;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+.menu{
+  display: flex;
+  align-items: center;
+}
+
+hr{
+  margin: 0 !important;
+}
+
+select{
+  padding: 3px 17px;
+  border-radius: 4px;
+}
+
+select:focus{
+  border: 4px solid gray;
+}
+
+body{
+  height: 100vh;
+  width: 100%;
+}
+
+.burger-icon{
+  width: 33px;
+}
+
+.wrapper a:focus{
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  border-radius: 10px;
+  background: darkgray;
+  font-size: 25px;
+    padding: 5px;
+}
+
+.container{
+    display: block;
+    background: #fff;
+    width: 100%;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.containeri,
+.containeri-fluid
+{
+  position: absolute;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  display: block;
+  background: #fff;
+  width: 410px;
+  padding: 30px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.containeri .text{
+  font-size: 35px;
+  font-weight: 400;
+  text-align: center;
+  color:#5199E4;
+}
+
+.containeri form .data{
+  height: 45px;
+  width: 100%;
+  margin: 40px 0;
+}
+
+form .data input{
+  height: 100%;
+  width: 100%;
+  padding-left: 10px;
+  border: 1px solid silver;
+}
+
+form .data input:focus{
+  border-color: #5199E4;
+  border-bottom-width: 2px;
+}
+
+
+form .forgot-pass{
+  margin-top: -8px;
+}
+form .forgot-pass a{
+  color: #5199E4;
+  text-decoration: none;
+}
+form .forgot-pass a:hover{
+  text-decoration: underline;
+}
+
+form .btn{
+  margin: 30px 0;
+  height: 45px;
+  width: 100%;
+}
+
+form .btn button{
+  height: 100%;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #fff; 
+   background:#5199E4;
+   font-weight: 500;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   cursor: pointer;
+}
+
+form .signup-link{
+  text-align: center;
+}
+
+form .signup-link a{
+  color: #5199E4;
+  text-decoration: none;
+}
+form .signup-link a:hover{
+  text-decoration: underline;
+}
+   
+
+.containeri-fluid{
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+
+nav{
+  width: 100%; 
+  height:50px;
+  background:white;
+  padding: 0px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav .logo{
+  font-weight:500;
+  font-size: 18px;
+  color:#34495e;
+  font-family: cursive;
+}
+
+nav .menu a{
+  margin:5px 5px ;
+  text-decoration: none;
+  color: #5199E4;
+  font-size: 25px;
+    padding: 5px;
+}
+
+/* nav .menu a:focus{
+  border: 2px solid;
+} */
+
+nav .menu a:hover{
+  text-decoration: underline;
+}
+
+
+.containeri-fluid h2,.containeri-fluid h3{
+  font-weight: 400;
+}
+
+.containeri-fluid img{
+  width: 200px;
+}
+
+.error{
+  color:red;
+  font-weight:bold;
+}
+
+.good{
+  color:green;
+  font-weight:lighter;
+}
+
+.poweredby{
+  font-size: 10px;
+}
+
+.input-containeri {
+  width: fit-content;
+    display: flex;
+    flex-direction: column;
+    margin: 2px;
+}
+
+.input-containeri label {
+  background: gray;
+    padding: 0 5px;
+    color: white;
+    width: fit-content;
+    font-size: 14px;
+    border-radius: 10px 3px 0 0;
+}
+
+.input-containeri input {
+  height: 30px;
+  border: 1px solid gray;
+  border-radius: 0 10px 0 10px;
+  outline: none;
+  padding: 0 5px;
+}
+
+.input-containeri textarea {
+  width: 100%;
+  height: 100%;
+  border: 1px solid gray;
+  border-radius: 0 10px 0 10px;
+  outline: none;
+  padding: 0 5px;
+}
+
+input:focus {
+  border: 4px solid gray;
+}
+
+textarea:focus {
+  border: 4px solid gray;
+}
+
+td:focus {
+  outline: 2px solid #007bff; /* Blue border on focus */
+}
+
+.flex-with-space-edit-delete{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100px;
+}
+
+table tbody tr:nth-child(even)
+{
+  background: lightgray;
+}
+
+table thead{
+  background: royalblue;
+  color: white;
+}
+
+/*menu bar css*/
+.navibar {
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+.navibar::-webkit-scrollbar {
+  display: none;  /* Hide the scrollbar */
+}
+
+.submenu {
+  list-style-type: none;
+  font-size: 20px;
+  padding: 0;
+  background: lightgray;
+}
+ 
+.li {
+  list-style-type: none;
+  padding: 0 5px;
+  width: max-content;
+}
+
+.folder{
+  margin: 0 10px;
+  width: 100px;
+  border-radius: 5px;
+  text-align: center;
+  background: lightgrey;
+  margin-bottom: 5px;
+}
+.folder > .folder-span {
+  font-variant: small-caps;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: large;
+  padding: 0 5px;
+  border-radius: 5px;
+  text-align: center;
+}
+.submenu {
+  display: none;
+  margin-left: 40px;
+  position: absolute;
+  margin-top: -1px;
+  z-index: 1000;
+  border-radius: 5px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+.folder:hover > .submenu {
+  display: block;
+}
+
+.file {
+  margin: 0 5px;
+  font-variant: small-caps;
+  cursor: pointer;
+  width: max-content;
+}
+
+.file > a {
+  text-decoration: none;
+}
+
+.folder:hover > span {
+  color: #5199E4;
+}
+
+.file:hover > span {
+  color: #5199E4;
+}
+
+.file a span:hover {
+  color: #5199E4;
+}
+
+/* Make sure submenu inside folders only appear when hovering over their parent folder */
+.folder > .submenu {
+  display: none; /* Hidden by default */
+}
+
+.folder:hover > .submenu {
+  display: block; /* Show when hovering over the parent folder */
+}
+
+.folder > .submenu > .folder {
+  position: relative;
+}
+
+.folder > .submenu > .folder > .submenu {
+  display: none;
+}
+
+.folder > .submenu > .folder:hover > .submenu {
+  display: block;
+}
+
+
+/*snow card*/
+.snowdiv{
+  position: relative;
+  width: 97%;
+  height: fit-content;
+  margin: 25px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 10px 30px, rgba(0, 0, 0, 0.3) 0px 25px 30px 0px, rgba(0, 0, 0, 0.2) 9px -9px 3px inset;
+}
+
+button {
+  padding: 5px 20px;
+  color: black;
+  border-radius: 10px !important;
+  border: 0;
+  background: lightgray;
+  box-shadow: rgba(0, 0, 0, 0.4) 4px 4px 5px, rgba(0, 0, 0, 0.3) 0px 0px 0px 0px, rgba(0, 0, 0, 0.2) 4px 4px 0px inset;
+}
+
+button:focus{
+  background: gray;
+  border: solid 2px;
+}
+
+button:active {
+  box-shadow: rgba(0, 0, 0, 0.4) 2px 2px 3px, rgba(0, 0, 0, 0.3) 0px 0px 0px 0px, rgba(0, 0, 0, 0.2) 2px 2px 0px inset;
+}
+
+.center-margin{
+  margin: 0 auto !important;
+}
+
+
+
+.wrapper-sidebar-sidebar .menu-btn{
+  position: absolute;
+  left: 20px;
+  top: 10px;
+  color: #fff;
+  z-index: 9999;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+#btn-sidebar:checked ~ .menu-btn{
+  left: 256px;
+}
+.wrapper-sidebar-sidebar .menu-btn img{
+  font-size: 23px;
+  transition: all 0.3s ease;
+}
+.wrapper-sidebar-sidebar .menu-btn .fa-times{
+  opacity: 0;
+}
+#btn-sidebar:checked ~ .menu-btn .fa-times{
+  opacity: 1;
+  position: fixed;
+  transform: rotate(-180deg);
+}
+#btn-sidebar:checked ~ .menu-btn .fa-bars{
+  margin-left: -40px;
+  opacity: 0;
+  transform: rotate(180deg);
+}
+#sidebar-sidebar{
+  border-radius: 10px;
+  position: fixed;
+  height: 60%;
+  background: rgba(0, 0, 0, 50%);
+  width: 270px;
+  overflow: hidden;
+  left: -270px;
+  transition: all 0.3s ease;
+  z-index: 1
+}
+#btn-sidebar:checked ~ #sidebar-sidebar{
+  left: 0;
+}
+#sidebar-sidebar .title-sidebar{
+  line-height: 65px;
+  text-align: center;
+  background: rgba(0, 0, 0, 50%);
+  font-size: 25px;
+  font-weight: 600;
+  color: #f2f2f2;
+  border-bottom: 1px solid #222;
+}
+#sidebar-sidebar .list-items-sidebar{
+  position: relative;
+  width: 100%;
+  list-style: none;
+}
+#sidebar-sidebar .list-items-sidebar li.li-sidebar{
+  padding-left: 40px;
+  line-height: 50px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid #333;
+  transition: all 0.3s ease;
+}
+#sidebar-sidebar .list-items-sidebar li.li-sidebar:hover{
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  box-shadow: 0 0px 10px 3px #222;
+}
+#sidebar-sidebar .list-items-sidebar li.li-sidebar:first-child{
+  border-top: none;
+}
+#sidebar-sidebar .list-items-sidebar li.li-sidebar a{
+  color: #f2f2f2;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 500;
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+#sidebar-sidebar .list-items-sidebar li.li-sidebar a i{
+  margin-right: 20px;
+}
+#sidebar-sidebar .list-items-sidebar .icons-sidebar{
+  width: 100%;
+  height: 40px;
+  text-align: center;
+  position: absolute;
+  bottom: 100px;
+  line-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#sidebar-sidebar .list-items-sidebar .icons-sidebar a{
+  height: 100%;
+  width: 40px;
+  display: block;
+  margin: 0 5px;
+  font-size: 18px;
+  color: #f2f2f2;
+  background: #095b63;
+  border-radius: 5px;
+  border: 1px solid #09484f;
+  transition: all 0.3s ease;
+}
+#sidebar-sidebar .list-items-sidebar .icons-sidebar a:hover{
+  background: #124045;
+}
+.list-items-sidebar .icons-sidebar a:first-child{
+  margin-left: 0px;
+}
+.content-sidebar{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  color: #fff;
+  z-index: -1;
+  width: 100%;
+  text-align: center;
+}
+.content-sidebar .header-sidebar{
+  font-size: 45px;
+  font-weight: 700;
+}
+.content-sidebar p{
+  font-size: 40px;
+  font-weight: 700;
+}
+.right-align{
+  text-align: right;
+}
+.overall-div{
+  overflow: hidden;
+  height: -webkit-fill-available;
+}
+.scrollable-div{
+  overflow-y: scroll;
+  height: 80%;
+  padding-bottom: 2rem;
+}
+.shadows{ /* not in use */
+  position: relative;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+.rates-price{
+  display: none;
+}
+/* Style the range slider when focused */
+input[type="range"]:focus {
+  border: 2px solid blue;    /* Add a blue border */
+  outline: none;             /* Remove the default outline */
+  box-shadow: 0 0 5px blue;  /* Optional: Add a glow effect */
+}
+
+input[type="range"]{
+  width: 100%;
+}
+
+.error-border{
+  border: 2px solid red;
+}
+
+.old-sml-box{
+  width: 125px;
+}
+
+.sheet{
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    border-radius: 10px;
+    background: white;
+    padding: 10px;
+}
+
+/* Focus effect with blue outline */
+.sheetclick:focus {
+    outline: 3px solid rgba(0, 123, 255, 0.7); /* Bootstrap blue */
+    outline-offset: 2px;
+    transform: scale(1.02);
+}
+
+.sheetclick:active {
+    transform: scale(0.98);
+    box-shadow: rgba(60, 64, 67, 0.2) 0px 1px 2px 0px;
+}
+
+.click-action:focus {
+ outline: 3px solid rgba(0, 123, 255, 0.7);
+  box-shadow: 0 0 0 4px #0d6efd; /* Bootstrap blue glow */
+  border-radius: 4px;
+}
+
+/* EXCHANGE AND BANKING CSS */
+
+.ex-entry-div{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: end;
+}
+
+#olddetails{
+    width: fit-content;
+    margin-top: -15px;
+    position: absolute;
+    padding-top: 25px !important;
+    display: none;
+    z-index: 15;
+}
+
+#banking-sheet{
+    position: absolute;
+    margin-top: -15px;
+    z-index: 8;
+    display: none;
+}
+
+.old-ship{
+    position: relative;
+}
+.old-ship button{
+    width: 100%;
+    margin: 5px;
+}
+.bank-ship{
+    position: relative;
+    z-index: 10;
+}
+.bank-ship button{
+    width: 100%;
+    margin: 5px;
+}
+.custom-exchange-design{
+    margin-bottom: 10px;
+    width: -webkit-fill-available;
+}
+.custom-banking-design{
+    margin-bottom: 10px;
+    width: -webkit-fill-available;
+}
+
+.banking{
+    display: flex;
+    gap: 10px;
+    align-items: end;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.delete-ex-bank-button{
+    width: 20px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.default_proof_css{
+    width: 40px;
+    border-radius: 51%;
+    padding: 2px;
+    object-fit: cover;
+    height: 40px;
+}
+
+.main-tabs {
+    display: flex;
+    justify-content: space-around;
+    gap: 2rem;
+    margin: 5px 2rem;
+    border-radius: 10px;
+}
+
+.main-tab {
+    font-family: monospace;
+    font-size: large;
+    font-weight: 700;
+    width: 100%;
+    text-align: center;
+    background-color: #5199E4;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Initial shadow for 3D effect */
+}
+
+/* Hover effect */
+.main-tab:hover {
+    background-color: #ddd;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+    transform: translateY(-2px); /* Slight "lift" effect */
+}
+
+/* Focus effect (for keyboard navigation or tab selection) */
+.main-tab:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.6); /* Blue focus ring */
+    transform: scale(1.05); /* Slight grow effect */
+}
+
+/* Active tab (selected state) */
+.main-tab.active {
+    background-color: #007bff;
+    color: #fff;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Shadow for active state */
+    transform: translateY(-2px); /* Lift effect on active tab */
+}
+
+.main-tab:active {
+    background-color: #0056b3; /* Darker color when tab is clicked */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Reduced shadow on click */
+    transform: translateY(2px); /* "Pressed" effect */
+}
+
+
+
+/* EXCHANGE AND BANKING CSS */

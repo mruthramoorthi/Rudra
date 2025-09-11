@@ -1,0 +1,69 @@
+<% if (!isRoot) { %>
+  <ul class="submenu">
+<% } %>
+
+<% 
+  // Separate files and folders
+  const files = folderStructure.filter(item => item.type === 'file' && item.name.endsWith('.hbs'));
+  const folders = folderStructure.filter(item => item.type === 'folder');
+
+  // Split the paths from the 'group_concat(path)' into an array
+  const userFiles = access_files[0]['path'].split(',').map(filePath => filePath.replace(/\\/g, '/'));
+  const pageName = access_files[0]['pagename'].split(',');
+%>
+
+<!-- Render files first -->
+<% files.forEach(item => { %>
+  <% 
+    // Check if the current file is in the userFiles list
+    const filePath = item.path.split('masters')[1].replace(/\\/g, '/');
+    if (userFiles.includes(filePath)) { // Only include the file if it's in userFiles
+    let index = userFiles.indexOf(filePath);
+  %>
+    <li class="file li">
+      <!-- Split the path at 'masters', take the part after 'masters', and append '/masters' to the href -->
+      <a alt="<%= pageName[index] %>" href="/masters<%= item.path.split('masters')[1].replace('.hbs', '').replace(/\\/g, '/') %>">
+        <span><%= pageName[index] %></span> <!-- Replace hyphens with spaces and remove .hbs item.name.replace(/-/g, ' ').replace('.hbs', '') -->
+      </a>
+    </li>
+  <% } %>
+<% }) %>
+
+<!-- Render folders next -->
+<% folders.forEach(item => { %>
+  <% 
+    // Check if the folder contains at least one accessible file directly or in any of its subfolders
+    const folderContainsAccessibleFile = (item.children && item.children.some(child => {
+      if (child.type === 'file' && child.path) {
+        const childFilePath = child.path.split('masters')[1].replace(/\\/g, '/');
+        return userFiles.includes(childFilePath);
+      } else if (child.type === 'folder') {
+        // Recursively check subfolders for accessible files
+        return child.children && child.children.some(subChild => {
+          if (subChild.path) {
+            const subChildFilePath = subChild.path.split('masters')[1].replace(/\\/g, '/');
+            return userFiles.includes(subChildFilePath);
+          }
+          return false;
+        });
+      }
+      return false;
+    }));
+
+    if (folderContainsAccessibleFile) { // Only render folder if it contains at least one file the user has access to
+  %>
+    <li class="folder li">
+      <span class="folder-span"><%= item.name.replace(/-/g, ' ').replace('.hbs', '') %></span> <!-- Replace hyphens with spaces -->
+      
+      <% if (item.children && item.children.length > 0) { %>
+        <%- include('folder', { folderStructure: item.children, isRoot: false, user_details: user_details, access_files: access_files }) %>
+      <% } else { %>
+        <!-- If there are no children, we don't need to render anything further for this folder -->
+      <% } %>
+    </li>
+  <% } %>
+<% }) %>
+
+<% if (!isRoot) { %>
+  </ul>
+<% } %>

@@ -1,0 +1,62 @@
+<style>
+    .display-flexing{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .exchange-list{
+        display: none;
+    }
+    .main-tabs{
+        display: none !important;
+    }
+</style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+
+<div class="snowdiv addcssfortable">
+    <div class="display-flexing">
+    {{createInput id="fdate" type="date" placeholder="From"}}
+    {{createInput id="todate" type="date" placeholder="To"}}
+    {{selectBox id="metal" options="nd:metal"}}
+    <button type="button" id="loadrepot">Load</button>
+    <button type="button" id="printing">Print</button>
+</div>
+<br>
+  <div id="lazy-content">
+    </div>
+    <div id="loading">
+    </div>
+</div>
+{{> formend }}
+{{> view }}
+
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+    function load_report()
+    {
+        let thead = "<th>S.no</th><th>Date</th><th>Category</th><th>ID</th><th>Rate</th><th>Weight</th><th>Waste</th><th>Total</th>";
+        let tfoot = "<td colspan='6'></td>";
+        fetchTableData('content', '1000', '1', 'content', '', '/old-report/select', '50vh', 'lazy-content', {fdate:Val("fdate"),metal:Val("metal"),todate:Val("todate")}, thead, tfoot);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        selectLoad('metal', '/old-report/metal', content = 'application/json', undefined);
+        load_report();
+    });
+    document.addEventListener("click", async (event) => {
+        const clickedId = event.target.id;
+        if(event.target.id=="printing")
+        {
+            await openPDF("/old-report/pdf","POST",{"fdate":Val("fdate"), "metal":Val("metal"), "todate":Val("todate")});
+        }
+        if(clickedId=="loadrepot")
+        {
+            load_report();
+        }
+    });
+</script>
+{{> footer }}

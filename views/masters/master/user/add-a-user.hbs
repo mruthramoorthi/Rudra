@@ -1,0 +1,129 @@
+<style>
+    
+.display-f{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.center{
+  margin: 0 auto;
+  display: block;
+}
+
+#cancelButton{
+    background-color: red;
+    color: white;
+    display: none;
+}
+    </style>
+{{> header }}
+{{> navbar }}
+{{> form }}
+<div class="snowdiv">
+    <div class="display-f"> 
+        {{createInput type="text" id="name" placeholder="First Name"}}
+        {{createInput type="text" id="lastname" placeholder="Last Name"}}
+        {{createInput type="date" id="dob" placeholder="DOB"}}
+        {{createInput type="number" id="number1" placeholder="Primary Number"}}
+        {{createInput type="number" id="number2" placeholder="Secondary Number"}}
+        {{createInputTa id="address" placeholder="Address"}}
+        {{createInput type="date" id="joinon" placeholder="DOJ"}}
+        {{createInput type="number" id="aadhaar" placeholder="Addhaar"}}
+        {{createInput type="text" id="pannum" placeholder="PAN"}}
+        {{imageUpload id="profile" noncei=nonce placeholder="Profile"}}
+        {{imageUpload id="proof" noncei=nonce placeholder="Proof"}}
+        <input type="hidden" id="uniquekey" name="uniquekey">
+        <input type="hidden" id="user_id" name="user_id">
+    </div>
+    <div class="display-f">
+        <button id="saveButton" class="center" type="button">Save</button>
+        <button id="cancelButton" class="center" type="button">Cancel</button>
+        {{#if (checkingRights data=rights action="print")}}
+            <button id="pdfBtns" type="button">Print</button>
+        {{/if}}
+    </div>
+    
+</div>
+
+{{> formend }}
+{{> view }}
+ {{#if (checkingRights data=rights action="view")}}
+<div id="lazy-content">
+</div>
+<div id="loading">
+</div>
+{{/if}}
+{{> viewend }}
+
+{{> dtb }}
+<script nonce="{{nonce}}">
+   const pdfBtn = document.getElementById("pdfBtns");
+    if ({{checkingRights data=rights action="print"}}) {
+        pdfBtn.addEventListener("click", async () => {
+            await openPDF("/add-a-user/pdf");
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("saveButton").addEventListener("click", () => {
+            const formData=getFormData();
+            backEndCall(undefined, "/add-a-user/insert", "POST", undefined, formData);
+        });
+        document.getElementById("cancelButton").addEventListener("click", () => {
+            reloadSite();
+        });
+        let thead = "<th>S.no</th><th>Name</th><th>Phone</th><th>Address</th><th>Photo</th><th>Date</th><th>Action</th>";
+        let tfoot = "<td colspan='7'></td>";
+
+        // Call the fetchTableData function and wait for it to complete
+        if({{checkingRights data=rights action="view"}})
+        fetchTableData('content', '1000', '1', 'content', '', '/add-a-user/select', '50vh', 'lazy-content', undefined, thead, tfoot);
+
+        document.addEventListener("click", (event) => {
+            const clickedId = event.target.id;
+            if(event.target.classList=="edit-icon")
+            {
+                let userDatas = JSON.parse(document.getElementById(clickedId).getAttribute('datas'));
+                Sv("name",userDatas.name);
+                Sv("user_id",userDatas.user_id);
+                Sv("lastname",userDatas.lastname);
+                Sv("dob",rawDateFormat(userDatas.dob, 'ymd'));
+                Sv("joinon",rawDateFormat(userDatas.joindate, 'ymd'));
+                Sv("aadhaar",userDatas.aadhaar);
+                Sv("pannum",userDatas.pan);
+                Sv("address",userDatas.address);
+                Sv("number1",userDatas.primaryphonenumber);
+                Sv("number2",userDatas.secondaryphonenumber);
+                Sv("uniquekey",userDatas.uniqueid)
+                Si("saveButton", "Update");
+                document.getElementById('cancelButton').style.display="block";
+                const profilePic = userDatas.profile;
+                const proof = userDatas.aadhaarproof;
+                const imagePathParts = profilePic.split("[pics~pics]").filter(item => item.trim() !== "");
+                const imageProofs = proof.split("[pics~pics]").filter(item => item.trim() !== "");
+
+                // Loop through the path parts and generate the <img> tags
+                imagePathParts.forEach(item => {
+                    loadImg("profile", item);
+                });
+
+                // Loop through the path parts and generate the <img> tags
+                imageProofs.forEach(item => {
+                    loadImg("proof", item);
+                });
+                document.dispatchEvent(edit_event);
+            }
+            if(event.target.classList=="delete-icon")
+            {
+                const deleteId = document.getElementById(clickedId).getAttribute('uniquekey');
+                const userId = document.getElementById(clickedId).getAttribute('userid');
+                deleteKey = JSON.stringify({uniquekey: deleteId, userid:userId});
+                const userConfirmed = window.confirm("Are you sure you want to delete this item?");
+                if(userConfirmed)
+                backEndCall(undefined, "/add-a-user/delete-user", "POST", undefined, deleteKey);
+            }
+        });
+    });
+</script>
+{{> footer }}
