@@ -365,10 +365,13 @@ router.post("/logIn", async (req, res) => {
     if (!pass){
         return res.json({msg:"Password is Invalid", msg_type : 'error', success: false });
     }
-    bcrypt.compare(pass, login_details[0].password, (err, passwordMatch) => {
-        if (err || !passwordMatch)
-            return res.json({msg: "Incorrect Password", msg_type: "error", success: true});
-    });
+    const passwordMatch = await bcrypt.compare(pass, login_details[0].password);
+    if (!passwordMatch)
+    {
+        console.log('Password does not match');
+        return res.json({msg: "Incorrect Password", msg_type: "error", success: true});
+    }
+    console.log('no entry');
     const savings_numbers = await backendController.selectQuery(`SELECT GROUP_CONCAT(savings_number) AS sav FROM customer_savings_enroll WHERE deleteon=? AND id=?`,['0000-00-00', login_details[0].userid]);
     const completed_savings = await backendController.selectQuery(`SELECT * FROM customer_savings_enroll WHERE deleteon=? AND id=? AND closed=?`,['0000-00-00', login_details[0].userid, '1']);
     let savings_number_list = ""

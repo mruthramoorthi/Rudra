@@ -216,5 +216,5 @@ io.on('connection', (socket) => {
 
 // Start the server (using the HTTP server for Socket.IO)
 server.listen(5001, () => {
-  console.log("Server started on https://localhost:5000");
+  console.log("Server started on http://localhost:5000");
 });
